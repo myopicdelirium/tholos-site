@@ -1,0 +1,19 @@
+export default function Articles() {
+  return (
+    <section className="space-y-6">
+      <h1 className="text-4xl tracking-tight font-semibold">TTTTT</h1>
+
+      <div className="grid gap-4">
+        <a className="paper shadow-paper border rule rounded-2xl p-6 block" href="/articles/ttttt">
+          <div className="smallcaps text-[11px] text-brass">TTTTT</div>
+          <div className="mt-3 text-[rgb(var(--ink))/0.78]">WWWWW</div>
+        </a>
+
+        <a className="paper shadow-paper border rule rounded-2xl p-6 block" href="/articles/ttttt-2">
+          <div className="smallcaps text-[11px] text-brass">TTTTT</div>
+          <div className="mt-3 text-[rgb(var(--ink))/0.78]">WWWWW</div>
+        </a>
+      </div>
+    </section>
+  )
+}

@@ -1,0 +1,20 @@
+import "./globals.css"
+import Nav from "./_components/Nav"
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body className="grain min-h-screen">
+        <header className="border-b rule bg-[rgb(var(--ivory))/0.85] backdrop-blur">
+          <div className="mx-auto max-w-6xl px-6 py-5">
+            <Nav />
+          </div>
+        </header>
+
+        <main className="mx-auto max-w-6xl px-6 py-10">
+          {children}
+        </main>
+      </body>
+    </html>
+  )
+}

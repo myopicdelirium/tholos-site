@@ -1,0 +1,27 @@
+export default function Home() {
+  return (
+    <section className="space-y-8">
+      <div className="inline-flex items-center gap-3 rounded-full border rule px-4 py-2 paper shadow-paper mono text-[11px] text-brass">
+        <span>Build</span>
+        <span className="text-[rgb(var(--ink))]">v0.1.0</span>
+        <span>•</span>
+        <span>Updated</span>
+        <span className="text-[rgb(var(--ink))]">2025-12-24</span>
+      </div>
+
+      <h1 className="text-5xl tracking-tight font-semibold">TTTTT</h1>
+      <p className="max-w-2xl leading-relaxed text-[rgb(var(--ink))/0.78]">WWWWW</p>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <div className="paper shadow-paper border rule rounded-2xl p-6">
+          <div className="smallcaps text-[11px] text-brass">TTTTT</div>
+          <div className="mt-4 text-[rgb(var(--ink))/0.78]">WWWWW</div>
+        </div>
+        <div className="paper shadow-paper border rule rounded-2xl p-6">
+          <div className="smallcaps text-[11px] text-brass">TTTTT</div>
+          <div className="mt-4 text-[rgb(var(--ink))/0.78]">WWWWW</div>
+        </div>
+      </div>
+    </section>
+  )
+}
