@@ -1,25 +1,31 @@
 import Link from 'next/link'
 
+const LINKS = [
+  { href: '/about', label: 'ABOUT' },
+  { href: '/artifacts', label: 'ARTIFACTS' },
+  { href: '/logbook', label: 'LOGBOOK' },
+  { href: '/#connect', label: 'CONNECT' },
+]
+
 export default function SiteNav() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-[rgba(133,118,101,0.22)] bg-[rgba(232,229,224,0.88)] backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-        <Link href="/" className="text-[12px] font-medium tracking-tight text-[#1b1b1b]">
-          Tholos.
+    <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-[#f4f1ea]/95 backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+        <Link href="/" className="text-sm text-black/70 hover:text-black/90">
+          Myopic Delirium
         </Link>
 
-        <nav className="hidden items-center gap-6 sm:flex">
-          <Link href="/about" className="text-[11px] uppercase tracking-[0.28em] text-[#5f564d] hover:text-[#1b1b1b]">About</Link>
-          <Link href="/articles" className="text-[11px] uppercase tracking-[0.28em] text-[#5f564d] hover:text-[#1b1b1b]">Articles</Link>
-          <Link href="/logbook" className="text-[11px] uppercase tracking-[0.28em] text-[#5f564d] hover:text-[#1b1b1b]">Logbook</Link>
-          <Link href="/demo" className="text-[11px] uppercase tracking-[0.28em] text-[#5f564d] hover:text-[#1b1b1b]">Demo</Link>
-          <Link href="/other" className="text-[11px] uppercase tracking-[0.28em] text-[#5f564d] hover:text-[#1b1b1b]">Other</Link>
-          <Link href="/#connect" className="text-[11px] uppercase tracking-[0.28em] text-[#5f564d] hover:text-[#1b1b1b]">Connect</Link>
+        <nav className="flex items-center gap-8">
+          {LINKS.map(l => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className="text-xs tracking-[0.32em] text-black/55 hover:text-black/85"
+            >
+              {l.label}
+            </Link>
+          ))}
         </nav>
-
-        <div className="text-[11px] uppercase tracking-[0.28em] text-[#857665] sm:hidden">
-          Menu
-        </div>
       </div>
     </header>
   )

@@ -9,7 +9,7 @@ const links = [
   { label: 'Logbook', href: '/logbook' },
   { label: 'Demo', href: '/demo' },
   { label: 'Other', href: '/other' },
-  { label: 'Connect', href: '/connect' },
+  { label: 'Connect', href: '/#connect' },
 ]
 
 function IconMenu(props: { className?: string }) {

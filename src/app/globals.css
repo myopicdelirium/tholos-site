@@ -33,13 +33,14 @@ body {
 .text-brass { color: rgb(var(--brass)); }
 .text-teal { color: rgb(var(--teal)); }
 
-.paper { background: rgb(var(--ivory) / 0.78); }
+.paper { background: rgb(var(--ivory) / 0.98); }
 
 .shadow-paper {
   box-shadow:
-    0 1px 0 rgb(var(--brass) / 0.10),
-    0 18px 40px rgb(0 0 0 / 0.08);
+    0 1px 0 rgb(var(--brass) / 0.12),
+    0 26px 70px rgb(0 0 0 / 0.12);
 }
+
 
 .grain {
   background-image:
@@ -57,3 +58,6 @@ body{font-family:var(--font-ui),ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetic
 .md-display{font-family:var(--font-display),ui-serif,Georgia,Cambria,"Times New Roman",Times,serif}
 .md-hero-title{font-size:clamp(44px,6vw,84px);line-height:1.02;letter-spacing:-0.02em}
 .md-hero-caption{text-transform:uppercase;letter-spacing:.34em;font-size:12px;opacity:.82;margin-top:14px}
+
+
+.clamp-3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}

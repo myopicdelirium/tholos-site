@@ -6,7 +6,7 @@ const links = [
   ["Logbook", "/logbook"],
   ["Demo", "/demo"],
   ["Other", "/other"],
-  ["Connect", "/connect"]
+  ["Connect", "/#connect"]
 ] as const
 
 export default function Nav() {
