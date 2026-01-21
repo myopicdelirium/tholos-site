@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${ui.variable} ${display.variable} bg-[#E8E5E0] text-[#1b1b1b]`}>
         <SiteNav />
-        <div className="pt-14">{children}</div>
+        {children}
       </body>
     </html>
   )
