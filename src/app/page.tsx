@@ -1,15 +1,13 @@
-import ImmersiveHero from './_components/home/ImmersiveHero'
-import ArticlesSection from './_components/home/ArticlesSection'
-import LogbookSection from './_components/home/LogbookSection'
-import ConnectSection from './_components/home/ConnectSection'
+import ImmersiveHero from "./_components/home/ImmersiveHero"
+import ConnectSection from "./_components/home/ConnectSection"
 
 export default function Home() {
   return (
     <main>
       <ImmersiveHero />
-      <ArticlesSection />
-      <LogbookSection />
       <ConnectSection />
     </main>
   )
 }
+
+
