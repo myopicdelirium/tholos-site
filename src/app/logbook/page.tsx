@@ -1,38 +1,117 @@
-import Link from 'next/link'
-import { LOGBOOK } from './_data'
+export default function LogbookPage() {
+  const preview = [
+    {
+      kind: 'RELEASE',
+      date: 'YYYY-MM-DD',
+      title: 'Build v0.2.0: Title goes here',
+      blurb: 'One or two sentences. What shipped. Why it matters. Where it lives.',
+    },
+    {
+      kind: 'PATCH',
+      date: 'YYYY-MM-DD',
+      title: 'Patch Notes 0004: Title goes here',
+      blurb: 'What changed. What improved. What was removed. Keep it tight.',
+    },
+    {
+      kind: 'PAPER',
+      date: 'YYYY-MM-DD',
+      title: 'Working Paper 002: Title goes here',
+      blurb: 'A short abstract-style hint, plus what the next milestone is.',
+    },
+  ]
 
-export default function LogbookIndex() {
   return (
-    <div className="min-h-screen bg-[#E8E5E0] text-[#1b1b1b]">
-      <main className="mx-auto max-w-6xl px-6 py-16 sm:py-20">
-        <div className="text-[11px] uppercase tracking-[0.28em] text-[#857665]">Logbook</div>
-        <h1 className="mt-5 text-[40px] leading-[1.02] tracking-tight sm:text-[56px]">
-          Releases, patches, and working paper drops
-        </h1>
-        <div className="mt-5 max-w-2xl text-[14px] leading-relaxed text-[#3a352f] sm:text-[15px]">
-          Development updates intended for outsiders: what shipped, what changed, what’s next.
+    <main className="px-6 pb-24 pt-20">
+      <div className="mx-auto w-full max-w-6xl">
+        <div className="mb-12">
+          <div className="mb-3 text-[11px] tracking-[0.22em] text-neutral-600">
+            LOGBOOK
+          </div>
+          <h1 className="max-w-4xl text-balance text-5xl font-semibold tracking-tight text-neutral-900 md:text-6xl">
+            Releases, patches, and working paper drops
+          </h1>
+          <p className="mt-4 max-w-2xl text-pretty text-base leading-relaxed text-neutral-700">
+            Development updates intended for outsiders: what shipped, what changed, what&apos;s next.
+          </p>
+
+          <div className="mt-8 rounded-2xl border border-neutral-200 bg-white/50 p-5">
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+              <div className="text-sm font-medium text-neutral-900">
+                Notice
+              </div>
+              <div className="text-sm text-neutral-700">
+                We&apos;re currently reformatting log entries for consistency and archival clarity.
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {LOGBOOK.map(e => (
-            <Link
-              key={e.slug}
-              href={`/logbook/${e.slug}`}
-              className="group rounded-2xl border border-[rgba(133,118,101,0.22)] bg-[rgba(255,255,255,0.30)] p-5 hover:bg-[rgba(255,255,255,0.55)] transition-colors"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <div className="text-[11px] uppercase tracking-[0.24em] text-[#857665]">{e.tag}</div>
-                <div className="text-[12px] font-mono text-[#5f564d]">{e.date}</div>
+        <section className="mb-14">
+          <div className="mb-5 flex items-end justify-between gap-6">
+            <div>
+              <div className="text-[11px] tracking-[0.22em] text-neutral-600">
+                FORMAT PREVIEW
               </div>
-              <div className="mt-4 text-[18px] leading-snug tracking-tight">{e.title}</div>
-              <div className="mt-3 text-[13px] leading-relaxed text-[#3a352f]">{e.deck}</div>
-              <div className="mt-6 text-[12px] uppercase tracking-[0.22em] text-[#00394F] opacity-80 group-hover:opacity-100">
-                Open →
+              <div className="mt-2 text-sm text-neutral-700">
+                This is the structure new entries will follow.
               </div>
-            </Link>
-          ))}
-        </div>
-      </main>
-    </div>
+            </div>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-3">
+            {preview.map((item) => (
+              <div
+                key={item.kind}
+                className="rounded-2xl border border-neutral-200 bg-white/50 p-6"
+              >
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="text-[11px] tracking-[0.22em] text-neutral-600">
+                    {item.kind}
+                  </div>
+                  <div className="text-[11px] tracking-[0.18em] text-neutral-500">
+                    {item.date}
+                  </div>
+                </div>
+
+                <div className="text-lg font-semibold leading-snug text-neutral-900">
+                  {item.title}
+                </div>
+                <div className="mt-3 text-sm leading-relaxed text-neutral-700">
+                  {item.blurb}
+                </div>
+
+                <div className="mt-6 text-[11px] tracking-[0.22em] text-neutral-500">
+                  PREVIEW ONLY
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-neutral-200 bg-white/50 p-10">
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="text-[11px] tracking-[0.22em] text-neutral-600">
+              ENTRIES
+            </div>
+            <div className="mt-3 text-2xl font-semibold tracking-tight text-neutral-900">
+              No published entries yet
+            </div>
+            <div className="mt-3 text-sm leading-relaxed text-neutral-700">
+              We&apos;re standardizing format, metadata, and backfilling older notes. When entries return,
+              they&apos;ll be consistent, searchable, and properly archived.
+            </div>
+
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <div className="rounded-full border border-neutral-200 bg-white/60 px-4 py-2 text-xs tracking-wide text-neutral-700">
+                Next: Reformat + publish initial set
+              </div>
+              <div className="rounded-full border border-neutral-200 bg-white/60 px-4 py-2 text-xs tracking-wide text-neutral-700">
+                Then: Tags + chronology + permanent IDs
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
   )
 }
