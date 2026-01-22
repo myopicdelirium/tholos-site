@@ -1,26 +1,26 @@
 import Link from 'next/link'
 
-const LINKS = [
+const links = [
   { href: '/about', label: 'ABOUT' },
-  { href: '/artifacts', label: 'ARTIFACTS' },
+  { href: '/articles', label: 'ARTICLES' },
   { href: '/logbook', label: 'LOGBOOK' },
-  { href: '/#connect', label: 'CONNECT' },
+  { href: '/artifacts', label: 'ARTIFACTS' },
 ]
 
 export default function SiteNav() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-[#f4f1ea]/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <Link href="/" className="text-sm text-black/70 hover:text-black/90">
-          Myopic Delirium
+    <header className="sticky top-0 z-50 bg-[#E8E5E0]/80 backdrop-blur border-b rule">
+      <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+        <Link href="/" className="md-display text-[18px] tracking-tight text-[#1b1b1b] hover:opacity-80">
+          Tholos.
         </Link>
 
-        <nav className="flex items-center gap-8">
-          {LINKS.map(l => (
+        <nav className="flex items-center gap-5">
+          {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className="text-xs tracking-[0.32em] text-black/55 hover:text-black/85"
+              className="text-[11px] uppercase tracking-[0.28em] text-[#5f564d] hover:text-[#1b1b1b]"
             >
               {l.label}
             </Link>

@@ -61,3 +61,84 @@ body{font-family:var(--font-ui),ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetic
 
 
 .clamp-3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+.md-prose {
+  color: rgba(18,18,18,.88);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.md-prose h2, .md-prose h3 {
+  font-family: var(--font-display), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  letter-spacing: -0.01em;
+  color: rgba(18,18,18,.94);
+}
+
+.md-prose h2 {
+  font-size: 22px;
+  margin-top: 26px;
+  margin-bottom: 10px;
+}
+
+.md-prose h3 {
+  font-size: 18px;
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+
+.md-prose p {
+  margin: 10px 0;
+}
+
+.md-prose ul, .md-prose ol {
+  margin: 12px 0 12px 20px;
+}
+
+.md-prose li {
+  margin: 6px 0;
+}
+
+.md-prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.92em;
+  background: rgba(133,118,101,0.10);
+  border: 1px solid rgba(133,118,101,0.18);
+  padding: 0.15em 0.35em;
+  border-radius: 10px;
+}
+
+.md-prose pre {
+  margin: 14px 0;
+  padding: 14px 16px;
+  overflow: auto;
+  background: rgba(133,118,101,0.08);
+  border: 1px solid rgba(133,118,101,0.22);
+  border-radius: 18px;
+}
+
+.md-prose pre code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.md-prose a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: rgb(var(--teal));
+}
+
+.md-prose blockquote {
+  margin: 14px 0;
+  padding: 10px 14px;
+  border-left: 2px solid rgba(133,118,101,0.35);
+  color: rgba(18,18,18,.82);
+  background: rgba(133,118,101,0.06);
+  border-radius: 14px;
+}
+
+.md-prose hr {
+  border: 0;
+  border-top: 1px solid rgba(133,118,101,0.28);
+  margin: 18px 0;
+}
