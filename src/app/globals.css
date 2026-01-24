@@ -289,3 +289,25 @@ body{font-family:var(--font-ui),ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetic
   .md-timeline:before{ left:14px; }
   .md-timeline-rail{ padding-left: 30px; }
 }
+
+.md-inline-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+}
+
+.md-link{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.28em;
+  color:#5f564d;
+}
+
+.md-link:hover{
+  color:#1b1b1b;
+}
+
+.md-sep{
+  opacity:.45;
+}
