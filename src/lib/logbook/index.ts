@@ -134,8 +134,7 @@ export function getAllLogbookEntries(): LogbookEntry[] {
   for (const fp of files) {
     const src = fs.readFileSync(fp, "utf8");
     const parsed = matter(src);
-    const entry = normalizeEntry(parsed.data, parsed.content.trim());
-    entries.push(entry);
+    entries.push(normalizeEntry(parsed.data, parsed.content.trim()));
   }
 
   entries.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.id < b.id ? 1 : -1));
