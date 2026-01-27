@@ -1,21 +1,23 @@
-import Link from 'next/link'
+import Link from "next/link";
 
 const links = [
-  { href: '/about', label: 'ABOUT' },
-  { href: '/articles', label: 'ARTICLES' },
-  { href: '/logbook', label: 'LOGBOOK' },
-  { href: '/artifacts', label: 'ARTIFACTS' },
-]
+  { href: "/about", label: "ABOUT" },
+  { href: "/preview", label: "PREVIEW" },
+  { href: "/artifacts", label: "ARTIFACTS" },
+  { href: "/logbook", label: "LOGBOOK" },
+  { href: "/events", label: "EVENTS" },
+  { href: "/connect", label: "CONNECT" },
+];
 
 export default function SiteNav() {
   return (
-    <header className="sticky top-0 z-50 bg-[#E8E5E0]/80 backdrop-blur border-b rule">
-      <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="md-display text-[18px] tracking-tight text-[#1b1b1b] hover:opacity-80">
+    <header className="w-full border-b rule bg-[rgb(var(--ivory))]">
+      <div className="mx-auto w-full max-w-6xl px-6 py-4 flex items-center justify-between">
+        <Link href="/" className="md-display text-xl tracking-tight">
           Tholos.
         </Link>
 
-        <nav className="flex items-center gap-5">
+        <nav className="flex items-center gap-6">
           {links.map((l) => (
             <Link
               key={l.href}
@@ -28,5 +30,5 @@ export default function SiteNav() {
         </nav>
       </div>
     </header>
-  )
+  );
 }

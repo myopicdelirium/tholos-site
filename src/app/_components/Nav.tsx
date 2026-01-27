@@ -1,37 +1,33 @@
-import Link from "next/link"
+import Link from "next/link";
 
 const links = [
   ["About", "/about"],
-  ["Articles", "/articles"],
+  ["Preview", "/preview"],
+  ["Artifacts", "/artifacts"],
   ["Logbook", "/logbook"],
-  ["Demo", "/demo"],
-  ["Other", "/other"],
-  ["Connect", "/#connect"]
-] as const
+  ["Events", "/events"],
+  ["Connect", "/connect"],
+] as const;
 
 export default function Nav() {
   return (
-    <div className="flex items-baseline justify-between gap-6">
-      <div className="flex items-baseline gap-10">
-        <Link href="/" className="font-semibold text-[18px] tracking-tight">
+    <div className="w-full border-b rule">
+      <div className="mx-auto w-full max-w-6xl px-6 py-4 flex items-center justify-between">
+        <Link href="/" className="md-display text-xl tracking-tight">
           Tholos.
         </Link>
-        <nav className="flex flex-wrap gap-6">
+        <div className="flex items-center gap-6">
           {links.map(([label, href]) => (
             <Link
               key={href}
               href={href}
-              className="smallcaps text-[11px] text-brass hover:text-[rgb(var(--teal))] transition"
+              className="text-[11px] uppercase tracking-[0.28em] text-[#5f564d] hover:text-[#1b1b1b]"
             >
               {label}
             </Link>
           ))}
-        </nav>
-      </div>
-
-      <div className="hidden md:block mono text-[11px] text-brass">
-        inspectable / ablatable / versioned
+        </div>
       </div>
     </div>
-  )
+  );
 }
