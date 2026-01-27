@@ -15,6 +15,8 @@ export type EventRecord = {
   speakers?: string[];
   reading?: Array<{ title: string; author?: string; href?: string }>;
   registerHref?: string;
+  capacity?: number;
+  registered?: number;
 };
 
 export const EVENTS: EventRecord[] = [
@@ -27,13 +29,13 @@ export const EVENTS: EventRecord[] = [
     location: "Hoboken, NJ",
     mode: "In-person",
     status: "Upcoming",
+    capacity: 20,
+    registered: 7,
     blurb: "A closed-format discussion on metric pressure and civic legitimacy.",
     description:
       "We examine how performance metrics shape organizational behavior, what gets distorted under reporting pressure, and how trust decays when measurement becomes proxy governance.",
     speakers: ["Myopic Delirium core team"],
-    reading: [
-      { title: "Goodhart’s Law and Institutional Behavior", author: "Selected notes" }
-    ],
+    reading: [{ title: "Goodhart’s Law and Institutional Behavior", author: "Selected notes" }],
     registerHref: "/connect"
   },
   {
@@ -45,13 +47,12 @@ export const EVENTS: EventRecord[] = [
     location: "Remote",
     mode: "Remote",
     status: "Archive",
+    capacity: 20,
+    registered: 20,
     blurb: "Methods and results from early multi-agent environment prototypes.",
     description:
       "We present prototype results on how scarcity and bounded cognition generate stable hierarchy, coalition behavior, and ideological clustering across runs.",
     speakers: ["Felix Tinio"],
-    reading: [
-      { title: "Model notes and run logs", author: "Internal archive", href: "/logbook" }
-    ],
-    registerHref: ""
+    reading: [{ title: "Model notes and run logs", author: "Internal archive", href: "/logbook" }]
   }
 ];
