@@ -52,7 +52,6 @@ type TabKey = "Upcoming" | "Archive";
 export default function EventsPage() {
   const [tab, setTab] = useState<TabKey>("Upcoming");
   const [selected, setSelected] = useState<EventRecord | null>(null);
-  const [intro, setIntro] = useState(true);
 
   const sorted = useMemo(() => {
     const copy = [...EVENTS];
@@ -69,16 +68,6 @@ export default function EventsPage() {
   }, [sorted]);
 
   const list = tab === "Upcoming" ? upcoming : archive;
-
-  useEffect(() => {
-    const t = window.setTimeout(() => setIntro(false), 980);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      window.clearTimeout(t);
-      document.body.style.overflow = prev;
-    };
-  }, []);
 
   useEffect(() => {
     if (!selected) return;
@@ -100,36 +89,10 @@ export default function EventsPage() {
         :root {
           --events-blue: #0f3a63;
         }
-        @keyframes eventsDrop {
+        @keyframes eventsHeroIn {
           0% {
-            transform: translate3d(0, -100%, 0);
-            opacity: 1;
-          }
-          55% {
-            transform: translate3d(0, 0, 0);
-            opacity: 1;
-          }
-          100% {
-            transform: translate3d(0, 0, 0);
-            opacity: 1;
-          }
-        }
-        @keyframes eventsFade {
-          0% {
-            opacity: 1;
-          }
-          100% {
+            transform: translate3d(0, -26px, 0);
             opacity: 0;
-          }
-        }
-        @keyframes eventsTitleRise {
-          0% {
-            transform: translate3d(0, 18px, 0);
-            opacity: 0;
-          }
-          60% {
-            transform: translate3d(0, 0, 0);
-            opacity: 1;
           }
           100% {
             transform: translate3d(0, 0, 0);
@@ -138,43 +101,39 @@ export default function EventsPage() {
         }
       `}</style>
 
-      {intro ? (
-        <div
-          aria-hidden="true"
-          className="fixed inset-0 z-[90] pointer-events-none"
-          style={{
-            animation: "eventsFade 320ms ease-out 820ms both"
-          }}
-        >
+      <section
+        className="w-full"
+        style={{
+          background: "var(--events-blue)"
+        }}
+      >
+        <div className="mx-auto w-full max-w-6xl px-6">
           <div
-            className="absolute inset-0"
-            style={{
-              background: "var(--events-blue)",
-              animation: "eventsDrop 760ms cubic-bezier(0.2, 0.9, 0.2, 1) both"
-            }}
-          />
-          <div className="absolute inset-0 flex items-end">
-            <div className="mx-auto w-full max-w-6xl px-6 pb-16">
-              <div
-                className="text-[#f3f0ea]"
-                style={{
-                  animation: "eventsTitleRise 760ms cubic-bezier(0.2, 0.9, 0.2, 1) both"
-                }}
-              >
-                <div className="text-[11px] uppercase tracking-[0.45em] text-[#f3f0ea]/75">
-                  MYOPIC DELIRIUM
-                </div>
-                <div className="mt-4 font-serif tracking-tight leading-[0.9] text-[52px] sm:text-[72px] md:text-[92px]">
-                  Events
-                </div>
-                <div className="mt-6 max-w-2xl text-[13px] leading-relaxed text-[#f3f0ea]/80">
-                  Colloquia, salons, and working sessions.
-                </div>
+            className="flex min-h-[76vh] items-center justify-center py-20"
+            style={{ animation: "eventsHeroIn 720ms cubic-bezier(0.2, 0.9, 0.2, 1) both" }}
+          >
+            <div className="w-full text-center text-[#f3f0ea]">
+              <div className="text-[12px] uppercase tracking-[0.55em] text-[#f3f0ea]/80">
+                MYOPIC DELIRIUM
+              </div>
+
+              <div className="mx-auto mt-8 max-w-[14ch] font-serif tracking-tight leading-[0.82] text-[84px] sm:text-[120px] md:text-[160px] lg:text-[210px]">
+                Events
+              </div>
+
+              <div className="mx-auto mt-10 max-w-2xl text-[14px] leading-relaxed text-[#f3f0ea]/85">
+                Colloquia, salons, and working sessions.
+              </div>
+
+              <div className="mx-auto mt-10 h-px w-24 bg-[#f3f0ea]/30" />
+
+              <div className="mono mx-auto mt-6 text-[12px] text-[#f3f0ea]/70">
+                Scroll for program and archive.
               </div>
             </div>
           </div>
         </div>
-      ) : null}
+      </section>
 
       <section className="w-full border-b rule">
         <div className="mx-auto w-full max-w-6xl px-6 py-10">
@@ -225,7 +184,7 @@ export default function EventsPage() {
       <main className="mx-auto w-full max-w-6xl px-6 pb-28 pt-12">
         <div className="flex items-end justify-between gap-6">
           <div>
-            <h1 className="font-serif tracking-tight text-[34px] text-[#1b1b1b]/90">Events</h1>
+            <h1 className="font-serif tracking-tight text-[34px] text-[#1b1b1b]/90">Program</h1>
             <div className="mono mt-2 text-[12px] text-[#1b1b1b]/55">
               Archive remains visible. Capacity is displayed per event.
             </div>
