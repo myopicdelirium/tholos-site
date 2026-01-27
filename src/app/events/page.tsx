@@ -52,7 +52,10 @@ type TabKey = "Upcoming" | "Archive";
 export default function EventsPage() {
   const [tab, setTab] = useState<TabKey>("Upcoming");
   const [selected, setSelected] = useState<EventRecord | null>(null);
-  const [curtainOn, setCurtainOn] = useState(true);
+
+  const [showSplash, setShowSplash] = useState(true);
+  const [splashFade, setSplashFade] = useState(false);
+  const [showCurtain, setShowCurtain] = useState(false);
 
   const sorted = useMemo(() => {
     const copy = [...EVENTS];
@@ -73,12 +76,20 @@ export default function EventsPage() {
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const t = window.setTimeout(() => {
+
+    const t1 = window.setTimeout(() => setSplashFade(true), 1300);
+    const t2 = window.setTimeout(() => setShowCurtain(true), 1500);
+    const t3 = window.setTimeout(() => setShowSplash(false), 1850);
+    const t4 = window.setTimeout(() => {
       document.body.style.overflow = prev;
-      setCurtainOn(false);
-    }, 2100);
+      setShowCurtain(false);
+    }, 1500 + 2300);
+
     return () => {
-      window.clearTimeout(t);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+      window.clearTimeout(t3);
+      window.clearTimeout(t4);
       document.body.style.overflow = prev;
     };
   }, []);
@@ -124,7 +135,7 @@ export default function EventsPage() {
 
         @keyframes heroTextUp {
           0% {
-            transform: translate3d(0, 90px, 0);
+            transform: translate3d(0, 110px, 0);
             opacity: 0;
           }
           100% {
@@ -143,9 +154,10 @@ export default function EventsPage() {
         }
 
         @media (prefers-reduced-motion: reduce) {
+          .events-splash,
           .events-curtainFixed {
             animation: none !important;
-            transform: translate3d(0, 0, 0) !important;
+            transform: none !important;
             opacity: 0 !important;
           }
           .events-heroText,
@@ -157,7 +169,30 @@ export default function EventsPage() {
         }
       `}</style>
 
-      {curtainOn ? (
+      {showSplash ? (
+        <div
+          aria-hidden="true"
+          className="events-splash fixed inset-0 z-[90]"
+          style={{
+            backgroundImage: "url(/punk.png)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            opacity: splashFade ? 0 : 1,
+            transition: "opacity 520ms cubic-bezier(0.2, 0.9, 0.2, 1)"
+          }}
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(1200px 600px at 50% 55%, rgba(0,0,0,0.22), rgba(0,0,0,0.55))"
+            }}
+          />
+        </div>
+      ) : null}
+
+      {showCurtain ? (
         <div
           aria-hidden="true"
           className="events-curtainFixed fixed inset-0 z-[95]"
@@ -165,7 +200,7 @@ export default function EventsPage() {
             background: "var(--events-blue)",
             transform: "translate3d(0, -100%, 0)",
             animation:
-              "curtainDownFixed 1500ms cubic-bezier(0.18, 0.9, 0.2, 1) both, curtainFadeOut 520ms ease-out 1580ms both"
+              "curtainDownFixed 1750ms cubic-bezier(0.18, 0.9, 0.2, 1) both, curtainFadeOut 520ms ease-out 1780ms both"
           }}
         />
       ) : null}
@@ -176,85 +211,65 @@ export default function EventsPage() {
             <div className="w-full text-center text-[#f3f0ea]">
               <div
                 className="events-heroMeta text-[12px] uppercase tracking-[0.55em] text-[#f3f0ea]/80"
-                style={{ opacity: 0, animation: "heroFadeIn 520ms ease-out 1500ms both" }}
+                style={{ opacity: 0, animation: "heroFadeIn 520ms ease-out 3360ms both" }}
               >
                 MYOPIC DELIRIUM
               </div>
 
               <div
-                className="events-heroText mx-auto mt-8 max-w-[14ch] font-serif tracking-tight leading-[0.82] text-[96px] sm:text-[140px] md:text-[190px] lg:text-[260px]"
+                className="events-heroText mx-auto mt-8 max-w-[14ch] font-serif tracking-tight leading-[0.80] text-[104px] sm:text-[150px] md:text-[205px] lg:text-[285px]"
                 style={{
                   opacity: 0,
-                  transform: "translate3d(0, 90px, 0)",
-                  animation: "heroTextUp 920ms cubic-bezier(0.2, 0.9, 0.2, 1) 1600ms both"
+                  transform: "translate3d(0, 110px, 0)",
+                  animation: "heroTextUp 980ms cubic-bezier(0.2, 0.9, 0.2, 1) 3520ms both"
                 }}
               >
                 Events
               </div>
 
               <div
-                className="events-heroMeta mx-auto mt-10 max-w-2xl text-[14px] leading-relaxed text-[#f3f0ea]/85"
-                style={{ opacity: 0, animation: "heroFadeIn 520ms ease-out 1840ms both" }}
+                className="events-heroMeta mx-auto mt-8 max-w-2xl text-[14px] leading-relaxed text-[#f3f0ea]/85"
+                style={{ opacity: 0, animation: "heroFadeIn 520ms ease-out 3820ms both" }}
               >
                 Colloquia, salons, and working sessions.
               </div>
 
               <div
-                className="events-heroMeta mx-auto mt-10 h-px w-24 bg-[#f3f0ea]/30"
-                style={{ opacity: 0, animation: "heroFadeIn 520ms ease-out 1940ms both" }}
+                className="events-heroMeta mx-auto mt-10 flex items-center justify-center gap-3"
+                style={{ opacity: 0, animation: "heroFadeIn 520ms ease-out 3960ms both" }}
+              >
+                <Link
+                  href="/conduct"
+                  className="border px-5 py-3 text-[11px] uppercase tracking-[0.28em] text-[#f3f0ea] hover:bg-[#f3f0ea]/10 focus:outline-none focus:ring-2 focus:ring-[#f3f0ea]/25"
+                  style={{
+                    borderColor: "rgba(243,240,234,0.35)",
+                    background: "rgba(243,240,234,0.06)"
+                  }}
+                >
+                  Customs
+                </Link>
+                <Link
+                  href="/connect"
+                  className="border px-5 py-3 text-[11px] uppercase tracking-[0.28em] text-[#f3f0ea] hover:bg-[#f3f0ea]/10 focus:outline-none focus:ring-2 focus:ring-[#f3f0ea]/25"
+                  style={{
+                    borderColor: "rgba(243,240,234,0.35)",
+                    background: "rgba(243,240,234,0.06)"
+                  }}
+                >
+                  Contact
+                </Link>
+              </div>
+
+              <div
+                className="events-heroMeta mx-auto mt-12 h-px w-24 bg-[#f3f0ea]/30"
+                style={{ opacity: 0, animation: "heroFadeIn 520ms ease-out 4100ms both" }}
               />
 
               <div
                 className="events-heroMeta mono mx-auto mt-6 text-[12px] text-[#f3f0ea]/70"
-                style={{ opacity: 0, animation: "heroFadeIn 520ms ease-out 2040ms both" }}
+                style={{ opacity: 0, animation: "heroFadeIn 520ms ease-out 4240ms both" }}
               >
                 Scroll for program and archive.
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="w-full border-b rule">
-        <div className="mx-auto w-full max-w-6xl px-6 py-10">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end">
-            <div className="md:col-span-5">
-              <div className="text-[11px] uppercase tracking-[0.45em] text-brass">Participation</div>
-              <div className="mt-4 font-serif tracking-tight leading-[1.05] text-[32px] text-[#1b1b1b]/90">
-                Small by design.
-              </div>
-              <div className="mt-4 text-[13px] leading-relaxed text-[#1b1b1b]/70">
-                Seats are finite. If an event is closed-format, assume non-attribution unless stated otherwise.
-              </div>
-            </div>
-
-            <div className="md:col-span-7">
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                <div className="border rule px-4 py-4">
-                  <div className="text-[11px] uppercase tracking-[0.32em] text-[#1b1b1b]/55">Code of conduct</div>
-                  <div className="mt-2 text-[13px] text-[#1b1b1b]/75">
-                    <Link href="/conduct" className="underline underline-offset-4">
-                      Read the policy
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="border rule px-4 py-4">
-                  <div className="text-[11px] uppercase tracking-[0.32em] text-[#1b1b1b]/55">Registration</div>
-                  <div className="mt-2 text-[13px] text-[#1b1b1b]/75">
-                    Some sessions are invite-only. Otherwise, use the Register link inside the event.
-                  </div>
-                </div>
-
-                <div className="border rule px-4 py-4">
-                  <div className="text-[11px] uppercase tracking-[0.32em] text-[#1b1b1b]/55">Inquiries</div>
-                  <div className="mt-2 text-[13px] text-[#1b1b1b]/75">
-                    <Link href="/connect" className="underline underline-offset-4">
-                      Connect
-                    </Link>{" "}
-                    for collaboration or hosting.
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -493,7 +508,7 @@ export default function EventsPage() {
                       <div className="mono text-[12px] text-[#1b1b1b]/55">
                         By attending, you agree to the{" "}
                         <Link href="/conduct" className="underline underline-offset-4">
-                          code of conduct
+                          customs
                         </Link>
                         .
                       </div>
