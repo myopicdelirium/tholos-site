@@ -108,9 +108,15 @@ export default function SiteNav() {
                   type="button"
                   aria-label="Close menu"
                   onClick={() => setOpen(false)}
-                  className="border rule bg-transparent px-3 py-2 text-[11px] uppercase tracking-[0.22em] text-[#5f564d] hover:bg-black/5 hover:text-[#1b1b1b]"
+                  className={cx(
+                    "relative inline-flex h-10 w-10 items-center justify-center",
+                    "border rule bg-transparent text-[#5f564d] hover:bg-black/5 hover:text-[#1b1b1b]",
+                    "focus:outline-none focus:ring-2 focus:ring-black/15",
+                    "shadow-paper"
+                  )}
                 >
-                  Close
+                  <span className="absolute block h-[1px] w-5 rotate-45 bg-current" />
+                  <span className="absolute block h-[1px] w-5 -rotate-45 bg-current" />
                 </button>
               </div>
 
