@@ -4,7 +4,7 @@ import LogbookIndexClient from "./_components/LogbookIndexClient";
 
 export const metadata = {
   title: "Logbook | Myopic Delirium",
-  description: "A research-grade ledger: typed entries, traceable provenance, evidence-first reporting.",
+  description: "Versioned research records for mechanisms, architectures, environments, experiments, and validations.",
 };
 
 function Inner({ children }: { children: React.ReactNode }) {
@@ -21,58 +21,53 @@ export default function LogbookPage() {
     <main className="w-full">
       <header className="paper border-y rule md-gridplate">
         <Inner>
-          <div className="py-12">
-            <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-start">
+          <div className="py-14">
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-start">
               <div className="lg:col-span-7 flex flex-col gap-6">
                 <div className="text-[11px] uppercase tracking-[0.34em] text-brass">Myopic Delirium</div>
-                <h1 className="md-display text-6xl tracking-tight">Logbook</h1>
+                <h1 className="md-display text-6xl tracking-[-0.02em]">Logbook</h1>
                 <p className="max-w-2xl text-sm text-[#1b1b1b]/80 leading-relaxed">
-                  A reproducible ledger for mechanisms, architectures, environments, experiments, validations, and releases—typed, traceable, and anchored to evidence.
+                  A versioned research record for model development. Entries capture what changed, why it changed, and how to reproduce or falsify the result. Each record can link to code, commit hashes, run bundles, seeds, parameters, and artifacts.
                 </p>
 
                 <div className="md-inline-actions">
-                  <Link href="#entries" className="md-link">
-                    Browse entries
-                  </Link>
-                  <span className="md-sep">/</span>
-                  <Link href="#claims" className="md-link">
-                    Claims index
-                  </Link>
-                  <span className="md-sep">/</span>
+                  <Link href="#entries" className="md-link">Entries</Link>
+                  <span className="md-sep">•</span>
+                  <Link href="#claims" className="md-link">Claims</Link>
+                  <span className="md-sep">•</span>
                   <span className="mono text-[12px] text-[#1b1b1b]/65">
-                    {entries.length} total • {verifiedCount} verified • {runningCount} running
+                    Total {entries.length} • Verified {verifiedCount} • Running {runningCount}
                   </span>
                 </div>
 
-                <div className="border-t rule pt-6">
-                  <div className="text-[11px] uppercase tracking-[0.28em] text-brass">Ledger discipline</div>
+                <div className="border-t rule pt-7">
+                  <div className="text-[11px] uppercase tracking-[0.28em] text-brass">Recording standard</div>
                   <div className="mt-2 text-sm text-[#1b1b1b]/78 leading-relaxed max-w-2xl">
-                    Entries are treated as research records: each one can carry provenance (repo/commit), run bundles, seeds, parameters, and linked artifacts.
+                    Each entry should state: objective, method, implementation change, and evidence. If an entry reports results, it must include run identifiers and enough configuration to replicate. If it reports a failure, it should name the failure mode and mitigation.
                   </div>
                 </div>
               </div>
 
-              <div className="lg:col-span-5 flex flex-col gap-5">
-                <div className="md-blackplate border rule h-[190px] w-full" />
-                <div className="border rule">
-                  <div className="px-6 py-5">
-                    <div className="text-[11px] uppercase tracking-[0.28em] text-brass">Latest entry</div>
-                    <div className="mt-3 flex flex-col gap-2">
-                      <div className="text-sm font-medium">{latest ? latest.title : "—"}</div>
-                      <div className="text-[12px] text-[#1b1b1b]/70">
-                        {latest ? latest.type : ""}
-                        {latest ? <span className="md-sep"> • </span> : null}
-                        <span className="mono text-[#1b1b1b]/60">{latest ? `${latest.date} • ${latest.id}` : ""}</span>
-                      </div>
-                      {latest?.summary ? (
-                        <div className="text-sm text-[#1b1b1b]/75 leading-relaxed">{latest.summary}</div>
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
+              <div className="lg:col-span-5 flex flex-col gap-6">
+                <div className="md-blackplate border rule h-[210px] w-full" />
 
-                <div className="mono text-[12px] text-[#1b1b1b]/55">
-                  The interface stays quiet. The records do the talking.
+                <div className="md-note">
+                  <div className="text-[11px] uppercase tracking-[0.28em] text-brass">Latest entry</div>
+                  <div className="mt-3 flex flex-col gap-2">
+                    <div className="text-sm font-medium">{latest ? latest.title : "—"}</div>
+
+                    {latest ? (
+                      <div className="mono text-[12px] text-[#1b1b1b]/60 leading-relaxed">
+                        <div>Type: {latest.type}</div>
+                        <div>Time: {latest.date} 00:00 UTC</div>
+                        <div>ID: {latest.id}</div>
+                      </div>
+                    ) : null}
+
+                    {latest?.summary ? (
+                      <div className="text-sm text-[#1b1b1b]/75 leading-relaxed">{latest.summary}</div>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             </div>
@@ -88,13 +83,13 @@ export default function LogbookPage() {
                 <div className="text-[11px] uppercase tracking-[0.28em] text-brass">Promotion layer</div>
                 <h2 className="md-display text-4xl tracking-tight">Claims index</h2>
                 <p className="text-sm text-[#1b1b1b]/80 leading-relaxed max-w-2xl">
-                  Claims are promoted results: explicit statements with supporting entries, replications, and falsification attempts. This layer reads like a living paper outline.
+                  Claims are promoted statements backed by entries. A claim should link to supporting runs, replications, and any falsification attempts. The purpose is traceability: from statement to evidence to code.
                 </p>
               </div>
 
               <div className="lg:col-span-5">
-                <div className="border rule px-6 py-5 text-sm text-[#1b1b1b]/80 leading-relaxed">
-                  Next step: add a Claim format and render it here with replication counts and links to run bundles.
+                <div className="md-note">
+                  Not yet populated. Add a claim format and render it here with links to supporting entries and replication counts.
                 </div>
               </div>
             </div>
@@ -112,7 +107,7 @@ export default function LogbookPage() {
                 <div className="mono text-[12px] text-[#1b1b1b]/60">{entries.length} entries</div>
               </div>
               <p className="text-sm text-[#1b1b1b]/80 leading-relaxed max-w-3xl">
-                Filter across type, status, and tags. Records attach to a ledger spine. Metadata stays quiet; the work stays central.
+                Filter by type, status, and tags. Use the ledger to track implementation decisions, experiment runs, validation work, and incidents.
               </p>
             </div>
 
