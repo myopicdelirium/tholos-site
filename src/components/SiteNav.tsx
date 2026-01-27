@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import ConnectLetter from "./ConnectLetter";
 
-type NavItem = { href: string; label: string };
+type NavItem =
+  | { kind: "link"; href: string; label: string }
+  | { kind: "action"; id: "connect"; label: string };
 
 function cx(...xs: Array<string | false | null | undefined>) {
   return xs.filter(Boolean).join(" ");
@@ -16,12 +19,12 @@ export default function SiteNav() {
 
   const items: NavItem[] = useMemo(
     () => [
-      { href: "/about", label: "About" },
-      { href: "/preview", label: "Preview" },
-      { href: "/artifacts", label: "Artifacts" },
-      { href: "/logbook", label: "Logbook" },
-      { href: "/events", label: "Events" },
-      { href: "/connect", label: "Connect" },
+      { kind: "link", href: "/about", label: "About" },
+      { kind: "link", href: "/preview", label: "Preview" },
+      { kind: "link", href: "/artifacts", label: "Artifacts" },
+      { kind: "link", href: "/logbook", label: "Logbook" },
+      { kind: "link", href: "/events", label: "Events" },
+      { kind: "action", id: "connect", label: "Connect" }
     ],
     []
   );
@@ -50,42 +53,48 @@ export default function SiteNav() {
 
   const isActive = (href: string) => pathname === href || pathname?.startsWith(href + "/");
 
+  const openConnect = () => {
+    window.dispatchEvent(new CustomEvent("md:connect-open"));
+  };
+
   return (
     <>
-      <button
-        type="button"
-        aria-label={open ? "Close menu" : "Open menu"}
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-        className={cx(
-          "fixed right-6 top-5 z-[70] group inline-flex h-10 w-10 items-center justify-center",
-          "border rule bg-[rgb(var(--ivory))]/70 backdrop-blur text-[#1b1b1b]/75",
-          "hover:bg-[rgb(var(--ivory))]/90 hover:text-[#1b1b1b]",
-          "focus:outline-none focus:ring-2 focus:ring-black/15",
-          "shadow-paper"
-        )}
-      >
-        <span className="relative block h-4 w-5">
-          <span
-            className={cx(
-              "absolute left-0 top-0 block h-[1px] w-5 bg-current transition-transform duration-200",
-              open && "translate-y-[7px] rotate-45"
-            )}
-          />
-          <span
-            className={cx(
-              "absolute left-0 top-[7px] block h-[1px] w-5 bg-current transition-opacity duration-200",
-              open ? "opacity-0" : "opacity-100"
-            )}
-          />
-          <span
-            className={cx(
-              "absolute left-0 top-[14px] block h-[1px] w-5 bg-current transition-transform duration-200",
-              open && "translate-y-[-7px] -rotate-45"
-            )}
-          />
-        </span>
-      </button>
+      <header className="sticky top-0 z-50 w-full border-b rule bg-[rgb(var(--ivory))]/90 backdrop-blur">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+          <Link href="/" className="select-none md-display text-lg tracking-tight text-[#1b1b1b]/85 hover:text-[#1b1b1b]">
+            Tholos.
+          </Link>
+
+          <button
+            type="button"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+            className="group inline-flex h-10 w-10 items-center justify-center border rule bg-transparent text-[#1b1b1b]/75 hover:bg-black/5 hover:text-[#1b1b1b] focus:outline-none focus:ring-2 focus:ring-black/15"
+          >
+            <span className="relative block h-4 w-5">
+              <span
+                className={cx(
+                  "absolute left-0 top-0 block h-[1px] w-5 bg-current transition-transform duration-200",
+                  open && "translate-y-[7px] rotate-45"
+                )}
+              />
+              <span
+                className={cx(
+                  "absolute left-0 top-[7px] block h-[1px] w-5 bg-current transition-opacity duration-200",
+                  open ? "opacity-0" : "opacity-100"
+                )}
+              />
+              <span
+                className={cx(
+                  "absolute left-0 top-[14px] block h-[1px] w-5 bg-current transition-transform duration-200",
+                  open && "translate-y-[-7px] -rotate-45"
+                )}
+              />
+            </span>
+          </button>
+        </div>
+      </header>
 
       {open ? (
         <div className="fixed inset-0 z-[60]">
@@ -108,15 +117,9 @@ export default function SiteNav() {
                   type="button"
                   aria-label="Close menu"
                   onClick={() => setOpen(false)}
-                  className={cx(
-                    "relative inline-flex h-10 w-10 items-center justify-center",
-                    "border rule bg-transparent text-[#5f564d] hover:bg-black/5 hover:text-[#1b1b1b]",
-                    "focus:outline-none focus:ring-2 focus:ring-black/15",
-                    "shadow-paper"
-                  )}
+                  className="border rule bg-transparent px-3 py-2 text-[11px] uppercase tracking-[0.22em] text-[#5f564d] hover:bg-black/5 hover:text-[#1b1b1b]"
                 >
-                  <span className="absolute block h-[1px] w-5 rotate-45 bg-current" />
-                  <span className="absolute block h-[1px] w-5 -rotate-45 bg-current" />
+                  <span className="text-[16px] leading-none">×</span>
                 </button>
               </div>
 
@@ -138,29 +141,49 @@ export default function SiteNav() {
                   </li>
 
                   {items.map((it) => (
-                    <li key={it.href}>
-                      <Link
-                        href={it.href}
-                        onClick={() => setOpen(false)}
-                        className={cx(
-                          "block px-3 py-3 text-[11px] uppercase tracking-[0.32em] transition-colors border rule",
-                          isActive(it.href) ? "bg-black/5 text-[#1b1b1b]" : "text-[#5f564d] hover:bg-black/5 hover:text-[#1b1b1b]"
-                        )}
-                      >
-                        {it.label}
-                      </Link>
+                    <li key={it.kind === "link" ? it.href : it.id}>
+                      {it.kind === "link" ? (
+                        <Link
+                          href={it.href}
+                          onClick={() => setOpen(false)}
+                          className={cx(
+                            "block px-3 py-3 text-[11px] uppercase tracking-[0.32em] transition-colors border rule",
+                            isActive(it.href) ? "bg-black/5 text-[#1b1b1b]" : "text-[#5f564d] hover:bg-black/5 hover:text-[#1b1b1b]"
+                          )}
+                        >
+                          {it.label}
+                        </Link>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOpen(false);
+                            window.setTimeout(() => openConnect(), 50);
+                          }}
+                          className={cx(
+                            "w-full text-left block px-3 py-3 text-[11px] uppercase tracking-[0.32em] transition-colors border rule",
+                            "text-[#5f564d] hover:bg-black/5 hover:text-[#1b1b1b]"
+                          )}
+                        >
+                          {it.label}
+                        </button>
+                      )}
                     </li>
                   ))}
                 </ul>
               </nav>
 
               <div className="border-t rule pt-4">
-                <div className="mono text-[12px] text-[#1b1b1b]/55">Press ESC to close.</div>
+                <div className="mono text-[12px] text-[#1b1b1b]/55">
+                  Press ESC to close.
+                </div>
               </div>
             </div>
           </aside>
         </div>
       ) : null}
+
+      <ConnectLetter />
     </>
   );
 }
