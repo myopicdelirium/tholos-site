@@ -249,7 +249,7 @@ export default function EventsPage() {
                   Customs
                 </Link>
                 <Link
-                  href="/connect"
+                  href="/#connect"
                   className="border px-5 py-3 text-[11px] uppercase tracking-[0.28em] text-[#f3f0ea] hover:bg-[#f3f0ea]/10 focus:outline-none focus:ring-2 focus:ring-[#f3f0ea]/25"
                   style={{
                     borderColor: "rgba(243,240,234,0.35)",
@@ -369,7 +369,7 @@ export default function EventsPage() {
         <div className="mt-12 border-t rule pt-6">
           <div className="mono text-[12px] text-[#1b1b1b]/55">
             If you want an invitation or collaboration slot, use{" "}
-            <Link href="/connect" className="underline underline-offset-4">
+            <Link href="/#connect" className="underline underline-offset-4">
               connect
             </Link>
             .
@@ -492,7 +492,7 @@ export default function EventsPage() {
                         </a>
                       ) : (
                         <Link
-                          href="/connect"
+                          href="/#connect"
                           className="border rule bg-black/5 px-4 py-3 text-[11px] uppercase tracking-[0.24em] text-[#1b1b1b] hover:bg-black/10"
                         >
                           Inquiries
