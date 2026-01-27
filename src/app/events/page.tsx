@@ -52,6 +52,7 @@ type TabKey = "Upcoming" | "Archive";
 export default function EventsPage() {
   const [tab, setTab] = useState<TabKey>("Upcoming");
   const [selected, setSelected] = useState<EventRecord | null>(null);
+  const [revealing, setRevealing] = useState(true);
 
   const sorted = useMemo(() => {
     const copy = [...EVENTS];
@@ -68,6 +69,19 @@ export default function EventsPage() {
   }, [sorted]);
 
   const list = tab === "Upcoming" ? upcoming : archive;
+
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const t = window.setTimeout(() => {
+      document.body.style.overflow = prev;
+      setRevealing(false);
+    }, 1900);
+    return () => {
+      window.clearTimeout(t);
+      document.body.style.overflow = prev;
+    };
+  }, []);
 
   useEffect(() => {
     if (!selected) return;
@@ -89,9 +103,17 @@ export default function EventsPage() {
         :root {
           --events-blue: #0f3a63;
         }
-        @keyframes eventsHeroIn {
+        @keyframes curtainDown {
           0% {
-            transform: translate3d(0, -26px, 0);
+            transform: translate3d(0, -100%, 0);
+          }
+          100% {
+            transform: translate3d(0, 0, 0);
+          }
+        }
+        @keyframes heroTextUp {
+          0% {
+            transform: translate3d(0, 70px, 0);
             opacity: 0;
           }
           100% {
@@ -99,40 +121,102 @@ export default function EventsPage() {
             opacity: 1;
           }
         }
+        @keyframes heroFadeIn {
+          0% {
+            opacity: 0;
+          }
+          100% {
+            opacity: 1;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .events-curtain {
+            animation: none !important;
+            transform: translate3d(0, 0, 0) !important;
+          }
+          .events-heroText {
+            animation: none !important;
+            transform: none !important;
+            opacity: 1 !important;
+          }
+          .events-heroMeta {
+            animation: none !important;
+            opacity: 1 !important;
+          }
+        }
       `}</style>
 
       <section
-        className="w-full"
-        style={{
-          background: "var(--events-blue)"
-        }}
+        className="relative w-full overflow-hidden"
+        style={{ background: "var(--events-blue)" }}
       >
-        <div className="mx-auto w-full max-w-6xl px-6">
-          <div
-            className="flex min-h-[76vh] items-center justify-center py-20"
-            style={{ animation: "eventsHeroIn 720ms cubic-bezier(0.2, 0.9, 0.2, 1) both" }}
-          >
+        <div
+          className="events-curtain absolute inset-0"
+          style={{
+            background: "var(--events-blue)",
+            transform: "translate3d(0, -100%, 0)",
+            animation: "curtainDown 1400ms cubic-bezier(0.18, 0.9, 0.2, 1) both"
+          }}
+        />
+
+        <div className="relative mx-auto w-full max-w-6xl px-6">
+          <div className="flex min-h-[86vh] items-center justify-center py-20">
             <div className="w-full text-center text-[#f3f0ea]">
-              <div className="text-[12px] uppercase tracking-[0.55em] text-[#f3f0ea]/80">
+              <div
+                className="events-heroMeta text-[12px] uppercase tracking-[0.55em] text-[#f3f0ea]/80"
+                style={{
+                  opacity: 0,
+                  animation: "heroFadeIn 520ms ease-out 1120ms both"
+                }}
+              >
                 MYOPIC DELIRIUM
               </div>
 
-              <div className="mx-auto mt-8 max-w-[14ch] font-serif tracking-tight leading-[0.82] text-[84px] sm:text-[120px] md:text-[160px] lg:text-[210px]">
+              <div
+                className="events-heroText mx-auto mt-8 max-w-[14ch] font-serif tracking-tight leading-[0.82] text-[92px] sm:text-[132px] md:text-[175px] lg:text-[235px]"
+                style={{
+                  opacity: 0,
+                  transform: "translate3d(0, 70px, 0)",
+                  animation: "heroTextUp 820ms cubic-bezier(0.2, 0.9, 0.2, 1) 1180ms both"
+                }}
+              >
                 Events
               </div>
 
-              <div className="mx-auto mt-10 max-w-2xl text-[14px] leading-relaxed text-[#f3f0ea]/85">
+              <div
+                className="events-heroMeta mx-auto mt-10 max-w-2xl text-[14px] leading-relaxed text-[#f3f0ea]/85"
+                style={{
+                  opacity: 0,
+                  animation: "heroFadeIn 520ms ease-out 1460ms both"
+                }}
+              >
                 Colloquia, salons, and working sessions.
               </div>
 
-              <div className="mx-auto mt-10 h-px w-24 bg-[#f3f0ea]/30" />
+              <div
+                className="events-heroMeta mx-auto mt-10 h-px w-24 bg-[#f3f0ea]/30"
+                style={{
+                  opacity: 0,
+                  animation: "heroFadeIn 520ms ease-out 1540ms both"
+                }}
+              />
 
-              <div className="mono mx-auto mt-6 text-[12px] text-[#f3f0ea]/70">
+              <div
+                className="events-heroMeta mono mx-auto mt-6 text-[12px] text-[#f3f0ea]/70"
+                style={{
+                  opacity: 0,
+                  animation: "heroFadeIn 520ms ease-out 1620ms both"
+                }}
+              >
                 Scroll for program and archive.
               </div>
             </div>
           </div>
         </div>
+
+        {revealing ? (
+          <div className="absolute inset-0 pointer-events-none" aria-hidden="true" />
+        ) : null}
       </section>
 
       <section className="w-full border-b rule">
