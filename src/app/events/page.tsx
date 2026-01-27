@@ -52,6 +52,7 @@ type TabKey = "Upcoming" | "Archive";
 export default function EventsPage() {
   const [tab, setTab] = useState<TabKey>("Upcoming");
   const [selected, setSelected] = useState<EventRecord | null>(null);
+  const [intro, setIntro] = useState(true);
 
   const sorted = useMemo(() => {
     const copy = [...EVENTS];
@@ -70,6 +71,16 @@ export default function EventsPage() {
   const list = tab === "Upcoming" ? upcoming : archive;
 
   useEffect(() => {
+    const t = window.setTimeout(() => setIntro(false), 980);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.clearTimeout(t);
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
+  useEffect(() => {
     if (!selected) return;
     const onKeyDown = (ev: KeyboardEvent) => {
       if (ev.key === "Escape") setSelected(null);
@@ -83,48 +94,127 @@ export default function EventsPage() {
     };
   }, [selected]);
 
-  const isActive = (href: string) => {
-    const p = window?.location?.pathname ?? "";
-    return p === href || p.startsWith(href + "/");
-  };
-
   return (
     <>
+      <style jsx global>{`
+        :root {
+          --events-blue: #0f3a63;
+        }
+        @keyframes eventsDrop {
+          0% {
+            transform: translate3d(0, -100%, 0);
+            opacity: 1;
+          }
+          55% {
+            transform: translate3d(0, 0, 0);
+            opacity: 1;
+          }
+          100% {
+            transform: translate3d(0, 0, 0);
+            opacity: 1;
+          }
+        }
+        @keyframes eventsFade {
+          0% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0;
+          }
+        }
+        @keyframes eventsTitleRise {
+          0% {
+            transform: translate3d(0, 18px, 0);
+            opacity: 0;
+          }
+          60% {
+            transform: translate3d(0, 0, 0);
+            opacity: 1;
+          }
+          100% {
+            transform: translate3d(0, 0, 0);
+            opacity: 1;
+          }
+        }
+      `}</style>
+
+      {intro ? (
+        <div
+          aria-hidden="true"
+          className="fixed inset-0 z-[90] pointer-events-none"
+          style={{
+            animation: "eventsFade 320ms ease-out 820ms both"
+          }}
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "var(--events-blue)",
+              animation: "eventsDrop 760ms cubic-bezier(0.2, 0.9, 0.2, 1) both"
+            }}
+          />
+          <div className="absolute inset-0 flex items-end">
+            <div className="mx-auto w-full max-w-6xl px-6 pb-16">
+              <div
+                className="text-[#f3f0ea]"
+                style={{
+                  animation: "eventsTitleRise 760ms cubic-bezier(0.2, 0.9, 0.2, 1) both"
+                }}
+              >
+                <div className="text-[11px] uppercase tracking-[0.45em] text-[#f3f0ea]/75">
+                  MYOPIC DELIRIUM
+                </div>
+                <div className="mt-4 font-serif tracking-tight leading-[0.9] text-[52px] sm:text-[72px] md:text-[92px]">
+                  Events
+                </div>
+                <div className="mt-6 max-w-2xl text-[13px] leading-relaxed text-[#f3f0ea]/80">
+                  Colloquia, salons, and working sessions.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <section className="w-full border-b rule">
-        <div className="mx-auto w-full max-w-6xl px-6 py-8">
-          <div className="flex flex-col gap-2">
-            <div className="text-[11px] uppercase tracking-[0.45em] text-brass">Participation</div>
-            <div className="md-display text-xl text-[#1b1b1b]/90">
-              Colloquia, salons, and working sessions.
-            </div>
-            <div className="mt-2 max-w-3xl text-[13px] leading-relaxed text-[#1b1b1b]/70">
-              Events are small by design. Seats are finite. If an event is closed-format, assume non-attribution unless stated otherwise.
-            </div>
-
-            <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-3">
-              <div className="border rule px-4 py-3">
-                <div className="text-[11px] uppercase tracking-[0.32em] text-[#1b1b1b]/55">Code of conduct</div>
-                <div className="mt-2 text-[13px] text-[#1b1b1b]/75">
-                  <Link href="/conduct" className="underline underline-offset-4">
-                    Read the policy
-                  </Link>
-                </div>
+        <div className="mx-auto w-full max-w-6xl px-6 py-10">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end">
+            <div className="md:col-span-5">
+              <div className="text-[11px] uppercase tracking-[0.45em] text-brass">Participation</div>
+              <div className="mt-4 font-serif tracking-tight leading-[1.05] text-[32px] text-[#1b1b1b]/90">
+                Small by design.
               </div>
-
-              <div className="border rule px-4 py-3">
-                <div className="text-[11px] uppercase tracking-[0.32em] text-[#1b1b1b]/55">Registration</div>
-                <div className="mt-2 text-[13px] text-[#1b1b1b]/75">
-                  Some sessions are invite-only. Otherwise, use the Register link inside the event.
-                </div>
+              <div className="mt-4 text-[13px] leading-relaxed text-[#1b1b1b]/70">
+                Seats are finite. If an event is closed-format, assume non-attribution unless stated otherwise.
               </div>
+            </div>
 
-              <div className="border rule px-4 py-3">
-                <div className="text-[11px] uppercase tracking-[0.32em] text-[#1b1b1b]/55">Inquiries</div>
-                <div className="mt-2 text-[13px] text-[#1b1b1b]/75">
-                  <Link href="/connect" className="underline underline-offset-4">
-                    Connect
-                  </Link>{" "}
-                  for collaboration or hosting.
+            <div className="md:col-span-7">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                <div className="border rule px-4 py-4">
+                  <div className="text-[11px] uppercase tracking-[0.32em] text-[#1b1b1b]/55">Code of conduct</div>
+                  <div className="mt-2 text-[13px] text-[#1b1b1b]/75">
+                    <Link href="/conduct" className="underline underline-offset-4">
+                      Read the policy
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="border rule px-4 py-4">
+                  <div className="text-[11px] uppercase tracking-[0.32em] text-[#1b1b1b]/55">Registration</div>
+                  <div className="mt-2 text-[13px] text-[#1b1b1b]/75">
+                    Some sessions are invite-only. Otherwise, use the Register link inside the event.
+                  </div>
+                </div>
+
+                <div className="border rule px-4 py-4">
+                  <div className="text-[11px] uppercase tracking-[0.32em] text-[#1b1b1b]/55">Inquiries</div>
+                  <div className="mt-2 text-[13px] text-[#1b1b1b]/75">
+                    <Link href="/connect" className="underline underline-offset-4">
+                      Connect
+                    </Link>{" "}
+                    for collaboration or hosting.
+                  </div>
                 </div>
               </div>
             </div>
@@ -132,12 +222,18 @@ export default function EventsPage() {
         </div>
       </section>
 
-      <main className="mx-auto w-full max-w-6xl px-6 pb-24 pt-12">
-        <div className="flex flex-col gap-2">
-          <h1 className="md-display text-2xl text-[#1b1b1b]/90">Events</h1>
-          <p className="mono text-[12px] text-[#1b1b1b]/55">
-            Archive remains visible. Capacity is displayed per event.
-          </p>
+      <main className="mx-auto w-full max-w-6xl px-6 pb-28 pt-12">
+        <div className="flex items-end justify-between gap-6">
+          <div>
+            <h1 className="font-serif tracking-tight text-[34px] text-[#1b1b1b]/90">Events</h1>
+            <div className="mono mt-2 text-[12px] text-[#1b1b1b]/55">
+              Archive remains visible. Capacity is displayed per event.
+            </div>
+          </div>
+
+          <div className="hidden sm:block text-[11px] uppercase tracking-[0.24em] text-[#1b1b1b]/45">
+            {list.length} entries
+          </div>
         </div>
 
         <div className="mt-8 flex items-center gap-2">
@@ -165,7 +261,8 @@ export default function EventsPage() {
           >
             Archive
           </button>
-          <div className="ml-auto text-[11px] uppercase tracking-[0.24em] text-[#1b1b1b]/45">
+
+          <div className="ml-auto sm:hidden text-[11px] uppercase tracking-[0.24em] text-[#1b1b1b]/45">
             {list.length} entries
           </div>
         </div>
@@ -192,7 +289,7 @@ export default function EventsPage() {
                   </div>
                 </div>
 
-                <div className="mt-3 md-display text-[15px] leading-snug text-[#1b1b1b]/90">
+                <div className="mt-3 font-serif leading-snug tracking-tight text-[16px] text-[#1b1b1b]/90">
                   {e.title}
                 </div>
 
@@ -202,7 +299,7 @@ export default function EventsPage() {
                   {fmtTime(e.dateStart) ? <span>{fmtTime(e.dateStart)}</span> : null}
                 </div>
 
-                <div className="mt-3 flex items-center justify-between gap-4">
+                <div className="mt-3 flex items-end justify-between gap-4">
                   <div className="text-[12px] leading-relaxed text-[#1b1b1b]/60">
                     {e.blurb ? e.blurb : "Details"}
                   </div>
@@ -215,7 +312,7 @@ export default function EventsPage() {
           })}
         </section>
 
-        <div className="mt-10 border-t rule pt-6">
+        <div className="mt-12 border-t rule pt-6">
           <div className="mono text-[12px] text-[#1b1b1b]/55">
             If you want an invitation or collaboration slot, use{" "}
             <Link href="/connect" className="underline underline-offset-4">
@@ -242,7 +339,7 @@ export default function EventsPage() {
                         {fmtDate(selected.dateStart)}
                         {fmtTime(selected.dateStart) ? `   ${fmtTime(selected.dateStart)}` : ""}
                       </div>
-                      <div className="mt-2 md-display text-xl text-[#1b1b1b]/90">
+                      <div className="mt-2 font-serif tracking-tight text-[22px] text-[#1b1b1b]/90">
                         {selected.title}
                       </div>
                       <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] uppercase tracking-[0.22em] text-[#5f564d]">
