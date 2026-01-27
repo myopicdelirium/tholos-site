@@ -52,42 +52,40 @@ export default function SiteNav() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b rule bg-[rgb(var(--ivory))]/90 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-          <Link href="/" className="select-none md-display text-lg tracking-tight text-[#1b1b1b]/85 hover:text-[#1b1b1b]">
-            Tholos.
-          </Link>
-
-          <button
-            type="button"
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-            className="group inline-flex h-10 w-10 items-center justify-center border rule bg-transparent text-[#1b1b1b]/75 hover:bg-black/5 hover:text-[#1b1b1b] focus:outline-none focus:ring-2 focus:ring-black/15"
-          >
-            <span className="relative block h-4 w-5">
-              <span
-                className={cx(
-                  "absolute left-0 top-0 block h-[1px] w-5 bg-current transition-transform duration-200",
-                  open && "translate-y-[7px] rotate-45"
-                )}
-              />
-              <span
-                className={cx(
-                  "absolute left-0 top-[7px] block h-[1px] w-5 bg-current transition-opacity duration-200",
-                  open ? "opacity-0" : "opacity-100"
-                )}
-              />
-              <span
-                className={cx(
-                  "absolute left-0 top-[14px] block h-[1px] w-5 bg-current transition-transform duration-200",
-                  open && "translate-y-[-7px] -rotate-45"
-                )}
-              />
-            </span>
-          </button>
-        </div>
-      </header>
+      <button
+        type="button"
+        aria-label={open ? "Close menu" : "Open menu"}
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className={cx(
+          "fixed right-6 top-5 z-[70] group inline-flex h-10 w-10 items-center justify-center",
+          "border rule bg-[rgb(var(--ivory))]/70 backdrop-blur text-[#1b1b1b]/75",
+          "hover:bg-[rgb(var(--ivory))]/90 hover:text-[#1b1b1b]",
+          "focus:outline-none focus:ring-2 focus:ring-black/15",
+          "shadow-paper"
+        )}
+      >
+        <span className="relative block h-4 w-5">
+          <span
+            className={cx(
+              "absolute left-0 top-0 block h-[1px] w-5 bg-current transition-transform duration-200",
+              open && "translate-y-[7px] rotate-45"
+            )}
+          />
+          <span
+            className={cx(
+              "absolute left-0 top-[7px] block h-[1px] w-5 bg-current transition-opacity duration-200",
+              open ? "opacity-0" : "opacity-100"
+            )}
+          />
+          <span
+            className={cx(
+              "absolute left-0 top-[14px] block h-[1px] w-5 bg-current transition-transform duration-200",
+              open && "translate-y-[-7px] -rotate-45"
+            )}
+          />
+        </span>
+      </button>
 
       {open ? (
         <div className="fixed inset-0 z-[60]">
@@ -151,9 +149,7 @@ export default function SiteNav() {
               </nav>
 
               <div className="border-t rule pt-4">
-                <div className="mono text-[12px] text-[#1b1b1b]/55">
-                  Press ESC to close.
-                </div>
+                <div className="mono text-[12px] text-[#1b1b1b]/55">Press ESC to close.</div>
               </div>
             </div>
           </aside>
