@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${ui.variable} ${display.variable}`}>
+      <body className={`${ui.variable} ${display.variable} bg-[#E8E5E0] text-[#1b1b1b]`}>
         <SiteNav />
         {children}
       </body>
