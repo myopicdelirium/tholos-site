@@ -10,6 +10,8 @@ export default function EventsHero() {
     return () => window.clearTimeout(t);
   }, []);
 
+  const blueOpacity = 0.42;
+
   return (
     <section className="relative h-[92vh] min-h-[680px] overflow-hidden text-[rgb(var(--ivory))]">
       <div
@@ -22,11 +24,8 @@ export default function EventsHero() {
       />
 
       <div
-        className={[
-          "absolute inset-0 bg-[#123e63]",
-          "transition-opacity duration-[1200ms] ease-out",
-          on ? "opacity-[0.78]" : "opacity-0",
-        ].join(" ")}
+        className="absolute inset-0 bg-[#123e63] transition-opacity duration-[1200ms] ease-out"
+        style={{ opacity: on ? blueOpacity : 0 }}
       />
 
       <div className="absolute inset-0 shadow-[inset_0_0_0_1px_rgba(244,241,234,0.08)]" />
