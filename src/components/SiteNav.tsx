@@ -129,16 +129,32 @@ export default function SiteNav() {
 
                   {items.map((it) => (
                     <li key={it.href}>
-                      <Link
-                        href={it.href}
-                        onClick={() => setOpen(false)}
-                        className={cx(
-                          "block px-3 py-3 text-[11px] uppercase tracking-[0.32em] transition-colors border rule",
-                          isActive(it.href) ? "bg-black/5 text-[#1b1b1b]" : "text-[#5f564d] hover:bg-black/5 hover:text-[#1b1b1b]"
-                        )}
-                      >
-                        {it.label}
-                      </Link>
+                      {it.href === "/connect" ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOpen(false);
+                            window.dispatchEvent(new Event("md:connect-open"));
+                          }}
+                          className={cx(
+                            "block w-full text-left px-3 py-3 text-[11px] uppercase tracking-[0.32em] transition-colors border rule",
+                            "text-[#5f564d] hover:bg-black/5 hover:text-[#1b1b1b]"
+                          )}
+                        >
+                          {it.label}
+                        </button>
+                      ) : (
+                        <Link
+                          href={it.href}
+                          onClick={() => setOpen(false)}
+                          className={cx(
+                            "block px-3 py-3 text-[11px] uppercase tracking-[0.32em] transition-colors border rule",
+                            isActive(it.href) ? "bg-black/5 text-[#1b1b1b]" : "text-[#5f564d] hover:bg-black/5 hover:text-[#1b1b1b]"
+                          )}
+                        >
+                          {it.label}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>

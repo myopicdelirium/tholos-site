@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
 
-export default function Connect() {
-  redirect('/#connect')
+export default function ConnectPage() {
+  redirect('/')
 }
