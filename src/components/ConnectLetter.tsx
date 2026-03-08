@@ -1,14 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
-
-type Row = {
-  label: string;
-  value: string;
-  href?: string;
-  note?: string;
-};
+import { useEffect, useRef, useState } from "react";
 
 function cx(...xs: Array<string | false | null | undefined>) {
   return xs.filter(Boolean).join(" ");
@@ -51,44 +43,28 @@ function CopyButton({ value }: { value: string }) {
   );
 }
 
-function Rule() {
-  return <div className="h-px w-full bg-black/10" />;
-}
+const channels = [
+  {
+    label: "Email",
+    value: "myopicdelirium@gmail.com",
+    href: "mailto:myopicdelirium@gmail.com",
+  },
+  {
+    label: "Phone",
+    value: "+1 (551) 227-8031",
+    href: "tel:+15512278031",
+  },
+  {
+    label: "GitHub",
+    value: "github.com/myopicdelirium",
+    href: "https://github.com/myopicdelirium",
+  },
+];
 
 export default function ConnectLetter() {
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const lastFocusRef = useRef<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
-
-  const rows: Row[] = useMemo(
-    () => [
-      {
-        label: "General",
-        value: "myopicdelirium@gmail.com",
-        href: "mailto:myopicdelirium@gmail.com",
-        note: "Research, collaboration, press."
-      },
-      {
-        label: "Sponsorship",
-        value: "felixtinio@gmail.com",
-        href: "mailto:felixtinio@gmail.com",
-        note: "Financing, sponsorship, sensitive correspondence."
-      },
-      {
-        label: "Phone",
-        value: "+1 (551) 227-8031",
-        href: "tel:+15512278031",
-        note: "Time-sensitive coordination only."
-      },
-      {
-        label: "GitHub",
-        value: "github.com/myopicdelirium",
-        href: "https://github.com/myopicdelirium",
-        note: "Public artifacts and selected releases."
-      }
-    ],
-    []
-  );
 
   useLockBody(open);
 
@@ -159,7 +135,7 @@ export default function ConnectLetter() {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[80]">
+    <div className="fixed inset-0 z-[90]">
       <button
         type="button"
         aria-label="Close correspondence"
@@ -173,13 +149,12 @@ export default function ConnectLetter() {
           role="dialog"
           aria-modal="true"
           className={cx(
-            "relative mx-auto w-full max-w-6xl",
+            "relative mx-auto w-full max-w-xl",
             "border border-black/15 shadow-paper",
-            "bg-[rgb(var(--ivory))] text-[#1b1b1b]",
-            "max-h-[calc(100vh-3.5rem)] overflow-auto"
+            "bg-[rgb(var(--ivory))] text-[#1b1b1b]"
           )}
           style={{
-            animation: "mdDrop 900ms cubic-bezier(0.16, 1, 0.3, 1) both"
+            animation: "mdDrop 900ms cubic-bezier(0.16, 1, 0.3, 1) both",
           }}
         >
           <style>{`
@@ -190,240 +165,68 @@ export default function ConnectLetter() {
             }
           `}</style>
 
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(900px 500px at 20% 10%, rgba(0,0,0,0.03), transparent 60%), radial-gradient(900px 520px at 85% 35%, rgba(10,42,74,0.05), transparent 62%), linear-gradient(180deg, rgba(0,0,0,0.015), rgba(0,0,0,0.02))"
-            }}
-          />
-
           <button
             type="button"
             aria-label="Close"
             onClick={() => setOpen(false)}
             className={cx(
-              "absolute right-4 top-4 sm:right-6 sm:top-6",
+              "absolute right-4 top-4",
               "h-10 w-10 grid place-items-center",
               "border border-black/15 bg-transparent text-black/55 hover:bg-black/5 hover:text-black/75",
               "focus:outline-none focus:ring-2 focus:ring-black/15"
             )}
             data-autofocus="true"
           >
-            <span className="text-[18px] leading-none">×</span>
+            <span className="text-[18px] leading-none">&times;</span>
           </button>
 
-          <div className="relative px-6 sm:px-10 py-10 sm:py-12">
-            <div className="flex items-start justify-between gap-6">
-              <div className="text-[11px] uppercase tracking-[0.55em] text-black/55">
-                MYOPIC DELIRIUM
-              </div>
-              <div className="text-right text-[11px] uppercase tracking-[0.32em] text-black/45">
-                CORRESPONDENCE · 48H WINDOW
-              </div>
+          <div className="relative px-6 sm:px-8 py-8">
+            <div className="text-[11px] uppercase tracking-[0.55em] text-black/55">
+              MYOPIC DELIRIUM
             </div>
 
-            <div className="mt-6">
-              <Rule />
-            </div>
+            <h2 className="mt-5 font-serif tracking-tight leading-[0.92] text-[42px] sm:text-[54px]">
+              Connect
+            </h2>
 
-            <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-end">
-              <div className="lg:col-span-8">
-                <div className="text-[11px] uppercase tracking-[0.55em] text-black/45">
-                  CONNECT
-                </div>
-                <h2 className="mt-4 font-serif tracking-tight leading-[0.92] text-[54px] sm:text-[72px] md:text-[86px]">
-                  Contact
-                </h2>
-                <div className="mt-6 max-w-2xl text-[14px] leading-relaxed text-black/62">
-                  For research collaboration, events, press, and sponsorship inquiries. If your message is technical, include a short abstract and a link to the relevant page or document.
-                </div>
+            <div className="mt-6 h-px w-full bg-black/10" />
 
-                <div className="mt-8 flex flex-wrap items-center gap-3">
-                  <a
-                    href="mailto:myopicdelirium@gmail.com"
-                    className="border border-black/15 bg-black/[0.03] px-6 py-3 text-[11px] uppercase tracking-[0.28em] text-black/75 hover:bg-black/5 hover:text-black/85"
-                  >
-                    Email
-                  </a>
-
-                  <Link
-                    href="/conduct"
-                    className="border border-black/15 bg-transparent px-6 py-3 text-[11px] uppercase tracking-[0.28em] text-black/65 hover:bg-black/5 hover:text-black/80"
-                    onClick={() => setOpen(false)}
-                  >
-                    Customs
-                  </Link>
-
-                  <Link
-                    href="/events"
-                    className="border border-black/15 bg-transparent px-6 py-3 text-[11px] uppercase tracking-[0.28em] text-black/65 hover:bg-black/5 hover:text-black/80"
-                    onClick={() => setOpen(false)}
-                  >
-                    Events
-                  </Link>
-                </div>
-              </div>
-
-              <div className="lg:col-span-4 lg:justify-self-end">
-                <div className="inline-flex items-center gap-3">
-                  <div className="h-[34px] w-[112px] border border-black/20 bg-[#0a2a4a]" />
-                  <div className="text-[11px] uppercase tracking-[0.32em] text-black/55">
-                    MD / CONNECT
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-10">
-              <Rule />
-            </div>
-
-            <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-12">
-              <div className="lg:col-span-7">
-                <div className="text-[11px] uppercase tracking-[0.55em] text-black/45">
-                  Channels
-                </div>
-
-                <div className="mt-6 border border-black/10 bg-black/[0.015]">
-                  <div className="px-6 py-6">
-                    <div className="space-y-6">
-                      {rows.map((r, i) => (
-                        <div key={r.label}>
-                          <div className="grid grid-cols-12 items-start gap-4">
-                            <div className="col-span-12 sm:col-span-3">
-                              <div className="text-[11px] uppercase tracking-[0.32em] text-black/45">
-                                {r.label}
-                              </div>
-                            </div>
-
-                            <div className="col-span-12 sm:col-span-7">
-                              {r.href ? (
-                                <a
-                                  href={r.href}
-                                  target={r.href.startsWith("http") ? "_blank" : undefined}
-                                  rel={r.href.startsWith("http") ? "noreferrer" : undefined}
-                                  className="block text-[20px] sm:text-[22px] font-semibold tracking-tight text-black/85 hover:text-black"
-                                >
-                                  {r.value}
-                                </a>
-                              ) : (
-                                <div className="text-[20px] sm:text-[22px] font-semibold tracking-tight text-black/85">
-                                  {r.value}
-                                </div>
-                              )}
-
-                              {r.note ? (
-                                <div className="mt-2 text-[13px] leading-relaxed text-black/55">
-                                  {r.note}
-                                </div>
-                              ) : null}
-                            </div>
-
-                            <div className="col-span-12 sm:col-span-2 flex justify-start sm:justify-end">
-                              <CopyButton value={r.value} />
-                            </div>
-                          </div>
-
-                          {i !== rows.length - 1 ? (
-                            <div className="mt-6">
-                              <div className="h-px w-full bg-black/10" />
-                            </div>
-                          ) : null}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6 text-[12px] text-black/45">
-                  If you are proposing an event, include a preferred date range, expected attendance, and whether the session is public or closed-format.
-                </div>
-              </div>
-
-              <div className="lg:col-span-5">
-                <div className="text-[11px] uppercase tracking-[0.55em] text-black/45">
-                  Protocol
-                </div>
-
-                <div className="mt-6 border border-black/10 bg-black/[0.015]">
-                  <div className="px-6 py-6">
-                    <div className="text-[11px] uppercase tracking-[0.32em] text-black/45">
-                      Correspondence
-                    </div>
-
-                    <div className="mt-6 space-y-6 text-[14px] leading-relaxed text-black/65">
-                      <div>
-                        <div className="text-[11px] uppercase tracking-[0.32em] text-black/40">1. Subject</div>
-                        <div className="mt-2">Use a specific subject line. If relevant, include Event, Collaboration, or Sponsorship.</div>
+            <div className="mt-6 space-y-5">
+              {channels.map((ch, i) => (
+                <div key={ch.label}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="text-[11px] uppercase tracking-[0.32em] text-black/45">
+                        {ch.label}
                       </div>
-
-                      <div>
-                        <div className="text-[11px] uppercase tracking-[0.32em] text-black/40">2. Abstract</div>
-                        <div className="mt-2">Three to five sentences: what you want, why it matters, what you need from us.</div>
-                      </div>
-
-                      <div>
-                        <div className="text-[11px] uppercase tracking-[0.32em] text-black/40">3. Links</div>
-                        <div className="mt-2">Prefer links to documents or repositories over heavy attachments.</div>
-                      </div>
-
-                      <div>
-                        <div className="text-[11px] uppercase tracking-[0.32em] text-black/40">4. Window</div>
-                        <div className="mt-2">General correspondence is handled within 48 hours. Phone is reserved for time-sensitive matters.</div>
-                      </div>
-                    </div>
-
-                    <div className="mt-8">
-                      <Rule />
-                    </div>
-
-                    <div className="mt-6 flex flex-wrap items-center gap-3">
-                      <Link
-                        href="/artifacts"
-                        className="border border-black/15 bg-black/[0.03] px-6 py-3 text-[11px] uppercase tracking-[0.28em] text-black/75 hover:bg-black/5 hover:text-black/85"
-                        onClick={() => setOpen(false)}
+                      <a
+                        href={ch.href}
+                        target={ch.href.startsWith("http") ? "_blank" : undefined}
+                        rel={ch.href.startsWith("http") ? "noreferrer" : undefined}
+                        className="mt-1 block text-[18px] sm:text-[20px] font-semibold tracking-tight text-black/85 hover:text-black"
                       >
-                        Artifacts
-                      </Link>
-
-                      <Link
-                        href="/events"
-                        className="border border-black/15 bg-transparent px-6 py-3 text-[11px] uppercase tracking-[0.28em] text-black/65 hover:bg-black/5 hover:text-black/80"
-                        onClick={() => setOpen(false)}
-                      >
-                        Events
-                      </Link>
+                        {ch.value}
+                      </a>
+                    </div>
+                    <div className="mt-4">
+                      <CopyButton value={ch.value} />
                     </div>
                   </div>
+                  {i !== channels.length - 1 && (
+                    <div className="mt-5 h-px w-full bg-black/10" />
+                  )}
                 </div>
-
-                <div className="mt-8 border-t border-black/10 pt-6 text-[12px] text-black/45">
-                  Customs outlines participation expectations and conduct.
-                </div>
-              </div>
+              ))}
             </div>
 
-            <div className="mt-10">
-              <Rule />
-            </div>
+            <div className="mt-6 h-px w-full bg-black/10" />
 
-            <div className="mt-6 flex items-center justify-between gap-6 text-[12px] text-black/45">
-              <div>© 2026 Myopic Delirium</div>
-              <div className="flex items-center gap-6">
-                <Link href="/conduct" className="underline decoration-black/20 underline-offset-4 hover:decoration-black/40" onClick={() => setOpen(false)}>
-                  Customs
-                </Link>
-                <Link href="/events" className="underline decoration-black/20 underline-offset-4 hover:decoration-black/40" onClick={() => setOpen(false)}>
-                  Events
-                </Link>
-              </div>
+            <div className="mt-4 flex items-center justify-between text-[12px] text-black/40">
+              <div>&copy; 2026 Myopic Delirium</div>
+              <div className="mono">Press ESC to close.</div>
             </div>
           </div>
         </div>
-
-        <div className="h-10" />
       </div>
     </div>
   );
