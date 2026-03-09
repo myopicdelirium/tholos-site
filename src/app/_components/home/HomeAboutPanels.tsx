@@ -1,7 +1,6 @@
 "use client"
 
 import Image from "next/image"
-import PulpheadPanel from "../about/PulpheadPanel"
 
 const OUR_MISSION_TITLE = "OUR MISSION"
 const OUR_MISSION_TEXT = [
@@ -22,8 +21,6 @@ const PREVIEW_TEXT = ["Work in progress modules, internal demos, and draft artif
 const IMAGE_MISSION = "/images/cope.png"
 const IMAGE_TECH = "/images/stock.png"
 
-const PULPHEAD_IMAGE = "/images/sred.png"
-const PULPHEAD_TITLE = "The Pulphead Initiative"
 
 function StickyPlate(props: { title: string; text: string[]; imageSrc: string; flip?: boolean }) {
   const flip = Boolean(props.flip)
@@ -115,7 +112,6 @@ export default function HomeAboutPanels() {
       <StickyPlate title={OUR_MISSION_TITLE} text={OUR_MISSION_TEXT} imageSrc={IMAGE_MISSION} />
       <StickyPlate title={TECH_TITLE} text={TECH_TEXT} imageSrc={IMAGE_TECH} flip />
       <StickyPlate title={PREVIEW_TITLE} text={PREVIEW_TEXT} imageSrc={IMAGE_MISSION} />
-      <PulpheadPanel imageSrc={PULPHEAD_IMAGE} title={PULPHEAD_TITLE} />
     </section>
   )
 }
