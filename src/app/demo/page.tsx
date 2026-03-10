@@ -1,56 +1,67 @@
-export default function Demo() {
+"use client";
+
+import AgentEcology from "../_components/AgentEcology";
+
+export default function DemoPage() {
   return (
-    <section className="space-y-6">
-      <h1 className="text-4xl tracking-tight font-semibold">TTTTT</h1>
+    <main className="min-h-screen bg-[#070d16]">
+      {/* header */}
+      <div className="mx-auto max-w-7xl px-6 pt-16 pb-6">
+        <div className="text-[10px] uppercase tracking-[0.38em] text-[#f4f1ea]/30">
+          Live Simulation
+        </div>
+        <h1
+          className="mt-3 text-4xl tracking-tight text-[#f4f1ea]/90"
+          style={{ fontFamily: "var(--font-display), serif" }}
+        >
+          Agent Ecology
+        </h1>
+        <p className="mt-3 max-w-xl text-[14px] leading-relaxed text-[#f4f1ea]/40">
+          Bounded agents forage, flock, and flee across a shifting resource
+          landscape. Adjust parameters to watch regime transitions emerge in
+          real time.
+        </p>
+      </div>
 
-      <div className="grid gap-6 lg:grid-cols-12">
-        <div className="paper shadow-paper border rule rounded-2xl p-6 lg:col-span-4">
-          <div className="smallcaps text-[11px] text-brass">TTTTT</div>
-          <div className="mt-4 text-[rgb(var(--ink))/0.78]">WWWWW</div>
-
-          <div className="mt-6 grid gap-3">
-            <div className="rounded-xl border rule p-4 bg-[rgb(var(--ivory))/0.55] mono text-sm">WWWWW</div>
-            <div className="rounded-xl border rule p-4 bg-[rgb(var(--ivory))/0.55] mono text-sm">WWWWW</div>
-            <div className="rounded-xl border rule p-4 bg-[rgb(var(--ivory))/0.55] mono text-sm">WWWWW</div>
-          </div>
-
-          <div className="mt-6 flex gap-3">
-            <button className="rounded-xl px-4 py-2 bg-[rgb(var(--teal))] text-[rgb(var(--mist))] border border-[rgb(var(--brass))/0.35]">
-              TTTTT
-            </button>
-            <button className="rounded-xl px-4 py-2 bg-transparent border rule text-[rgb(var(--ink))/0.8]">
-              TTTTT
-            </button>
-          </div>
+      {/* canvas container — 16:10 aspect, full bleed within max-w */}
+      <div className="mx-auto max-w-7xl px-6 pb-20">
+        <div className="relative w-full overflow-hidden border border-white/[0.06]"
+          style={{ aspectRatio: "16 / 10" }}
+        >
+          <AgentEcology className="h-full w-full" />
         </div>
 
-        <div className="paper shadow-paper border rule rounded-2xl p-6 lg:col-span-8">
-          <div className="flex items-baseline justify-between gap-6">
-            <div className="smallcaps text-[11px] text-brass">TTTTT</div>
-            <div className="mono text-[11px] text-brass">TTTTT</div>
-          </div>
-
-          <div className="mt-4 rounded-2xl border rule bg-[rgb(var(--teal))/0.06] p-6">
-            <div className="text-[rgb(var(--ink))/0.85]">WWWWW</div>
-            <div className="mt-2 text-sm text-[rgb(var(--ink))/0.6]">WWWWW</div>
-          </div>
-
-          <div className="mt-4 grid gap-4 md:grid-cols-3">
-            <div className="rounded-2xl border rule bg-[rgb(var(--ivory))/0.55] p-4">
-              <div className="smallcaps text-[11px] text-brass">TTTTT</div>
-              <div className="mt-2 mono text-sm">WWWWW</div>
-            </div>
-            <div className="rounded-2xl border rule bg-[rgb(var(--ivory))/0.55] p-4">
-              <div className="smallcaps text-[11px] text-brass">TTTTT</div>
-              <div className="mt-2 mono text-sm">WWWWW</div>
-            </div>
-            <div className="rounded-2xl border rule bg-[rgb(var(--ivory))/0.55] p-4">
-              <div className="smallcaps text-[11px] text-brass">TTTTT</div>
-              <div className="mt-2 mono text-sm">WWWWW</div>
-            </div>
-          </div>
+        {/* legend */}
+        <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2">
+          <Legend color="rgb(0, 180, 200)" label="Calm / Foraging" />
+          <Legend color="rgb(200, 170, 90)" label="Stressed" />
+          <Legend color="rgb(240, 234, 224)" label="Cooperative" />
+          <Legend color="rgb(194, 58, 43)" label="Fleeing" />
+          <Legend color="rgb(220, 60, 45)" label="Predator" shape="diamond" />
         </div>
       </div>
-    </section>
-  )
+    </main>
+  );
+}
+
+function Legend({
+  color,
+  label,
+  shape = "circle",
+}: {
+  color: string;
+  label: string;
+  shape?: "circle" | "diamond";
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <span
+        className={shape === "diamond" ? "h-2.5 w-2.5 rotate-45" : "h-2 w-2 rounded-full"}
+        style={{ backgroundColor: color }}
+      />
+      <span className="text-[11px] uppercase tracking-[0.2em] text-[#f4f1ea]/35">
+        {label}
+      </span>
+    </div>
+  );
 }
