@@ -135,7 +135,7 @@ export default function ConnectLetter() {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[90]">
+    <div className="fixed inset-0 z-[100]">
       <button
         type="button"
         aria-label="Close correspondence"
@@ -149,7 +149,7 @@ export default function ConnectLetter() {
           role="dialog"
           aria-modal="true"
           className={cx(
-            "relative mx-auto w-full max-w-xl",
+            "relative z-[1] mx-auto w-full max-w-xl",
             "border border-black/15 shadow-paper",
             "bg-[rgb(var(--ivory))] text-[#1b1b1b]"
           )}
