@@ -15,9 +15,6 @@ const TECH_TEXT = [
   "We have been grateful to receive input from some of the foremost experts across critical domains, but currently maintain 21 core members and have formed four teams: Agent Cognition & Behavioral Mechanics (ABBY); Research Software & Reproducibility (RODY); Empirical Methods, Metrics & Validation (EMMY); High-Performance Simulation Systems (HOBY). Our collective experience is extensive, including members and former members of the MEB Biostatistics group at the Karolinska Institutet, Vienna Center for Experimental Economics at Universität Wien, along with participants at Treehacks 2026 and Hack the North in Waterloo.",
 ]
 
-const PREVIEW_TITLE = "PREVIEW"
-const PREVIEW_TEXT = ["Work in progress modules, internal demos, and draft artifacts intended for collaborators."]
-
 const IMAGE_MISSION = "/images/cope.png"
 const IMAGE_TECH = "/images/stock.png"
 
@@ -111,7 +108,6 @@ export default function HomeAboutPanels() {
     <section className="relative text-[#1b1b1b]">
       <StickyPlate title={OUR_MISSION_TITLE} text={OUR_MISSION_TEXT} imageSrc={IMAGE_MISSION} />
       <StickyPlate title={TECH_TITLE} text={TECH_TEXT} imageSrc={IMAGE_TECH} flip />
-      <StickyPlate title={PREVIEW_TITLE} text={PREVIEW_TEXT} imageSrc={IMAGE_MISSION} />
     </section>
   )
 }
