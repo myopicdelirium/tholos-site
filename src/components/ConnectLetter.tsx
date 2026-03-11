@@ -170,7 +170,7 @@ export default function ConnectLetter() {
             aria-label="Close"
             onClick={() => setOpen(false)}
             className={cx(
-              "absolute right-4 top-4",
+              "absolute right-4 top-4 z-10",
               "h-10 w-10 grid place-items-center",
               "border border-black/15 bg-transparent text-black/55 hover:bg-black/5 hover:text-black/75",
               "focus:outline-none focus:ring-2 focus:ring-black/15"
@@ -220,6 +220,12 @@ export default function ConnectLetter() {
             </div>
 
             <div className="mt-6 h-px w-full bg-black/10" />
+
+            <p className="mt-4 text-[11px] leading-relaxed tracking-[0.02em] text-black/30 max-w-sm">
+              This is a temporary, publicly available space encompassing up to model
+              6. Models 6.9–11.2 are not publicly available. We reserve our
+              intellectual property rights.
+            </p>
 
             <div className="mt-4 flex items-center justify-between text-[12px] text-black/40">
               <div>&copy; 2026 Myopic Delirium</div>
