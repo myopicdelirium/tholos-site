@@ -1,7 +1,6 @@
 "use client"
 
 import Image from "next/image"
-import PulpheadPanel from "../about/PulpheadPanel"
 
 const OUR_MISSION_TITLE = "OUR MISSION"
 const OUR_MISSION_TEXT = [
@@ -13,17 +12,12 @@ const TECH_TITLE = "THE TECHNICAL"
 const TECH_TEXT = [
   "Our initiative developed with a small core team, most of which had worked in the development of limited models. That includes RBC / New Keynesian DSGE Models, CGE and IAM policy workhorses, macroprudential scenario model, and shallow, goal-seeking ABM models. Our best definition of our core model is a hybrid cognitive-institutional ABM, treating bounded cognition as the state space and using ensemble runs with sensitivity and ablation to map regime structures of social emergence.",
   "Our experiments are designed for reproducible batch execution: we run ensembles on multi-core CPU infrastructure (workstations and HPC-style environments), with storage and logging optimized for large parameter sweeps. We are extremely grateful to the Stevens Institute of Technology’s Research Computing Services for access to the JARVIS cluster, and the Hanlon Financial Systems Center for providing compute resources that supported this work. We would also like to thank KTH Royal Institute of Technology and the PDC Center for High Performance Computing (NAISS) for providing initial access and support that enabled us to begin this work on high-performance computing infrastructure.",
-  "We have been grateful to receive input from some of the foremost experts across critical domains, but currently maintain 21 core members and have formed four teams: Agent Cognition & Behavioral Mechanics (ABBY); Research Software & Reproducibility (RODY); Empirical Methods, Metrics & Validation (EMMY); High-Performance Simulation Systems (HOBY). Our collective experience is extensive, including members and former members of the MEB Biostatics group at the Karolinska Institutet, Vienna Center for Experimental Economics at Universität Wien, along with participants at Treehacks 2026 and Hack the North in Waterloo.",
+  "We have been grateful to receive input from some of the foremost experts across critical domains, but currently maintain 21 core members and have formed four teams: Agent Cognition & Behavioral Mechanics (ABBY); Research Software & Reproducibility (RODY); Empirical Methods, Metrics & Validation (EMMY); High-Performance Simulation Systems (HOBY). Our collective experience is growing, including members and former members of the MEB Biostatistics group at the Karolinska Institutet, Vienna Center for Experimental Economics at Universität Wien, along with participants at Treehacks 2026 and Hack the North in Waterloo.",
 ]
-
-const PREVIEW_TITLE = "PREVIEW"
-const PREVIEW_TEXT = ["Work in progress modules, internal demos, and draft artifacts intended for collaborators."]
 
 const IMAGE_MISSION = "/images/cope.png"
 const IMAGE_TECH = "/images/stock.png"
 
-const PULPHEAD_IMAGE = "/images/sred.png"
-const PULPHEAD_TITLE = "The Pulphead Initiative"
 
 function StickyPlate(props: { title: string; text: string[]; imageSrc: string; flip?: boolean }) {
   const flip = Boolean(props.flip)
@@ -114,8 +108,6 @@ export default function HomeAboutPanels() {
     <section className="relative text-[#1b1b1b]">
       <StickyPlate title={OUR_MISSION_TITLE} text={OUR_MISSION_TEXT} imageSrc={IMAGE_MISSION} />
       <StickyPlate title={TECH_TITLE} text={TECH_TEXT} imageSrc={IMAGE_TECH} flip />
-      <StickyPlate title={PREVIEW_TITLE} text={PREVIEW_TEXT} imageSrc={IMAGE_MISSION} />
-      <PulpheadPanel imageSrc={PULPHEAD_IMAGE} title={PULPHEAD_TITLE} />
     </section>
   )
 }

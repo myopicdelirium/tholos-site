@@ -1,5 +1,6 @@
 import { getArtifact } from "@/lib/artifacts"
 import { notFound } from "next/navigation"
+import AccessRequestForm from "./AccessRequestFormClient"
 
 export default async function ArtifactPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -82,31 +83,7 @@ export default async function ArtifactPage({ params }: { params: Promise<{ slug:
             </div>
           </div>
 
-          <form className="mt-6 grid gap-3">
-            <input
-              className="w-full rounded-2xl border border-[rgba(133,118,101,0.18)] bg-white/70 px-4 py-3 text-[14px] outline-none"
-              placeholder="Name"
-            />
-            <input
-              className="w-full rounded-2xl border border-[rgba(133,118,101,0.18)] bg-white/70 px-4 py-3 text-[14px] outline-none"
-              placeholder="Affiliation"
-            />
-            <input
-              className="w-full rounded-2xl border border-[rgba(133,118,101,0.18)] bg-white/70 px-4 py-3 text-[14px] outline-none"
-              placeholder="Email"
-            />
-            <textarea
-              className="min-h-[120px] w-full rounded-2xl border border-[rgba(133,118,101,0.18)] bg-white/70 px-4 py-3 text-[14px] outline-none"
-              placeholder="What are you asking for, and why?"
-            />
-
-            <button
-              type="button"
-              className="mt-1 rounded-2xl bg-[#0e0e0e] px-4 py-3 text-[13px] font-medium text-white hover:opacity-95"
-            >
-              Request full text
-            </button>
-          </form>
+          <AccessRequestForm title={artifact.title} slug={slug} />
         </div>
       </div>
     </section>
