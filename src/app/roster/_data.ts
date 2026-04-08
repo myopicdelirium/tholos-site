@@ -5,6 +5,7 @@ export type Member = {
   joined: string
   active: boolean
   school: string
+  statusColor?: "teal" | "red"
 }
 
 export const members: Member[] = [
@@ -127,5 +128,30 @@ export const members: Member[] = [
     joined: "2025-08",
     active: true,
     school: "RUB'29",
+  },
+  {
+    name: "Yinu Wong",
+    positions: ["Stress Testing Analyst"],
+    teams: ["EMMY", "HOBY"],
+    joined: "2026-02",
+    active: true,
+    school: "COR'23",
+  },
+  {
+    name: "Arnav Patel",
+    positions: ["Stress Testing & Consultation"],
+    teams: ["EMMY", "HOBY"],
+    joined: "2026-01",
+    active: true,
+    school: "N/A",
+  },
+  {
+    name: "Onyx Dabuda",
+    positions: ["Consultation"],
+    teams: ["N/A"],
+    joined: "2026-01",
+    active: true,
+    statusColor: "red",
+    school: "WUV'24",
   },
 ]
