@@ -7,6 +7,7 @@ export default function RosterPage() {
       <h1 className="mt-2 md-display text-[54px] leading-[1.02] tracking-[-0.02em] text-[#191714]">
         Roster
       </h1>
+      <p className="mono mt-2 text-[12px] text-[#1b1b1b]/55">Updated April 2026</p>
 
       {/* column headers */}
       <div className="mt-10 hidden sm:grid sm:grid-cols-[1.4fr_1fr_0.8fr_0.7fr_0.5fr_40px] gap-x-4 border-b rule pb-2 text-[10px] smallcaps text-[#6a6258]">
