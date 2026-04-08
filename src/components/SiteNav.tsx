@@ -18,6 +18,7 @@ export default function SiteNav() {
     () => [
       { href: "/artifacts", label: "Artifacts" },
       { href: "/logbook", label: "Logbook" },
+      { href: "/roster", label: "Roster" },
       { href: "/events", label: "Events" },
       { href: "/connect", label: "Connect" },
     ],

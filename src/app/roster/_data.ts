@@ -1,0 +1,131 @@
+export type Member = {
+  name: string
+  positions: string[]
+  teams: string[]
+  joined: string
+  active: boolean
+  school: string
+}
+
+export const members: Member[] = [
+  {
+    name: "Charlotte Brown",
+    positions: ["Website Designer"],
+    teams: ["N/A"],
+    joined: "2025-12",
+    active: true,
+    school: "N/A",
+  },
+  {
+    name: "Felix Tinio",
+    positions: ["Team Lead"],
+    teams: ["Management", "ABBY", "EMMY", "HOBY"],
+    joined: "2025-05",
+    active: true,
+    school: "SIT'29",
+  },
+  {
+    name: "Alfonso Leder",
+    positions: ["Environmental Design Lead"],
+    teams: ["HOBY", "EMMY"],
+    joined: "2025-07",
+    active: true,
+    school: "WUV'27",
+  },
+  {
+    name: "Jacob Stinton",
+    positions: ["Simulation Architecture Engineer"],
+    teams: ["RODY", "HOBY"],
+    joined: "2025-08",
+    active: true,
+    school: "SIT'29",
+  },
+  {
+    name: "Stan Daaboul",
+    positions: ["Simulation Architecture Engineer"],
+    teams: ["RODY", "HOBY"],
+    joined: "2025-08",
+    active: true,
+    school: "SIT'29",
+  },
+  {
+    name: "Leo Ances",
+    positions: ["Validation & Audit Lead"],
+    teams: ["EMMY"],
+    joined: "2025-09",
+    active: true,
+    school: "SIT'29",
+  },
+  {
+    name: "Emil Anderssen",
+    positions: ["Epistemological Architect"],
+    teams: ["ABBY"],
+    joined: "2025-05",
+    active: false,
+    school: "KTH'26",
+  },
+  {
+    name: "Zwity Zulueta",
+    positions: ["Simulation Architecture Engineer"],
+    teams: ["HOBY"],
+    joined: "2025-05",
+    active: true,
+    school: "RUB'29",
+  },
+  {
+    name: "Giulia Apolloni",
+    positions: ["HPC Accessibility & Usage Lead"],
+    teams: ["HOBY"],
+    joined: "2025-06",
+    active: true,
+    school: "IPP'28",
+  },
+  {
+    name: "Peter Kongtcheu",
+    positions: ["Assistant Funding Management"],
+    teams: ["Management"],
+    joined: "2025-10",
+    active: true,
+    school: "RUN'27",
+  },
+  {
+    name: "Maria Anderson",
+    positions: ["Epistemological Architect"],
+    teams: ["ABBY"],
+    joined: "2025-06",
+    active: false,
+    school: "KTH'24",
+  },
+  {
+    name: "Kalel Sanvictores",
+    positions: ["Adversarial Robustness Analyst"],
+    teams: ["ABBY"],
+    joined: "2025-11",
+    active: true,
+    school: "CU'30",
+  },
+  {
+    name: "Vicky Pradeep",
+    positions: ["Computational Visualization Lead"],
+    teams: ["EMMY"],
+    joined: "2025-05",
+    active: false,
+    school: "UMI'28",
+  },
+  {
+    name: "Maximilian Risach",
+    positions: ["Data Analytics & AI Ethics Lead"],
+    teams: ["EMMY", "HOBY"],
+    joined: "2026-01",
+    active: true,
+    school: "WUV'29",
+  },
+  {
+    name: "Denis Dukaj",
+    positions: ["Communications Manager"],
+    teams: ["Management"],
+    joined: "2025-08",
+    active: true,
+    school: "RUB'29",
+  },
+]
