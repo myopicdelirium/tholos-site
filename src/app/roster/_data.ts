@@ -1,4 +1,5 @@
 export type Member = {
+  id: string
   name: string
   positions: string[]
   teams: string[]
@@ -10,6 +11,7 @@ export type Member = {
 
 export const members: Member[] = [
   {
+    id: "847291",
     name: "Charlotte Brown",
     positions: ["Website Designer"],
     teams: ["N/A"],
@@ -18,6 +20,7 @@ export const members: Member[] = [
     school: "N/A",
   },
   {
+    id: "310574",
     name: "Felix Tinio",
     positions: ["Team Lead"],
     teams: ["Management", "ABBY", "EMMY", "HOBY"],
@@ -26,6 +29,7 @@ export const members: Member[] = [
     school: "SIT'29",
   },
   {
+    id: "629183",
     name: "Alfonso Leder",
     positions: ["Environmental Design Lead"],
     teams: ["HOBY", "EMMY"],
@@ -34,6 +38,7 @@ export const members: Member[] = [
     school: "WUV'27",
   },
   {
+    id: "058462",
     name: "Jacob Stinton",
     positions: ["Simulation Architecture Engineer"],
     teams: ["RODY", "HOBY"],
@@ -42,6 +47,7 @@ export const members: Member[] = [
     school: "SIT'29",
   },
   {
+    id: "493710",
     name: "Stan Daaboul",
     positions: ["Simulation Architecture Engineer"],
     teams: ["RODY", "HOBY"],
@@ -50,6 +56,7 @@ export const members: Member[] = [
     school: "SIT'29",
   },
   {
+    id: "172856",
     name: "Leo Ances",
     positions: ["Validation & Audit Lead"],
     teams: ["EMMY"],
@@ -58,6 +65,7 @@ export const members: Member[] = [
     school: "SIT'29",
   },
   {
+    id: "384920",
     name: "Emil Anderssen",
     positions: ["Epistemological Architect"],
     teams: ["ABBY"],
@@ -66,6 +74,7 @@ export const members: Member[] = [
     school: "KTH'26",
   },
   {
+    id: "761038",
     name: "Zwity Zulueta",
     positions: ["Simulation Architecture Engineer"],
     teams: ["HOBY"],
@@ -74,6 +83,7 @@ export const members: Member[] = [
     school: "RUB'29",
   },
   {
+    id: "520947",
     name: "Giulia Apolloni",
     positions: ["HPC Accessibility & Usage Lead"],
     teams: ["HOBY"],
@@ -82,6 +92,7 @@ export const members: Member[] = [
     school: "IPP'28",
   },
   {
+    id: "206385",
     name: "Peter Kongtcheu",
     positions: ["Assistant Funding Management"],
     teams: ["Management"],
@@ -90,6 +101,7 @@ export const members: Member[] = [
     school: "RUN'27",
   },
   {
+    id: "915274",
     name: "Maria Anderson",
     positions: ["Epistemological Architect"],
     teams: ["ABBY"],
@@ -98,6 +110,7 @@ export const members: Member[] = [
     school: "KTH'24",
   },
   {
+    id: "438601",
     name: "Kalel Sanvictores",
     positions: ["Adversarial Robustness Analyst"],
     teams: ["ABBY"],
@@ -106,6 +119,7 @@ export const members: Member[] = [
     school: "CU'30",
   },
   {
+    id: "682053",
     name: "Vicky Pradeep",
     positions: ["Computational Visualization Lead"],
     teams: ["EMMY"],
@@ -114,6 +128,7 @@ export const members: Member[] = [
     school: "UMI'28",
   },
   {
+    id: "547192",
     name: "Maximilian Risach",
     positions: ["Data Analytics & AI Ethics Lead"],
     teams: ["EMMY", "HOBY"],
@@ -122,6 +137,7 @@ export const members: Member[] = [
     school: "WUV'29",
   },
   {
+    id: "803461",
     name: "Denis Dukaj",
     positions: ["Communications Manager"],
     teams: ["Management"],
@@ -130,6 +146,7 @@ export const members: Member[] = [
     school: "RUB'29",
   },
   {
+    id: "295780",
     name: "Yinu Wong",
     positions: ["Stress Testing Analyst"],
     teams: ["EMMY", "HOBY"],
@@ -138,6 +155,7 @@ export const members: Member[] = [
     school: "COR'23",
   },
   {
+    id: "164309",
     name: "Arnav Patel",
     positions: ["Stress Testing & Consultation"],
     teams: ["EMMY", "HOBY"],
@@ -146,6 +164,7 @@ export const members: Member[] = [
     school: "N/A",
   },
   {
+    id: "731502",
     name: "Onyx Dabuda",
     positions: ["Consultation"],
     teams: ["N/A"],

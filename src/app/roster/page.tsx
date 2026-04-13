@@ -85,6 +85,7 @@ export default function RosterPage() {
             <span
               className={`text-[15px] text-[#191714] ${!m.active ? "text-[#191714]/45" : ""}`}
             >
+              <span className="mono text-[11px] text-[#6a6258]/50">...{m.id}</span>{" "}
               {m.name}
             </span>
 
