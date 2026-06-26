@@ -96,3 +96,14 @@ tests/                   # determinism, config, environment, agent, smoke
 - **`docs/EXPERIMENTAL_DESIGN.md`** — per-case design, seeds, aggregation,
   controls/ablations, sensitivity, and how results tie to operational definitions.
 - **`docs/DECISIONS.md`** — the §9 decision points and how each was ruled.
+
+**Consolidated report.** `docs/Batch_A_Full_Report.pdf` stitches all of the above
+— executive summary, decision record, ODD spec, parameter table, implementation
+walkthrough (with live code excerpts), experimental design, results & calibration
+narrative, and appendices (file tree + full config listings) — into one typeset
+PDF with a table of contents. Rebuild it with:
+
+```bash
+pip install reportlab            # plus DejaVu/Liberation TTFs (system fonts)
+python docs/build_report.py      # -> docs/Batch_A_Full_Report.pdf
+```
