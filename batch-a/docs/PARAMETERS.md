@@ -27,9 +27,9 @@ defaults.
 | `fields.moisture.baseline` | 0.05 | frac | field floor | A1 |
 | `fields.temperature.gradient_axis` | y | — | axis of the linear temperature gradient | A3 |
 | `fields.temperature.low` / `.high` | 0.0 / 1.0 | frac | field values at the two edges | A3 |
-| `fields.temperature.comfort_low` / `.high` | 0.30 / 0.70 | frac | comfort band bounds | A3 |
-| `fields.temperature.season_amplitude` | 0.0 (A4: 0.15) | frac | peak seasonal offset added to the field | A4 |
-| `fields.temperature.season_period` | 365 (A4: 600) | ticks | ticks per seasonal cycle | A4 |
+| `fields.temperature.comfort_low` / `.high` | 0.25 / 0.75 | frac | comfort band bounds | A3 |
+| `fields.temperature.season_amplitude` | 0.0 (A4: 0.05) | frac | peak seasonal offset added to the field | A4 |
+| `fields.temperature.season_period` | 365 (A4: 400) | ticks | ticks per seasonal cycle | A4 |
 | `fields.risk.predator_sigma` | 4.0 | tiles | spread of each predator's risk halo | A3 |
 | `fields.risk.baseline` | 0.0 | frac | ambient risk floor | A3 |
 
@@ -44,17 +44,17 @@ defaults.
 | `entities.water.efficiency` | 1.0 | — | consumed quantity → hydration gain | A1 |
 | `entities.vegetation.patches` | 8 | count | vegetation patches | A3 |
 | `entities.vegetation.cluster_sigma` | 3.0 | tiles | patch spread | A3 |
-| `entities.vegetation.regen_per_tick` | 0.02 | frac/tick | regrowth toward capacity | A3 |
+| `entities.vegetation.regen_per_tick` | 0.02 (A4: 0.03) | frac/tick | regrowth toward capacity | A3 |
 | `entities.vegetation.efficiency` | 0.8 | — | consumed quantity → energy gain | A3 |
 | `entities.vegetation.season_gated` | false (A4: true) | — | edible only in-season | A4 |
 | `entities.prey.count` | 12 | count | discrete prey | A3 |
 | `entities.prey.respawn_ticks` | 80 | ticks | delay before a consumed prey respawns | A3 |
 | `entities.prey.efficiency` | 1.0 | — | eating prey → energy gain | A3 |
 | `entities.prey.move_prob` | 0.0 (A4: 0.3) | prob | per-tick step probability | A4 |
-| `entities.predators.count` | 6 | count | discrete predators | A3 |
+| `entities.predators.count` | 6 (A4: 4) | count | discrete predators | A3 |
 | `entities.predators.attack_radius` | 1 | tiles | predation range (Chebyshev) | A3 |
 | `entities.predators.predation_prob` | 0.15 | prob | per-tick kill probability in range | A3 |
-| `entities.predators.move_prob` | 0.0 (A4: 0.3) | prob | per-tick step probability | A4 |
+| `entities.predators.move_prob` | 0.0 (A4: 0.15) | prob | per-tick step probability | A4 |
 
 ## Non-stationarity (§2.2, A4)
 
@@ -62,9 +62,9 @@ defaults.
 |-----------|-----------|-------|---------|
 | `nonstationarity.seasonality` | true | — | temperature oscillates; vegetation season-gated |
 | `nonstationarity.mobile_fauna` | true | — | prey & predators move |
-| `nonstationarity.drought.onset_prob` | 0.0025 | prob | wet→drought flip per tick |
+| `nonstationarity.drought.onset_prob` | 0.0018 | prob | wet→drought flip per tick |
 | `nonstationarity.drought.recovery_prob` | 0.012 | prob | drought→wet flip per tick |
-| `nonstationarity.drought.dry_regen_factor` | 0.20 | — | water regen multiplier during drought |
+| `nonstationarity.drought.dry_regen_factor` | 0.30 | — | water regen multiplier during drought |
 
 ## Needs (§3.1)
 
@@ -107,8 +107,8 @@ All in *frac* (levels) or *frac/tick* (rates). Exposure drain =
 | Parameter | Value | Units | Meaning |
 |-----------|-------|-------|---------|
 | `reproduction.enabled` | false (A2+: true) | — | asexual clone-with-mutation |
-| `reproduction.maturity_age` | 60 | ticks | minimum age to reproduce |
-| `reproduction.cooldown` | 40 | ticks | ticks between births for one agent |
+| `reproduction.maturity_age` | 40 | ticks | minimum age to reproduce |
+| `reproduction.cooldown` | 25 | ticks | ticks between births for one agent |
 | `reproduction.readiness_min_need` | 0.6 | frac | all needs must be ≥ this to reproduce |
 | `reproduction.energy_cost` | 0.4 | frac | energy spent per offspring |
 | `reproduction.offspring_spawn_radius` | 1 | tiles | offspring placement radius around parent |
@@ -118,7 +118,7 @@ All in *frac* (levels) or *frac/tick* (rates). Exposure drain =
 
 | Parameter | Value | Units | Meaning |
 |-----------|-------|-------|---------|
-| `init.n_agents` | 1 (A2+: 40–50) | count | founder population |
+| `init.n_agents` | 1 (A2/A3: 40, A4: 60) | count | founder population |
 | `init.spawn_mode` | uniform | — | `uniform` / `born_rich` / `born_poor` |
 | `init.endowment_percentile` | 0.85 | frac | rich/poor spawn cutoff |
 | `init.endowment_radius` | 2 | tiles | radius for the birthplace endowment scalar |
@@ -127,4 +127,4 @@ All in *frac* (levels) or *frac/tick* (rates). Exposure drain =
 | `metrics.settle_displacement_threshold` | 1.5 | tiles | below this counts as "settled" |
 | `metrics.settle_window` | 50 | ticks | window displacement must stay low to settle |
 | `metrics.resource_percentile_k` | 0.75 | frac | Kth percentile defining a "good" tile |
-| `run.max_ticks` | 2000 (per case 1500–4000) | ticks | run horizon (also ends on extinction) |
+| `run.max_ticks` | per case: A1 1500, A2/A3 3000, A4 2500 | ticks | run horizon (also ends on extinction) |

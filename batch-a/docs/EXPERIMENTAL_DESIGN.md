@@ -73,6 +73,9 @@ learning-frozen and trait-frozen ablations as controls.
 - **Fixed:** everything stationary — fauna don't move, no seasons, no drought.
 - **Success criterion ("it works"):** the population is self-sustaining under the
   full need set (energy, hydration, comfort, safety) across most seeds.
+- **Result (calibration checks, 2500 ticks):** `0/2–0/3` seeds extinct; the
+  population stabilises near carrying capacity (mean ~360–383) — uniformly stable,
+  in deliberate contrast to A4 (see the A3→A4 table below).
 - **Mortality structure:** logged by cause (`deaths_by_cause`) — comfort-band
   exposure and predation are the dominant pressures here.
 
@@ -88,7 +91,42 @@ learning-frozen and trait-frozen ablations as controls.
 
 #### A3 → A4 contrast (calibration run)
 
-`<<CALIBRATION>>`
+Measured at the 2500-tick horizon (these are turnaround checks at n = 2–5 seeds;
+headline numbers warrant ≥ 20 seeds per the discipline above — the small-n rates
+here are seed-noisy by ±1 seed):
+
+| Metric | A3 (stationary) | A4 (non-stationary) |
+|--------|-----------------|---------------------|
+| extinct by horizon | **0 / 2–3 seeds** | **~3 / 5 seeds** |
+| mean population over run | ~360–383 (near cap) | 50–379, typ. ~300 then crash |
+| min population over run | ~30–38 | **1–58** (teeters at the edge) |
+| median individual survival | 176–502 ticks | **113–175 ticks** (high turnover) |
+| population trajectory | rises and **stabilises** near carrying capacity | **violent oscillation**; deep recurrent crashes |
+
+**Reading.** A3 is uniformly stable: every seed settles into the comfortable
+temperature refuge and sustains near carrying capacity. A4 is **fragile**:
+surviving seeds persist *precariously* — substantial populations that crash
+deeply (to a handful of agents) and claw back, repeatedly — while a sizeable
+fraction of seeds collapse to extinction outright. Individuals live roughly half
+as long (constant churn), and the population teeters near zero throughout. This
+is "survive it poorly enough that Batch B has something to do" made quantitative:
+the physical-needs substrate **alone** cannot reliably survive non-stationarity.
+
+**Why fragility is horizon-dependent (an honest caveat).** Extinction is an
+absorbing state, and a deeply-oscillating population eventually hits zero given
+enough time — so A4's extinction *rate rises with the reporting horizon*. We fix
+the horizon at 2500 ticks, where A4 "survives poorly but not totally"; extending
+it drives more seeds extinct. That horizon-dependence **is** the fragility, not an
+artefact of it.
+
+**The collapse boundary (sensitivity, §8.5).** A4 sits near a tipping point. The
+pre-calibration settings (`season_amplitude` 0.15–0.30, severe drought, 6 fast
+mobile predators) produced **uniform collapse** (3/3 extinct, whole-population
+die-offs around the first cold season). The calibrated knobs in `config/a4.yaml`
+— shallower/shorter seasons, a wider comfort refuge, calmer predators, and faster
+reproductive recovery — move the system from *guaranteed collapse* to *precarious
+persistence*. The narrowness of that band is itself a finding, and every knob is
+config, so the harshness is a dial, not a constant.
 
 ---
 
