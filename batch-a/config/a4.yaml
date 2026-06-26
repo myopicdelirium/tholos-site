@@ -8,10 +8,12 @@
 case: a4
 
 run:
-  max_ticks: 4000
+  max_ticks: 2500          # reporting horizon for "fragile survival"; extending it
+                           # reveals the population is non-viable long-term (the
+                           # quantitative face of fragility — see docs §A4)
 
 init:
-  n_agents: 50
+  n_agents: 60
   spawn_mode: uniform
 
 actions:
@@ -21,8 +23,8 @@ actions:
 fields:
   temperature:
     enabled: true
-    season_amplitude: 0.06   # seasonal swing periodically narrows the comfort band
-    season_period: 600
+    season_amplitude: 0.05   # seasonal swing periodically narrows the comfort band
+    season_period: 400
   risk:
     enabled: true
 
@@ -30,6 +32,7 @@ entities:
   vegetation:
     enabled: true
     season_gated: true       # edible only part of the year -> seasonal famine
+    regen_per_tick: 0.03     # slightly richer so the famine half-cycle isn't fatal
   prey:
     enabled: true
     mobile: true
@@ -37,14 +40,15 @@ entities:
   predators:
     enabled: true
     mobile: true
-    move_prob: 0.3
+    move_prob: 0.15          # roam, but scatter the herd less violently
+    count: 4
 
 nonstationarity:
   seasonality: true
   mobile_fauna: true
   drought:
     enabled: true
-    onset_prob: 0.0020       # fragile, not catastrophic
+    onset_prob: 0.0018       # fragile, not catastrophic
     recovery_prob: 0.012
     dry_regen_factor: 0.30
 

@@ -40,8 +40,8 @@ fields:
     gradient_axis: y       # 'x' or 'y'; linear gradient across the grid
     low: 0.0               # field value at one edge [0,1]
     high: 1.0              # field value at the other edge [0,1]
-    comfort_low: 0.30      # comfort band lower bound [0,1]
-    comfort_high: 0.70     # comfort band upper bound [0,1]
+    comfort_low: 0.25      # comfort band lower bound [0,1]
+    comfort_high: 0.75     # comfort band upper bound [0,1]
     season_amplitude: 0.0  # A4: peak seasonal offset added to the field [0,1]
     season_period: 365     # ticks per full seasonal cycle (A4)
   risk:
@@ -175,8 +175,8 @@ traits:
 # Reproduction (§9.4: asexual clone-with-mutation). Inert when disabled (A1).
 reproduction:
   enabled: false           # A2+ enable
-  maturity_age: 60         # ticks before an agent can reproduce
-  cooldown: 40             # ticks between births for one agent
+  maturity_age: 40         # ticks before an agent can reproduce
+  cooldown: 25             # ticks between births for one agent
   readiness_min_need: 0.6  # all needs must be >= this to reproduce
   energy_cost: 0.4         # energy spent producing one offspring
   offspring_spawn_radius: 1 # tiles from parent where offspring appears
