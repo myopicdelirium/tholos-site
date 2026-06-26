@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "batch-a"
+version = "0.1.0"
+description = "Batch A — agent-based ecological simulation (cases A1–A4) for the ABM research lab"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24", "PyYAML>=6.0"]
+
+[project.optional-dependencies]
+parquet = ["pandas>=2.0", "pyarrow>=12.0"]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+batch-a = "batch_a.cli:main"
+
+[tool.setuptools]
+packages = ["batch_a", "batch_a.environment", "batch_a.agent", "batch_a.logging"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

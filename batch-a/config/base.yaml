@@ -1,0 +1,209 @@
+# ============================================================================
+# Batch A — base configuration (all defaults live here).
+# Per-case configs (a1..a4) and ablations override only the deltas they change.
+# NO magic numbers anywhere else in the code: every constant is here, with units.
+# See docs/PARAMETERS.md for the human-readable parameter table.
+# ============================================================================
+
+case: base
+
+run:
+  max_ticks: 2000          # ticks; a run also ends early on extinction
+  stop_on_extinction: true # end the run when no agents are alive
+
+# ---------------------------------------------------------------------------
+# World / environment (§2)
+# ---------------------------------------------------------------------------
+world:
+  size: 64                 # grid is size x size tiles (parameterize up to 256)
+  boundary: toroidal       # 'toroidal' (wrap) or 'walls'
+  perception_radius: 2     # bounded Moore radius r in {1,2}; local info only
+
+# How local field gradients become movement cues (perception.py). A gradient
+# direction yields a cue of strength clamp(floor + magnitude*gain, .., 1). The
+# floor lets a faint-but-correct gradient still commit the agent to a heading,
+# which is what makes long-range "follow moisture to water" navigation work.
+perception:
+  gradient_cue_gain: 8.0
+  gradient_cue_floor: 0.35
+
+# Continuous scalar fields (§2.1). Each is generated once and (unless a case
+# enables dynamics) held fixed across all comparisons.
+fields:
+  moisture:
+    enabled: true
+    clusters: 5            # number of gaussian "wet" clusters
+    cluster_sigma: 6.0     # tiles; spread of each cluster
+    baseline: 0.05         # field floor [0,1]
+  temperature:
+    enabled: false         # introduced in A3
+    gradient_axis: y       # 'x' or 'y'; linear gradient across the grid
+    low: 0.0               # field value at one edge [0,1]
+    high: 1.0              # field value at the other edge [0,1]
+    comfort_low: 0.30      # comfort band lower bound [0,1]
+    comfort_high: 0.70     # comfort band upper bound [0,1]
+    season_amplitude: 0.0  # A4: peak seasonal offset added to the field [0,1]
+    season_period: 365     # ticks per full seasonal cycle (A4)
+  risk:
+    enabled: false         # derived from predators when they exist (A3)
+    predator_sigma: 4.0    # tiles; spread of each predator's risk halo
+    baseline: 0.0          # ambient risk floor [0,1]
+
+# Discrete consumable / threat entities (§2.2). Quantities live on a per-tile
+# grid; sources sit on a fixed clustered mask and regenerate toward a cap.
+entities:
+  water:
+    enabled: true
+    introduced_in: A1
+    sources: 6             # number of discrete water source clusters
+    cluster_sigma: 2.0     # tiles
+    capacity: 1.0          # max stored quantity per source tile [0,1]
+    regen_per_tick: 0.05   # quantity restored per tick toward capacity
+    restores: hydration    # which need drinking restores
+    action: drink
+    efficiency: 1.0        # fraction of consumed quantity converted to need gain
+  vegetation:
+    enabled: false         # A3
+    introduced_in: A3
+    patches: 8
+    cluster_sigma: 3.0
+    capacity: 1.0
+    regen_per_tick: 0.02
+    restores: energy
+    action: eat
+    efficiency: 0.8
+    season_gated: false    # A4: edible only in-season
+  prey:
+    enabled: false         # A3
+    introduced_in: A3
+    count: 12              # number of discrete prey
+    capacity: 1.0
+    regen_per_tick: 0.0    # prey do not regrow in place; they respawn
+    respawn_ticks: 80      # ticks after consumption before a prey respawns
+    restores: energy
+    action: eat
+    efficiency: 1.0
+    mobile: false          # A4: prey move
+    move_prob: 0.0         # A4: per-tick probability a prey steps
+  predators:
+    enabled: false         # A3
+    introduced_in: A3
+    count: 6
+    attack_radius: 1       # tiles; predation possible within this Chebyshev range
+    predation_prob: 0.15   # per-tick kill probability inside attack radius
+    mobile: false          # A4: predators move
+    move_prob: 0.0         # A4: per-tick probability a predator steps
+
+# ---------------------------------------------------------------------------
+# Non-stationarity (§2.2, A4). All inert unless a case turns them on.
+# ---------------------------------------------------------------------------
+nonstationarity:
+  seasonality: false       # temperature oscillates; vegetation season-gated
+  mobile_fauna: false      # prey & predators move
+  drought:
+    enabled: false
+    onset_prob: 0.002      # per-tick probability a wet period flips to drought
+    recovery_prob: 0.01    # per-tick probability a drought flips back to wet
+    dry_regen_factor: 0.1  # water regen multiplier while in drought
+
+# ---------------------------------------------------------------------------
+# Agent (§3)
+# ---------------------------------------------------------------------------
+# Homeostatic need substrate (§3.1). Order is preserved; Batch B appends needs.
+# drain_per_tick: endogenous drain. target/threshold in [0,1], threshold < target.
+needs:
+  energy:
+    initial: 1.0
+    target: 1.0
+    threshold: 0.25
+    drain_per_tick: 0.004
+  hydration:
+    initial: 1.0
+    target: 1.0
+    threshold: 0.25
+    drain_per_tick: 0.010
+  temperature_comfort:
+    initial: 1.0
+    target: 1.0
+    threshold: 0.20
+    drain_per_tick: 0.000   # only drains via exposure outside comfort band (A3)
+    exposure_gain: 0.15     # drain = exposure_gain * distance_outside_band
+    recovery: 0.05          # restored per tick while inside the comfort band
+  safety:
+    initial: 1.0
+    target: 1.0
+    threshold: 0.20
+    drain_per_tick: 0.000   # only drains via risk exposure (A3)
+    exposure_gain: 0.50     # drain = exposure_gain * local_risk
+    recovery: 0.05          # restored per tick while local risk is low
+
+# Action effects (§3.3). The action set is a registry (see actions.py).
+actions:
+  rest:
+    restores: energy
+    amount: 0.06           # need gain per tick of resting
+  move_cost_per_tile: 0.0  # energy drained per tile moved (A2 sets this > 0)
+  flee_cost_per_tile: 0.0  # energy drained per tile fled (tracks move cost in A2)
+
+# Decision rule (§3.4): U(a) = Σ_i w_i(t)·Q_i(a) − MoveCost(a) − Risk(a)
+decision:
+  weighting: deficit_proportional   # the single swappable weight function
+  epsilon: 0.05            # base ε for ε-stochastic action choice
+  risk_weight: 1.0         # coefficient on Risk(a) in U(a)
+  move_cost_weight: 1.0    # coefficient on MoveCost(a) in U(a)
+
+# Within-lifetime learning (§3.5). One flag disables it for ablations.
+learning:
+  enabled: true
+  rule: recency            # 'recency' (delta rule) or 'td0'
+  alpha: 0.2               # learning rate
+  gamma: 0.9               # discount (td0 only)
+  gain_init: 1.0           # initial learned gain on each (need, action) affordance
+  gain_min: 0.1
+  gain_max: 3.0
+
+# Heritable traits (§3.6). One flag fixes all traits identical for ablations.
+traits:
+  fix_identical: false     # ablation: everyone gets the same disposition
+  exploration:
+    init_mean: 0.5         # mean exploration disposition at world seeding [0,1]
+    init_sd: 0.15          # sd of initial disposition across the founder pop
+    mutation_sd: 0.05      # gaussian mutation sd passed to offspring
+    epsilon_scale: 0.30    # ε contribution = epsilon + exploration*epsilon_scale
+    step_noise_scale: 0.50 # prob. of a random (non-greedy) move step
+
+# Reproduction (§9.4: asexual clone-with-mutation). Inert when disabled (A1).
+reproduction:
+  enabled: false           # A2+ enable
+  maturity_age: 60         # ticks before an agent can reproduce
+  cooldown: 40             # ticks between births for one agent
+  readiness_min_need: 0.6  # all needs must be >= this to reproduce
+  energy_cost: 0.4         # energy spent producing one offspring
+  offspring_spawn_radius: 1 # tiles from parent where offspring appears
+  max_population: 400      # hard cap to keep runs bounded
+
+# ---------------------------------------------------------------------------
+# Initialization (§5). Birthplace is the independent variable, not incidental.
+# ---------------------------------------------------------------------------
+init:
+  n_agents: 1              # founder population (A1 = single agent)
+  spawn_mode: uniform      # 'uniform' | 'born_rich' | 'born_poor'
+  endowment_percentile: 0.85 # for born_rich: spawn among tiles above this pct
+                             # for born_poor: spawn among tiles below (1 - this)
+  endowment_radius: 2      # radius r used to compute birthplace endowment scalar
+
+# ---------------------------------------------------------------------------
+# Logging (§6)
+# ---------------------------------------------------------------------------
+logging:
+  format: csv              # 'csv' (always available) or 'parquet' (needs pandas)
+  per_tick: true           # write the per-tick per-agent stream
+  out_dir: runs            # runs/<run_id>/ holds all artifacts for a run
+
+# ---------------------------------------------------------------------------
+# Metrics / operational definitions (§7)
+# ---------------------------------------------------------------------------
+metrics:
+  settle_displacement_threshold: 1.5 # tiles; below this counts as "settled"
+  settle_window: 50                  # ticks displacement must stay low to settle
+  resource_percentile_k: 0.75        # Kth percentile defining a "good" tile

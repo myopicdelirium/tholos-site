@@ -1,0 +1,21 @@
+# A1 — single-agent learning baseline (§1). No reproduction, traits fixed.
+# Only the moisture field + water sources exist. The task is hydration survival:
+# navigate the moisture gradient to water, drink before hydration hits zero,
+# while energy slowly drains and rest recovers it.
+case: a1
+
+run:
+  max_ticks: 1500
+
+init:
+  n_agents: 1
+  spawn_mode: uniform
+
+reproduction:
+  enabled: false
+
+traits:
+  fix_identical: true      # A1 holds traits fixed; learning is the only adaptation
+
+learning:
+  enabled: true

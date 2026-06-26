@@ -1,0 +1,24 @@
+# A2 — population + movement cost + birth/death (§1, §2.2). Selection turns on.
+# This is where the birthplace insights live: "born on water", "born poor".
+# Movement now drains energy, so the conservative<->explorative trade-off bites.
+case: a2
+
+run:
+  max_ticks: 3000
+
+init:
+  n_agents: 40
+  spawn_mode: uniform      # sweep over uniform | born_rich | born_poor
+
+actions:
+  move_cost_per_tile: 0.012
+  flee_cost_per_tile: 0.012
+
+reproduction:
+  enabled: true
+
+traits:
+  fix_identical: false     # heritable exploration disposition now varies & is selected
+
+learning:
+  enabled: true
