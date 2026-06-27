@@ -1,0 +1,6 @@
+# Ablation (§1, §8.4): freeze learning. Does the trait alone reproduce the
+# A2 survival pattern? Q-values never update; only heritable disposition adapts.
+extends: a2.yaml
+case: a2_freeze_learning
+learning:
+  enabled: false

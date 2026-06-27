@@ -1,0 +1,9 @@
+# Ablation (§1, §8.4): freeze traits. Does learning alone reproduce the A2
+# survival pattern? Everyone gets an identical disposition (no selection on the
+# exploration trait); only within-lifetime learning adapts.
+extends: a2.yaml
+case: a2_freeze_traits
+traits:
+  fix_identical: true
+learning:
+  enabled: true

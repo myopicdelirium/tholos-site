@@ -1,0 +1,62 @@
+# A4 — the stationary -> non-stationary phase change (§2.2, §9.5).
+# Seasons turn, fauna move, water sources dry and rebound. Everything an agent
+# learned or was selected for in A3 can be invalidated here.
+#
+# Harshness target: FRAGILE survival (per §9.5 ruling) — the population persists
+# but poorly, leaving pressure for Batch B's mechanisms to act on. Not total
+# collapse. All harshness knobs are here so it can be re-tuned empirically.
+case: a4
+
+run:
+  max_ticks: 2500          # reporting horizon for "fragile survival"; extending it
+                           # reveals the population is non-viable long-term (the
+                           # quantitative face of fragility — see docs §A4)
+
+init:
+  n_agents: 60
+  spawn_mode: uniform
+
+actions:
+  move_cost_per_tile: 0.012
+  flee_cost_per_tile: 0.012
+
+fields:
+  temperature:
+    enabled: true
+    season_amplitude: 0.05   # seasonal swing periodically narrows the comfort band
+    season_period: 400
+  risk:
+    enabled: true
+
+entities:
+  vegetation:
+    enabled: true
+    season_gated: true       # edible only part of the year -> seasonal famine
+    regen_per_tick: 0.03     # slightly richer so the famine half-cycle isn't fatal
+  prey:
+    enabled: true
+    mobile: true
+    move_prob: 0.3
+  predators:
+    enabled: true
+    mobile: true
+    move_prob: 0.15          # roam, but scatter the herd less violently
+    count: 4
+
+nonstationarity:
+  seasonality: true
+  mobile_fauna: true
+  drought:
+    enabled: true
+    onset_prob: 0.0018       # fragile, not catastrophic
+    recovery_prob: 0.012
+    dry_regen_factor: 0.30
+
+reproduction:
+  enabled: true
+
+traits:
+  fix_identical: false
+
+learning:
+  enabled: true
