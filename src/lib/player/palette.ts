@@ -1,52 +1,51 @@
-// Shared visual tokens for the Batch A player (WO-V1, site-native).
-// These mirror the site palette in src/app/globals.css; keep them in sync.
-// One place owns sim colors so figures and the player read as one designed thing.
+// Player tokens, read from the site's WO-V1 design tokens at runtime — NOT
+// hardcoded. The plate is ink-on-paper; exactly two colours carry data:
+// the site's water blue (--teal, only ever water) and rust (--insurgent, only
+// ever stress & death). Everything else is ink at varying alpha.
 
-export const SIM = {
-  // instrument panel (a deep "scientific monitor" set into the ivory page)
-  bg: "#0b1419",
-  bgEdge: "#0e1a20",
-  grid: "rgba(180,200,205,0.05)",
-  ink: "#f0eae0", // ivory readout text
+export type RGB = [number, number, number];
 
-  // per-need colors (what an agent is "about" — its most urgent deficit)
-  need: {
-    energy: [206, 170, 92] as const, // brass/amber
-    hydration: [54, 170, 198] as const, // teal/cyan
-    temperature_comfort: [150, 150, 220] as const, // cold violet
-    safety: [214, 96, 74] as const, // insurgent red
-  },
+export interface Tokens {
+  paper: RGB; // --ivory
+  ink: RGB; // --ink
+  water: RGB; // --teal
+  rust: RGB; // --insurgent
+  brass: RGB; // --brass
+}
 
-  // field ramps (drawn additively on the dark panel)
-  field: {
-    moisture: [44, 150, 176] as const, // teal water
-    tempCold: [78, 116, 196] as const,
-    tempWarm: [212, 150, 78] as const,
-    risk: [194, 58, 43] as const, // insurgent
-  },
-
-  // per-case accent (UI chrome), from the site palette
-  case: {
-    a1: "#00394f", // teal
-    a2: "#3f6f5f",
-    a3: "#857665", // brass
-    a4: "#c23a2b", // insurgent
-  },
-
-  death: "#f4ece0",
-} as const;
-
-export type NeedName = keyof typeof SIM.need;
-export const NEED_ORDER: NeedName[] = [
-  "energy",
-  "hydration",
-  "temperature_comfort",
-  "safety",
-];
-
-export const NEED_LABEL: Record<NeedName, string> = {
-  energy: "Energy",
-  hydration: "Hydration",
-  temperature_comfort: "Comfort",
-  safety: "Safety",
+const FALLBACK: Tokens = {
+  paper: [240, 234, 224],
+  ink: [12, 14, 16],
+  water: [0, 57, 79],
+  rust: [194, 58, 43],
+  brass: [133, 118, 101],
 };
+
+function readVar(name: string, fallback: RGB): RGB {
+  if (typeof window === "undefined") return fallback;
+  const raw = getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+  if (!raw) return fallback;
+  const parts = raw.split(/[\s,]+/).map(Number);
+  return parts.length === 3 && parts.every((n) => !Number.isNaN(n))
+    ? (parts as RGB)
+    : fallback;
+}
+
+// Read once on the client; the site declares these as "R G B" triplets on :root.
+export function readTokens(): Tokens {
+  return {
+    paper: readVar("--ivory", FALLBACK.paper),
+    ink: readVar("--ink", FALLBACK.ink),
+    water: readVar("--teal", FALLBACK.water),
+    rust: readVar("--insurgent", FALLBACK.rust),
+    brass: readVar("--brass", FALLBACK.brass),
+  };
+}
+
+export function rgba([r, g, b]: RGB, a: number): string {
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+export const NEED_LABELS = ["Energy", "Hydration", "Comfort", "Safety"] as const;

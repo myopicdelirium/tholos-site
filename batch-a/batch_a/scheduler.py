@@ -207,6 +207,7 @@ def run_tick(world, agents, config, rng, recorder):
 
     # 8. logging
     recorder.log_env(tick, world.env_summary())
+    recorder.log_fauna(tick, world)
     for a in living:
         recorder.log_tick(tick, a)
     for a in newborns:

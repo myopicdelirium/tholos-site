@@ -42,6 +42,7 @@ class Recorder:
         self._tick_rows = []
         self._summary_rows = []
         self._env_series = []  # per-tick environment scalars
+        self._fauna_rows = []  # per-tick predator positions (for visualization)
 
     # -- per-tick per-agent (§6) ------------------------------------------
     def log_tick(self, tick, agent):
@@ -61,6 +62,18 @@ class Recorder:
     def log_env(self, tick, env_summary):
         self._env_series.append({"tick": tick, **env_summary})
 
+    def log_fauna(self, tick, world):
+        """Per-tick predator positions — needed to *replay* A4 risk (not re-sim)."""
+        if not self.per_tick or world.predators is None:
+            return
+        p = world.predators
+        for i in range(p.count):
+            if p.alive[i]:
+                self._fauna_rows.append({
+                    "tick": tick, "kind": "predator",
+                    "x": int(p.pos[i, 0]), "y": int(p.pos[i, 1]),
+                })
+
     # -- per-agent lifetime summary (§6) ----------------------------------
     def log_summary(self, agent):
         row = {
@@ -77,6 +90,7 @@ class Recorder:
     def finalize(self, results: dict):
         self._write_table("ticks", self._tick_cols, self._tick_rows)
         self._write_table("summaries", self._summary_cols, self._summary_rows)
+        self._write_table("fauna", None, self._fauna_rows)
         self._write_table("environment", None, self._env_series)
 
         with open(self.dir / "config.yaml", "w") as fh:

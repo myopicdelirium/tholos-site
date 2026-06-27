@@ -11,8 +11,8 @@ const SimPlayer = dynamic(() => import("./SimPlayer"), {
   ssr: false,
   loading: () => (
     <div
-      className="aspect-[16/10] w-full rounded-[6px] border"
-      style={{ borderColor: "rgba(133,118,101,0.4)", background: "#0e1a20" }}
+      className="aspect-[3/2] w-full rounded-[4px] border rule"
+      style={{ background: "rgb(var(--ivory))" }}
       aria-hidden
     />
   ),
