@@ -24,8 +24,8 @@ const CASES = [
     title: "Population & selection",
     blurb:
       "Movement now costs energy, and agents are born and die — so the heritable exploration disposition is exposed to selection, and birthplace starts to matter.",
-    src: null,
-    status: "In preparation — diagnostic figures pending.",
+    src: "/runs/a2.manifest.json",
+    status: "Selection at work — births fill the plate to the cap, movement costs bite.",
   },
   {
     id: "A3",
@@ -33,8 +33,8 @@ const CASES = [
     title: "The full stationary ecology",
     blurb:
       "Heat (a comfort band), vegetation, prey, and predators (a risk field) — four needs at once, everything still stationary. The world A4 will invalidate.",
-    src: null,
-    status: "In preparation — diagnostic figures pending.",
+    src: "/runs/a3.manifest.json",
+    status: "Stable: the population settles into the comfort band and holds.",
   },
   {
     id: "A4",
@@ -165,8 +165,8 @@ export default function BatchAPage() {
 
       <div className="mt-16 border-t pt-6 rule">
         <p className="max-w-2xl text-[12px] leading-relaxed text-[#1b1b1b]/50">
-          Static analysis figures and additional plates (A2, A3) follow as the diagnostic runs land.
-          The full specification, parameter table, and results live in the{" "}
+          All four plates replay real logged runs; static analysis figures follow as the diagnostic
+          runs land. The full specification, parameter table, and results live in the{" "}
           <Link href="/artifacts" className="underline underline-offset-2">
             artifacts
           </Link>
