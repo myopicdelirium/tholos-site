@@ -17,8 +17,10 @@ export default function SiteNav() {
   const items: NavItem[] = useMemo(
     () => [
       { href: "/artifacts", label: "Artifacts" },
+      { href: "/batch-a", label: "Batch A" },
       { href: "/instruments", label: "Instruments" },
       { href: "/logbook", label: "Logbook" },
+      { href: "/roster", label: "Roster" },
       { href: "/events", label: "Events" },
       { href: "/connect", label: "Connect" },
     ],

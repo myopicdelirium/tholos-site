@@ -1,0 +1,40 @@
+# A3 — full stationary ecology (§2.2). Adds heat (comfort band), vegetation,
+# prey, and predators (risk). Everything still STATIONARY: fauna don't move,
+# seasons don't turn. This is the world A4 will invalidate.
+case: a3
+
+run:
+  max_ticks: 3000
+
+init:
+  n_agents: 40
+  spawn_mode: uniform
+
+actions:
+  move_cost_per_tile: 0.012
+  flee_cost_per_tile: 0.012
+
+fields:
+  temperature:
+    enabled: true
+  risk:
+    enabled: true
+
+entities:
+  vegetation:
+    enabled: true
+  prey:
+    enabled: true
+    mobile: false
+  predators:
+    enabled: true
+    mobile: false
+
+reproduction:
+  enabled: true
+
+traits:
+  fix_identical: false
+
+learning:
+  enabled: true

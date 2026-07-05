@@ -1,0 +1,42 @@
+[
+  {
+    "cell": "learn_on__grad_on",
+    "learning": true,
+    "gradient": true,
+    "n": 20,
+    "frac_survived": 1.0,
+    "median_survival": 1500.0,
+    "ci_low": 1500.0,
+    "ci_high": 1500.0
+  },
+  {
+    "cell": "learn_frozen__grad_on",
+    "learning": false,
+    "gradient": true,
+    "n": 20,
+    "frac_survived": 1.0,
+    "median_survival": 1500.0,
+    "ci_low": 1500.0,
+    "ci_high": 1500.0
+  },
+  {
+    "cell": "learn_on__grad_off",
+    "learning": true,
+    "gradient": false,
+    "n": 20,
+    "frac_survived": 0.2,
+    "median_survival": 100.0,
+    "ci_low": 100.0,
+    "ci_high": 100.0
+  },
+  {
+    "cell": "learn_frozen__grad_off",
+    "learning": false,
+    "gradient": false,
+    "n": 20,
+    "frac_survived": 0.2,
+    "median_survival": 100.0,
+    "ci_low": 100.0,
+    "ci_high": 100.0
+  }
+]

@@ -7,6 +7,20 @@ export default function Home() {
     <main>
       <ImmersiveHero />
 
+      {/* notice */}
+      <section className="border-y rule bg-[rgb(var(--ivory))]">
+        <div className="mx-auto max-w-6xl px-6 py-6">
+          <p className="text-[12px] leading-relaxed text-[#6a6258]">
+            The public interface has been delayed due to unforeseen circumstances.
+            Appropriate adjustments have been made and we expect release prior to
+            relocation in June 2026. We reserve all intellectual property rights.
+            The Tholos set has not been and will not be submitted for publication
+            to any journal. Previews of shortened articles will be released in
+            our artifacts section beginning April 20, 2026 and June 1, 2026.
+          </p>
+        </div>
+      </section>
+
       {/* simulation band */}
       <section className="relative bg-[#070d16]">
         <div className="mx-auto max-w-6xl px-6 py-14 sm:py-20">

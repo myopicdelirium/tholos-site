@@ -1,0 +1,11 @@
+# Simulation outputs (reproducible from code+config+seed; do not commit)
+runs/
+experiments/results/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
