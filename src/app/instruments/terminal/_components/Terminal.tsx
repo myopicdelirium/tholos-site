@@ -1,23 +1,22 @@
 "use client";
 
 /**
- * The live terminal (Stage P3) — drives the PVE public-tier API.
+ * The live terminal (P3, widened in P4 to books) — drives the PVE public API.
  *
- * The browser computes NOTHING: the payoff curve, density bins, bands, ranges
- * and bridge numbers all arrive from the backend, whose response schema makes
- * a lone-number mark unrepresentable. This component has no point-only render
- * path — a mark renders as its band or not at all. Synthetic-reference results
- * carry the payload's illustrative flag and render behind a loud banner.
- *
- * If the API is unreachable, the terminal degrades to a clear offline state;
- * the narrative /instruments page above never depends on it.
+ * The browser computes NOTHING: every number renders from API payloads whose
+ * schemas make lone-number marks unrepresentable. Books are bands and ranges
+ * all the way up; mixed-reference books carry a banner naming the illustrative
+ * holdings. Export/import moves the entered book as a local JSON file — no
+ * accounts, no server-side storage of books beyond the response cache.
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Bridge, Hist, PayoffCurve, RangeDots } from "../../_components/charts";
+import { Fan, HBars, Heatmap, Hist, PayoffCurve, RangeBars, RangeDots } from "../../_components/charts";
 
-const API = process.env.NEXT_PUBLIC_PVE_API_URL ?? "http://127.0.0.1:8620";
+const API = process.env.NEXT_PUBLIC_PVE_API_URL ??
+  (process.env.NODE_ENV === "production" ? "https://api.myopicdelirium.com" : "http://127.0.0.1:8620");
 const OX = "#8a3033";
+const BOOK_FILE_VERSION = 1;
 
 const SECTORS = ["SOFTWARE_SAAS", "FINTECH", "HEALTHTECH", "CONSUMER", "INDUSTRIAL_TECH",
   "CLEANTECH_ENERGY", "BIOTECH_PHARMA", "MEDIA_GAMING", "LOGISTICS_MOBILITY", "OTHER"];
@@ -31,57 +30,107 @@ type ClassRow = {
 };
 type CompRow = { ticker: string; ev_to_revenue: string; ev_to_ebitda: string;
   revenue_growth_yoy: string; gross_margin: string };
+type CompanyForm = { name: string; sector: string; stage: string; geography: string;
+  revenue_ltm: string; revenue_growth_yoy: string; gross_margin: string;
+  ebitda_ltm: string; cash_balance: string; monthly_burn: string };
+type StakeForm = { owned_class: string; shares_owned: string; cost_basis: string; self_mark: string };
+type Draft = { company: CompanyForm; classes: ClassRow[]; stake: StakeForm;
+  refMode: "pasted" | "synthetic"; comps: CompRow[]; dlomOverride: string; blendOverride: string };
 
 type Band = { low: number; central: number; high: number; alpha: number };
-type ValuationBody = {
-  mark: {
-    band: Band; dlom_applied: number; peer_set: string[];
-    density: { edges: number[]; counts: number[] };
-    chain: { enterprise_value: number; equity_value: number;
-             pro_rata_stake: number; waterfall_stake: number };
-    gap: { absolute: number; relative: number; from_comps: number;
-           from_dlom: number; driver: string } | null;
-  };
-  payoff_curve: { equity_values: number[]; owned_class_proceeds: number[];
-                  segment_slopes: number[]; preference_threshold: number };
-  forward: {
-    tvpi: Band; p_tvpi_target: number; tvpi_target: number;
-    target_hit: { low: number; high: number; by_set: Record<string, number> };
-    target_irr: number;
-    irr: { median: number; iqr_low: number; iqr_high: number; caveat: string };
-  };
-  reference: { mode: string; illustrative: boolean; label: string | null };
-  oracle: { passed: boolean; checks: Record<string, boolean>; signal: string };
+type Density = { edges: number[]; counts: number[] };
+type CurvePayload = { equity_values: number[]; owned_class_proceeds: number[];
+  segment_slopes: number[]; preference_threshold: number };
+type BookBody = {
+  nav: Band; nav_density: Density;
+  holdings: { name: string; band: Band; dlom_applied: number; illustrative: boolean;
+              peer_set: string[]; curve: CurvePayload;
+              gap: { relative: number; from_comps: number; from_dlom: number; driver: string } | null }[];
+  forward: { tvpi: Band; p_tvpi_target: number; tvpi_target: number;
+             target_hit: { low: number; high: number; by_set: Record<string, number> };
+             target_irr: number;
+             irr: { median: number; iqr_low: number; iqr_high: number } };
+  tvpi_density: Density;
+  jcurve: { t: number[]; q05: number[]; q25: number[]; q50: number[]; q75: number[]; q95: number[] };
+  assumption_set: string;
+  sensitivity: { assumption: string; lo: number; hi: number }[];
+  risk: { note: string; portfolio_vol_annual: number; effective_bets_risk: number;
+          effective_bets_spectrum: number; herfindahl_nav: number; n_signal_factors: number;
+          contributions: { name: string; share: number }[];
+          exposures: Record<string, Record<string, { nav_share: number; risk_share: number }>>;
+          liquidity_ladder: Record<string, number>;
+          heatmap: { names: string[]; matrix: number[][] } } | null;
+  risk_note: string;
+  reference: { illustrative_any: boolean; illustrative_names: string[]; label: string | null };
+  scenario_labels: string[];
+  oracle: { signal: string };
   method_notes: string[];
   seed: number;
 };
 
 const num = (s: string): number | null => (s.trim() === "" ? null : Number(s));
 
-const DEFAULT_CLASSES: ClassRow[] = [
-  { name: "Series A", class_type: "preferred", seniority_rank: 0,
-    liquidation_preference_multiple: "1.0", participating: false,
-    participation_cap_multiple: "", shares_outstanding: "4", invested_capital: "8" },
-  { name: "Common", class_type: "common", seniority_rank: 1,
-    liquidation_preference_multiple: "", participating: false,
-    participation_cap_multiple: "", shares_outstanding: "10", invested_capital: "0" },
-];
-const DEFAULT_COMPS: CompRow[] = [
-  { ticker: "PEERA", ev_to_revenue: "8.0", ev_to_ebitda: "24", revenue_growth_yoy: "0.35", gross_margin: "0.75" },
-  { ticker: "PEERB", ev_to_revenue: "6.5", ev_to_ebitda: "20", revenue_growth_yoy: "0.25", gross_margin: "0.70" },
-  { ticker: "PEERC", ev_to_revenue: "9.5", ev_to_ebitda: "", revenue_growth_yoy: "0.45", gross_margin: "0.80" },
-  { ticker: "PEERD", ev_to_revenue: "5.0", ev_to_ebitda: "15", revenue_growth_yoy: "0.15", gross_margin: "0.60" },
-  { ticker: "PEERE", ev_to_revenue: "7.2", ev_to_ebitda: "22", revenue_growth_yoy: "0.30", gross_margin: "0.72" },
-];
+const freshDraft = (): Draft => ({
+  company: { name: "Holding " + String.fromCharCode(65 + Math.floor(Math.random() * 26)),
+    sector: "SOFTWARE_SAAS", stage: "SERIES_A", geography: "NORDICS",
+    revenue_ltm: "12", revenue_growth_yoy: "0.35", gross_margin: "0.72",
+    ebitda_ltm: "", cash_balance: "10", monthly_burn: "0.6" },
+  classes: [
+    { name: "Series A", class_type: "preferred", seniority_rank: 0,
+      liquidation_preference_multiple: "1.0", participating: false,
+      participation_cap_multiple: "", shares_outstanding: "4", invested_capital: "8" },
+    { name: "Common", class_type: "common", seniority_rank: 1,
+      liquidation_preference_multiple: "", participating: false,
+      participation_cap_multiple: "", shares_outstanding: "10", invested_capital: "0" },
+  ],
+  stake: { owned_class: "Series A", shares_owned: "2", cost_basis: "6", self_mark: "" },
+  refMode: "pasted",
+  comps: [
+    { ticker: "PEERA", ev_to_revenue: "8.0", ev_to_ebitda: "24", revenue_growth_yoy: "0.35", gross_margin: "0.75" },
+    { ticker: "PEERB", ev_to_revenue: "6.5", ev_to_ebitda: "20", revenue_growth_yoy: "0.25", gross_margin: "0.70" },
+    { ticker: "PEERC", ev_to_revenue: "9.5", ev_to_ebitda: "", revenue_growth_yoy: "0.45", gross_margin: "0.80" },
+    { ticker: "PEERD", ev_to_revenue: "5.0", ev_to_ebitda: "15", revenue_growth_yoy: "0.15", gross_margin: "0.60" },
+    { ticker: "PEERE", ev_to_revenue: "7.2", ev_to_ebitda: "22", revenue_growth_yoy: "0.30", gross_margin: "0.72" },
+  ],
+  dlomOverride: "", blendOverride: "",
+});
+
+function draftToApiHolding(d: Draft) {
+  const levers: Record<string, number> = {};
+  if (d.dlomOverride.trim() !== "") levers.dlom_central = Number(d.dlomOverride);
+  if (d.blendOverride.trim() !== "") levers.blend_weight_revenue = Number(d.blendOverride);
+  return {
+    company: { name: d.company.name, sector: d.company.sector, stage: d.company.stage,
+      geography: d.company.geography, revenue_ltm: num(d.company.revenue_ltm),
+      revenue_growth_yoy: num(d.company.revenue_growth_yoy),
+      gross_margin: num(d.company.gross_margin), ebitda_ltm: num(d.company.ebitda_ltm),
+      cash_balance: num(d.company.cash_balance), monthly_burn: num(d.company.monthly_burn) },
+    cap_table: d.classes.map((c) => ({
+      name: c.name, class_type: c.class_type, seniority_rank: Number(c.seniority_rank),
+      liquidation_preference_multiple: num(c.liquidation_preference_multiple),
+      participating: c.participating,
+      participation_cap_multiple: num(c.participation_cap_multiple),
+      shares_outstanding: num(c.shares_outstanding),
+      invested_capital: num(c.invested_capital),
+    })),
+    stake: { owned_class: d.stake.owned_class, shares_owned: num(d.stake.shares_owned),
+      cost_basis: num(d.stake.cost_basis) ?? 0, self_mark: num(d.stake.self_mark) },
+    market: d.refMode === "pasted"
+      ? { mode: "pasted", comps: d.comps.filter((c) => c.ticker.trim()).map((c) => ({
+          ticker: c.ticker.trim().toUpperCase(), ev_to_revenue: num(c.ev_to_revenue),
+          ev_to_ebitda: num(c.ev_to_ebitda), revenue_growth_yoy: num(c.revenue_growth_yoy),
+          gross_margin: num(c.gross_margin) })) }
+      : { mode: "synthetic" },
+    ...(Object.keys(levers).length ? { levers } : {}),
+  };
+}
 
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`paper shadow-paper border rule rounded-2xl p-6 ${className}`}>{children}</div>;
 }
-
 function Small({ children }: { children: React.ReactNode }) {
   return <p className="mt-2 text-[11.5px] leading-relaxed text-[#6a6258]">{children}</p>;
 }
-
 function Guidance({ lines }: { lines: string[] }) {
   return (
     <div className="mt-3 rounded-xl border rule bg-white/60 p-4">
@@ -99,39 +148,35 @@ const inputCls =
   "w-full rounded-lg border rule bg-white/70 px-2.5 py-1.5 text-[12.5px] text-[#191714] " +
   "focus:outline-none focus:ring-2 focus:ring-[#2d5bff]/30";
 const labelCls = "smallcaps block text-[9.5px] text-[#6a6258] mb-1";
+const pillCls = (on: boolean) =>
+  `rounded-full border rule px-4 py-2 text-[11px] uppercase tracking-[0.18em] ${
+    on ? "bg-[#191714] text-[#f4f1ea]" : "bg-white/50 text-[#5f564d] hover:bg-black/5"}`;
 
 export default function Terminal() {
   const [apiUp, setApiUp] = useState<boolean | null>(null);
-  const [classes, setClasses] = useState<ClassRow[]>(DEFAULT_CLASSES);
+  const [draft, setDraft] = useState<Draft>(freshDraft());
+  const [book, setBook] = useState<Draft[]>([]);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
   const [curve, setCurve] = useState<{ x: number[]; y: number[]; threshold: number } | null>(null);
   const [curveGuidance, setCurveGuidance] = useState<string[]>([]);
-  const [company, setCompany] = useState({ name: "Your company", sector: "SOFTWARE_SAAS",
-    stage: "SERIES_A", geography: "NORDICS", revenue_ltm: "12", revenue_growth_yoy: "0.35",
-    gross_margin: "0.72", ebitda_ltm: "", cash_balance: "10", monthly_burn: "0.6" });
-  const [stake, setStake] = useState({ owned_class: "Series A", shares_owned: "2",
-    cost_basis: "6", self_mark: "" });
-  const [refMode, setRefMode] = useState<"pasted" | "synthetic">("pasted");
-  const [comps, setComps] = useState<CompRow[]>(DEFAULT_COMPS);
+  const [scen, setScen] = useState({ compress: false, window: false, writeoff: false });
+  const [assumptionSet, setAssumptionSet] = useState<"base" | "pessimistic" | "optimistic">("base");
+  const [seed, setSeed] = useState("20240115");
+  const [paths, setPaths] = useState("");
   const [running, setRunning] = useState(false);
   const [runGuidance, setRunGuidance] = useState<string[]>([]);
-  const [result, setResult] = useState<ValuationBody | null>(null);
+  const [result, setResult] = useState<BookBody | null>(null);
+  const [openHolding, setOpenHolding] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fileRef = useRef<HTMLInputElement | null>(null);
 
-  // ---- health: the terminal announces itself or degrades clearly ---------- //
   useEffect(() => {
     fetch(`${API}/health`).then((r) => setApiUp(r.ok)).catch(() => setApiUp(false));
   }, []);
 
-  const classPayload = useCallback(() => classes.map((c) => ({
-    name: c.name, class_type: c.class_type, seniority_rank: Number(c.seniority_rank),
-    liquidation_preference_multiple: num(c.liquidation_preference_multiple),
-    participating: c.participating,
-    participation_cap_multiple: num(c.participation_cap_multiple),
-    shares_outstanding: num(c.shares_outstanding),
-    invested_capital: num(c.invested_capital),
-  })), [classes]);
+  const classPayload = useCallback(() => draftToApiHolding(draft).cap_table, [draft]);
 
-  // ---- the live payoff curve (signature moment), server-computed ---------- //
+  // the live payoff curve while building (server-computed, debounced)
   useEffect(() => {
     if (!apiUp) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -139,7 +184,7 @@ export default function Terminal() {
       try {
         const r = await fetch(`${API}/payoff-curve`, {
           method: "POST", headers: { "content-type": "application/json" },
-          body: JSON.stringify({ cap_table: classPayload(), owned_class: stake.owned_class }),
+          body: JSON.stringify({ cap_table: classPayload(), owned_class: draft.stake.owned_class }),
         });
         const body = await r.json();
         if (r.status === 422) {
@@ -150,36 +195,38 @@ export default function Terminal() {
                      threshold: body.preference_threshold });
           setCurveGuidance([]);
         }
-      } catch {
-        setApiUp(false);
-      }
+      } catch { setApiUp(false); }
     }, 450);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [classes, stake.owned_class, apiUp, classPayload]);
+  }, [draft.classes, draft.stake.owned_class, apiUp, classPayload]);
 
   const updateClass = (i: number, patch: Partial<ClassRow>) =>
-    setClasses((cs) => cs.map((c, j) => (j === i ? { ...c, ...patch } : c)));
+    setDraft((d) => ({ ...d, classes: d.classes.map((c, j) => (j === i ? { ...c, ...patch } : c)) }));
 
-  const run = async () => {
+  const addToBook = () => {
+    if (editIndex !== null) {
+      setBook((b) => b.map((h, i) => (i === editIndex ? draft : h)));
+      setEditIndex(null);
+    } else {
+      setBook((b) => [...b, draft]);
+    }
+    setDraft(freshDraft());
+    setResult(null);
+  };
+
+  const runBook = async () => {
+    const holdings = (book.length ? book : [draft]).map(draftToApiHolding);
     setRunning(true); setRunGuidance([]); setResult(null);
     try {
       const payload = {
-        company: { name: company.name, sector: company.sector, stage: company.stage,
-          geography: company.geography, revenue_ltm: num(company.revenue_ltm),
-          revenue_growth_yoy: num(company.revenue_growth_yoy),
-          gross_margin: num(company.gross_margin), ebitda_ltm: num(company.ebitda_ltm),
-          cash_balance: num(company.cash_balance), monthly_burn: num(company.monthly_burn) },
-        cap_table: classPayload(),
-        stake: { owned_class: stake.owned_class, shares_owned: num(stake.shares_owned),
-          cost_basis: num(stake.cost_basis) ?? 0, self_mark: num(stake.self_mark) },
-        market: refMode === "pasted"
-          ? { mode: "pasted", comps: comps.filter((c) => c.ticker.trim()).map((c) => ({
-              ticker: c.ticker.trim().toUpperCase(), ev_to_revenue: num(c.ev_to_revenue),
-              ev_to_ebitda: num(c.ev_to_ebitda), revenue_growth_yoy: num(c.revenue_growth_yoy),
-              gross_margin: num(c.gross_margin) })) }
-          : { mode: "synthetic" },
+        holdings,
+        compress_multiples: scen.compress, window_shut: scen.window,
+        higher_write_offs: scen.writeoff,
+        assumption_set: assumptionSet,
+        seed: num(seed) ?? undefined,
+        ...(num(paths) !== null ? { n_paths: num(paths) } : {}),
       };
-      const r = await fetch(`${API}/valuation`, {
+      const r = await fetch(`${API}/book`, {
         method: "POST", headers: { "content-type": "application/json" },
         body: JSON.stringify(payload),
       });
@@ -193,14 +240,40 @@ export default function Terminal() {
       } else {
         setRunGuidance(["The engine returned an unexpected error."]);
       }
-    } catch {
-      setApiUp(false);
-    } finally {
-      setRunning(false);
-    }
+    } catch { setApiUp(false); } finally { setRunning(false); }
   };
 
-  // ---------------- offline state (§5.2) ---------------------------------- //
+  // A.3 — book portability, no accounts: local JSON export/import
+  const exportBook = () => {
+    const data = { version: BOOK_FILE_VERSION,
+      book: book.length ? book : [draft],
+      controls: { scen, assumptionSet, seed, paths } };
+    const blob = new Blob([JSON.stringify(data, null, 1)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "pve-book.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+  const importBook = (file: File) => {
+    file.text().then((t) => {
+      try {
+        const data = JSON.parse(t);
+        if (data.version !== BOOK_FILE_VERSION || !Array.isArray(data.book)) throw new Error();
+        setBook(data.book);
+        if (data.controls) {
+          setScen(data.controls.scen ?? { compress: false, window: false, writeoff: false });
+          setAssumptionSet(data.controls.assumptionSet ?? "base");
+          setSeed(data.controls.seed ?? "20240115");
+          setPaths(data.controls.paths ?? "");
+        }
+        setResult(null);
+      } catch {
+        setRunGuidance(["That file isn't a PVE book export (version " + BOOK_FILE_VERSION + ")."]);
+      }
+    });
+  };
+
   if (apiUp === false) {
     return (
       <Card>
@@ -213,54 +286,89 @@ export default function Terminal() {
       </Card>
     );
   }
-  if (apiUp === null) {
-    return <Card><Small>Reaching the engine…</Small></Card>;
-  }
+  if (apiUp === null) return <Card><Small>Reaching the engine…</Small></Card>;
 
   const fwd = result?.forward;
-  const mark = result?.mark;
 
   return (
     <div className="space-y-8">
+      {/* ------------------ the book shelf --------------------------------- */}
+      <Card>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="smallcaps text-[10px] text-[#6a6258]">
+            Your book · {book.length} holding{book.length === 1 ? "" : "s"}
+            {book.length === 0 ? " (the holding below runs solo until you add more)" : ""}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" className={pillCls(false)} onClick={exportBook}>Export book</button>
+            <button type="button" className={pillCls(false)} onClick={() => fileRef.current?.click()}>
+              Import book
+            </button>
+            <input ref={fileRef} type="file" accept="application/json" className="hidden"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) importBook(f); e.target.value = ""; }} />
+          </div>
+        </div>
+        {book.length > 0 ? (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {book.map((h, i) => (
+              <span key={i} className="inline-flex items-center gap-2 rounded-full border rule bg-white/60 px-3 py-1.5 text-[12px] text-[#191714]">
+                {h.company.name}
+                <span className="text-[10px] text-[#6a6258]">
+                  {h.refMode === "synthetic" ? "illustrative" : `${h.comps.filter((c) => c.ticker.trim()).length} comps`}
+                </span>
+                <button type="button" className="text-[11px] text-[#6a6258] hover:text-[#191714]"
+                  onClick={() => { setDraft(h); setEditIndex(i); }}>edit</button>
+                <button type="button" aria-label={`remove ${h.company.name}`}
+                  className="text-[11px] text-[#6a6258] hover:text-[#8a3033]"
+                  onClick={() => setBook((b) => b.filter((_, j) => j !== i))}>✕</button>
+              </span>
+            ))}
+          </div>
+        ) : null}
+        <Small>No accounts, no server-side storage of your book — export it as a file, keep it,
+          re-import it later. Same seed, same result, exactly. Bodies are never logged; the
+          computation cache is keyed by hash.</Small>
+      </Card>
+
       {/* ------------------ 1 · the company ------------------------------- */}
       <Card>
-        <div className="smallcaps text-[10px] text-[#6a6258]">1 · The company</div>
+        <div className="smallcaps text-[10px] text-[#6a6258]">
+          {editIndex !== null ? `Editing — ${draft.company.name}` : "1 · The company"}
+        </div>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <label className={labelCls}>Name</label>
-            <input className={inputCls} value={company.name}
-              onChange={(e) => setCompany({ ...company, name: e.target.value })} />
+            <input className={inputCls} value={draft.company.name}
+              onChange={(e) => setDraft({ ...draft, company: { ...draft.company, name: e.target.value } })} />
           </div>
           {([["sector", SECTORS], ["stage", STAGES], ["geography", GEOS]] as const).map(([k, opts]) => (
             <div key={k}>
               <label className={labelCls}>{k}</label>
-              <select className={inputCls} value={company[k]}
-                onChange={(e) => setCompany({ ...company, [k]: e.target.value })}>
+              <select className={inputCls} value={draft.company[k]}
+                onChange={(e) => setDraft({ ...draft, company: { ...draft.company, [k]: e.target.value } })}>
                 {opts.map((o) => <option key={o} value={o}>{o.replace(/_/g, " ").toLowerCase()}</option>)}
               </select>
             </div>
           ))}
         </div>
         <div className="mt-3 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {([["revenue_ltm", "revenue (LTM, M)"], ["revenue_growth_yoy", "growth (YoY, e.g. 0.35)"],
-             ["gross_margin", "gross margin (0–1)"], ["ebitda_ltm", "EBITDA (M, optional)"],
-             ["cash_balance", "cash (M)"], ["monthly_burn", "burn (M/month)"]] as const).map(([k, label]) => (
+          {([["revenue_ltm", "revenue (LTM, M)"], ["revenue_growth_yoy", "growth (YoY)"],
+             ["gross_margin", "gross margin (0–1)"], ["ebitda_ltm", "EBITDA (M, opt.)"],
+             ["cash_balance", "cash (M)"], ["monthly_burn", "burn (M/mo)"]] as const).map(([k, label]) => (
             <div key={k}>
               <label className={labelCls}>{label}</label>
-              <input className={inputCls} inputMode="decimal" value={company[k as keyof typeof company]}
-                onChange={(e) => setCompany({ ...company, [k]: e.target.value })} />
+              <input className={inputCls} inputMode="decimal" value={draft.company[k]}
+                onChange={(e) => setDraft({ ...draft, company: { ...draft.company, [k]: e.target.value } })} />
             </div>
           ))}
         </div>
-        <Small>All optional — the engine handles gaps explicitly rather than guessing silently.</Small>
       </Card>
 
-      {/* ------------------ 2 · the cap table + live curve ----------------- */}
+      {/* ------------------ 2 · cap table + live curve --------------------- */}
       <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
         <Card>
           <div className="smallcaps text-[10px] text-[#6a6258]">2 · The cap table</div>
-          <Small>Rank 0 is paid first. The curve on the right redraws as you type — an incoherent
-            stack shows itself before any mark is computed.</Small>
+          <Small>Rank 0 is paid first. The curve on the right redraws as you type.</Small>
           <div className="mt-3 overflow-x-auto">
             <table className="w-full min-w-[680px] text-[12px]">
               <thead>
@@ -271,7 +379,7 @@ export default function Terminal() {
                 </tr>
               </thead>
               <tbody>
-                {classes.map((c, i) => (
+                {draft.classes.map((c, i) => (
                   <tr key={i} className="border-b rule/50">
                     <td className="px-2 py-1.5"><input className={inputCls} value={c.name}
                       onChange={(e) => updateClass(i, { name: e.target.value })} /></td>
@@ -303,7 +411,7 @@ export default function Terminal() {
                     <td className="px-1 py-1.5">
                       <button type="button" aria-label={`remove ${c.name}`}
                         className="rounded px-2 py-1 text-[11px] text-[#6a6258] hover:bg-black/5"
-                        onClick={() => setClasses((cs) => cs.filter((_, j) => j !== i))}>✕</button>
+                        onClick={() => setDraft((d) => ({ ...d, classes: d.classes.filter((_, j) => j !== i) }))}>✕</button>
                     </td>
                   </tr>
                 ))}
@@ -312,12 +420,12 @@ export default function Terminal() {
           </div>
           <button type="button"
             className="mt-3 rounded-full border rule bg-white/60 px-4 py-1.5 text-[11px] uppercase tracking-[0.18em] text-[#5f564d] hover:bg-black/5"
-            onClick={() => setClasses((cs) => [
-              { name: `Series ${String.fromCharCode(65 + cs.length - 1)}`, class_type: "preferred",
+            onClick={() => setDraft((d) => ({ ...d, classes: [
+              { name: `Series ${String.fromCharCode(65 + d.classes.length - 1)}`, class_type: "preferred",
                 seniority_rank: 0, liquidation_preference_multiple: "1.0", participating: false,
                 participation_cap_multiple: "", shares_outstanding: "3", invested_capital: "10" },
-              ...cs.map((c) => ({ ...c, seniority_rank: c.seniority_rank + 1 })),
-            ])}>
+              ...d.classes.map((c) => ({ ...c, seniority_rank: c.seniority_rank + 1 })),
+            ] }))}>
             + add a senior preferred round
           </button>
           {curveGuidance.length > 0 ? <Guidance lines={curveGuidance} /> : null}
@@ -325,12 +433,7 @@ export default function Terminal() {
         <Card>
           <div className="smallcaps text-[10px] text-[#6a6258]">Your payoff, live</div>
           {curve ? (
-            <div className="mt-2">
-              <PayoffCurve x={curve.x} y={curve.y} thresholdX={curve.threshold} />
-              <Small>Server-computed on every edit. Each kink is a preference exhausting, a cap
-                binding, or a class converting. If the shape surprises you, the cap table doesn&rsquo;t
-                say what you think it says.</Small>
-            </div>
+            <div className="mt-2"><PayoffCurve x={curve.x} y={curve.y} thresholdX={curve.threshold} /></div>
           ) : (
             <Small>The curve appears once the cap table is coherent.</Small>
           )}
@@ -338,203 +441,336 @@ export default function Terminal() {
             <div className="grid gap-3 sm:grid-cols-3">
               <div>
                 <label className={labelCls}>class you hold</label>
-                <select className={inputCls} value={stake.owned_class}
-                  onChange={(e) => setStake({ ...stake, owned_class: e.target.value })}>
-                  {classes.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
+                <select className={inputCls} value={draft.stake.owned_class}
+                  onChange={(e) => setDraft({ ...draft, stake: { ...draft.stake, owned_class: e.target.value } })}>
+                  {draft.classes.map((c) => <option key={c.name} value={c.name}>{c.name}</option>)}
                 </select>
               </div>
               <div>
                 <label className={labelCls}>shares owned (M)</label>
-                <input className={inputCls} inputMode="decimal" value={stake.shares_owned}
-                  onChange={(e) => setStake({ ...stake, shares_owned: e.target.value })} />
+                <input className={inputCls} inputMode="decimal" value={draft.stake.shares_owned}
+                  onChange={(e) => setDraft({ ...draft, stake: { ...draft.stake, shares_owned: e.target.value } })} />
               </div>
               <div>
                 <label className={labelCls}>cost basis (M)</label>
-                <input className={inputCls} inputMode="decimal" value={stake.cost_basis}
-                  onChange={(e) => setStake({ ...stake, cost_basis: e.target.value })} />
+                <input className={inputCls} inputMode="decimal" value={draft.stake.cost_basis}
+                  onChange={(e) => setDraft({ ...draft, stake: { ...draft.stake, cost_basis: e.target.value } })} />
               </div>
             </div>
-            <div className="mt-3">
-              <label className={labelCls}>your current mark (M, optional — enables the gap read)</label>
-              <input className={inputCls} inputMode="decimal" value={stake.self_mark}
-                onChange={(e) => setStake({ ...stake, self_mark: e.target.value })} />
+            <div className="mt-3 grid gap-3 sm:grid-cols-3">
+              <div>
+                <label className={labelCls}>your current mark (M, opt.)</label>
+                <input className={inputCls} inputMode="decimal" value={draft.stake.self_mark}
+                  onChange={(e) => setDraft({ ...draft, stake: { ...draft.stake, self_mark: e.target.value } })} />
+              </div>
+              <div>
+                <label className={labelCls}>DLOM override (0–0.85, opt.)</label>
+                <input className={inputCls} inputMode="decimal" placeholder="engine default"
+                  value={draft.dlomOverride}
+                  onChange={(e) => setDraft({ ...draft, dlomOverride: e.target.value })} />
+              </div>
+              <div>
+                <label className={labelCls}>revenue-blend weight (0–1, opt.)</label>
+                <input className={inputCls} inputMode="decimal" placeholder="engine default"
+                  value={draft.blendOverride}
+                  onChange={(e) => setDraft({ ...draft, blendOverride: e.target.value })} />
+              </div>
             </div>
+            <Small>The DLOM default is the middle of three defensible methods
+              (empirical / Chaffe / Finnerty), stage-conditional; the override is a lever, not a
+              correction of the engine.</Small>
           </div>
         </Card>
       </div>
 
-      {/* ------------------ 3 · the market reference ----------------------- */}
+      {/* ------------------ 3 · market reference --------------------------- */}
       <Card>
         <div className="smallcaps text-[10px] text-[#6a6258]">3 · The market reference</div>
         <div className="mt-3 flex flex-wrap gap-3">
-          <button type="button" aria-pressed={refMode === "pasted"}
-            className={`rounded-full border rule px-4 py-2 text-[11px] uppercase tracking-[0.18em] ${refMode === "pasted" ? "bg-[#191714] text-[#f4f1ea]" : "bg-white/50 text-[#5f564d] hover:bg-black/5"}`}
-            onClick={() => setRefMode("pasted")}>
+          <button type="button" aria-pressed={draft.refMode === "pasted"} className={pillCls(draft.refMode === "pasted")}
+            onClick={() => setDraft({ ...draft, refMode: "pasted" })}>
             Paste your own comps (real mark)
           </button>
-          <button type="button" aria-pressed={refMode === "synthetic"}
-            className={`rounded-full border rule px-4 py-2 text-[11px] uppercase tracking-[0.18em] ${refMode === "synthetic" ? "bg-[#191714] text-[#f4f1ea]" : "bg-white/50 text-[#5f564d] hover:bg-black/5"}`}
-            onClick={() => setRefMode("synthetic")}>
+          <button type="button" aria-pressed={draft.refMode === "synthetic"} className={pillCls(draft.refMode === "synthetic")}
+            onClick={() => setDraft({ ...draft, refMode: "synthetic" })}>
             Synthetic reference (mechanics only)
           </button>
         </div>
-        {refMode === "pasted" ? (
+        {draft.refMode === "pasted" ? (
           <div className="mt-4 overflow-x-auto">
             <table className="w-full min-w-[560px] text-[12px]">
               <thead>
                 <tr className="border-b rule text-left">
-                  {["ticker", "EV/Revenue", "EV/EBITDA", "growth (YoY)", "gross margin"].map((h, i) => (
+                  {["ticker", "EV/Revenue", "EV/EBITDA", "growth (YoY)", "gross margin", ""].map((h, i) => (
                     <th key={i} className="smallcaps px-2 py-2 text-[9px] font-normal text-[#6a6258]">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {comps.map((c, i) => (
+                {draft.comps.map((c, i) => (
                   <tr key={i} className="border-b rule/50">
                     {(["ticker", "ev_to_revenue", "ev_to_ebitda", "revenue_growth_yoy", "gross_margin"] as const).map((k) => (
                       <td key={k} className="px-2 py-1.5">
                         <input className={inputCls} value={c[k]} inputMode={k === "ticker" ? "text" : "decimal"}
-                          onChange={(e) => setComps((rows) => rows.map((r, j) => j === i ? { ...r, [k]: e.target.value } : r))} />
+                          onChange={(e) => setDraft((d) => ({ ...d,
+                            comps: d.comps.map((r, j) => j === i ? { ...r, [k]: e.target.value } : r) }))} />
                       </td>
                     ))}
+                    <td className="px-1 py-1.5">
+                      <button type="button" aria-label="remove comp"
+                        className="rounded px-2 py-1 text-[11px] text-[#6a6258] hover:bg-black/5"
+                        onClick={() => setDraft((d) => ({ ...d, comps: d.comps.filter((_, j) => j !== i) }))}>✕</button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
             <button type="button"
               className="mt-2 rounded-full border rule bg-white/60 px-4 py-1.5 text-[11px] uppercase tracking-[0.18em] text-[#5f564d] hover:bg-black/5"
-              onClick={() => setComps((rows) => [...rows,
-                { ticker: "", ev_to_revenue: "", ev_to_ebitda: "", revenue_growth_yoy: "", gross_margin: "" }])}>
+              onClick={() => setDraft((d) => ({ ...d, comps: [...d.comps,
+                { ticker: "", ev_to_revenue: "", ev_to_ebitda: "", revenue_growth_yoy: "", gross_margin: "" }] }))}>
               + add comp
             </button>
-            <Small>Your comparables, your mark — the tool takes no data-quality liability it can&rsquo;t
-              stand behind. Live comparables run on the private tier.</Small>
+            <Small>Your comparables, your mark. Live comparables run on the private tier.</Small>
           </div>
         ) : (
           <div className="mt-4 rounded-xl border p-4" style={{ borderColor: OX, background: "rgba(138,48,51,0.06)" }}>
             <div className="smallcaps text-[10px]" style={{ color: OX }}>Illustrative — not a real mark</div>
             <p className="mt-1 text-[12.5px] leading-relaxed text-[#4b443b]">
-              This mode marks your structure against the synthetic reference market — useful for
-              exploring the mechanics, meaningless as a valuation. The result will carry this label.
+              Marks this holding against the synthetic reference market — mechanics only. In a book,
+              the result banner will name every holding that rides this reference.
             </p>
           </div>
         )}
       </Card>
 
-      {/* ------------------ run -------------------------------------------- */}
-      <div>
-        <button type="button" disabled={running || !curve}
-          className="rounded-full border rule bg-[#191714] px-6 py-2.5 text-[11px] uppercase tracking-[0.22em] text-[#f4f1ea] transition-opacity disabled:opacity-40"
-          onClick={run}>
-          {running ? "The engine is running…" : "Run the engine on this holding"}
-        </button>
+      {/* ------------------ book controls + run ---------------------------- */}
+      <Card>
+        <div className="smallcaps text-[10px] text-[#6a6258]">The controls</div>
+        <div className="mt-3 flex flex-wrap items-end gap-3">
+          <button type="button" className={pillCls(false)} onClick={addToBook}>
+            {editIndex !== null ? "Save holding" : "+ Add this holding to the book"}
+          </button>
+          <div className="flex flex-wrap gap-2">
+            {([["compress", "Compress multiples 30%"], ["window", "Exit window shut"],
+               ["writeoff", "Write-offs +10pp"]] as const).map(([k, label]) => (
+              <button key={k} type="button" aria-pressed={scen[k]} className={pillCls(scen[k])}
+                onClick={() => setScen((s0) => ({ ...s0, [k]: !s0[k] }))}>{label}</button>
+            ))}
+          </div>
+          <div>
+            <label className={labelCls}>calibration set (headline)</label>
+            <select className={inputCls} value={assumptionSet}
+              onChange={(e) => setAssumptionSet(e.target.value as typeof assumptionSet)}>
+              <option value="base">base</option>
+              <option value="pessimistic">pessimistic</option>
+              <option value="optimistic">optimistic</option>
+            </select>
+          </div>
+          <div className="w-32">
+            <label className={labelCls}>seed (reproducible)</label>
+            <input className={inputCls} inputMode="numeric" value={seed}
+              onChange={(e) => setSeed(e.target.value)} />
+          </div>
+          <div className="w-32">
+            <label className={labelCls}>paths (≤ 20000)</label>
+            <input className={inputCls} inputMode="numeric" placeholder="default" value={paths}
+              onChange={(e) => setPaths(e.target.value)} />
+          </div>
+        </div>
+        <Small>Same seed, same result — bit-identical, by construction. The target-hit range always
+          spans all three calibration sets; the selector only chooses which distribution leads.</Small>
+        <div className="mt-4">
+          <button type="button" disabled={running}
+            className="rounded-full border rule bg-[#191714] px-6 py-2.5 text-[11px] uppercase tracking-[0.22em] text-[#f4f1ea] transition-opacity disabled:opacity-40"
+            onClick={runBook}>
+            {running ? "The engine is running…" :
+              `Run the ${book.length > 1 ? `book (${book.length} holdings)` : "engine"}`}
+          </button>
+        </div>
         {runGuidance.length > 0 ? <Guidance lines={runGuidance} /> : null}
-      </div>
+      </Card>
 
-      {/* ------------------ the result ------------------------------------- */}
-      {result && mark && fwd ? (
+      {/* ------------------ the book result -------------------------------- */}
+      {result && fwd ? (
         <div className="space-y-4">
-          {result.reference.illustrative ? (
+          {result.reference.illustrative_any ? (
             <div className="rounded-xl border p-4" style={{ borderColor: OX, background: "rgba(138,48,51,0.08)" }}>
-              <div className="smallcaps text-[11px]" style={{ color: OX }}>
-                {result.reference.label}
-              </div>
+              <div className="smallcaps text-[11px]" style={{ color: OX }}>{result.reference.label}</div>
             </div>
           ) : null}
+          {result.scenario_labels.length ? (
+            <div className="text-[11.5px] text-[#6a6258]">
+              Active stresses: {result.scenario_labels.join(" · ")} · calibration set: {result.assumption_set}
+            </div>
+          ) : null}
+
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Card>
-              <div className="smallcaps text-[10px] text-[#6a6258]">The mark, with its band</div>
+              <div className="smallcaps text-[10px] text-[#6a6258]">Book NAV, with its band</div>
               <div className="mono mt-2 text-[22px] text-[#191714]">
-                {mark.band.low.toFixed(2)} – {mark.band.high.toFixed(2)} M
+                {result.nav.low.toFixed(1)} – {result.nav.high.toFixed(1)} M
               </div>
-              <Small>central {mark.band.central.toFixed(2)} M · {Math.round(mark.band.alpha * 100)}%
-                credible interval. Never a lone number.</Small>
+              <Small>central {result.nav.central.toFixed(1)} M · {Math.round(result.nav.alpha * 100)}%
+                credible interval, correlated aggregation — never a lone number.</Small>
             </Card>
             <Card>
-              <div className="smallcaps text-[10px] text-[#6a6258]">Median TVPI (forward)</div>
+              <div className="smallcaps text-[10px] text-[#6a6258]">Median TVPI · {result.assumption_set}</div>
               <div className="mono mt-2 text-[22px] text-[#191714]">{fwd.tvpi.central.toFixed(2)}x</div>
-              <Small>{Math.round(fwd.tvpi.alpha * 100)}% CI [{fwd.tvpi.low.toFixed(2)}, {fwd.tvpi.high.toFixed(2)}]x</Small>
+              <Small>{Math.round(fwd.tvpi.alpha * 100)}% CI [{fwd.tvpi.low.toFixed(2)}, {fwd.tvpi.high.toFixed(2)}]x ·
+                P(TVPI ≥ {fwd.tvpi_target}x) = {Math.round(fwd.p_tvpi_target * 100)}%</Small>
             </Card>
             <Card>
               <div className="smallcaps text-[10px] text-[#6a6258]">P(IRR ≥ {Math.round(fwd.target_irr * 100)}%)</div>
               <div className="mono mt-2 text-[22px] text-[#191714]">
                 {Math.round(fwd.target_hit.low * 100)}% – {Math.round(fwd.target_hit.high * 100)}%
               </div>
-              <Small>a range across calibration sets — IRR targets are timing-sensitive.</Small>
+              <Small>across calibration sets, whatever the selector says — IRR is timing-sensitive;
+                median {(fwd.irr.median * 100).toFixed(1)}%, IQR [{(fwd.irr.iqr_low * 100).toFixed(1)}%,
+                {(fwd.irr.iqr_high * 100).toFixed(1)}%]; mean not shown.</Small>
             </Card>
             <Card>
-              <div className="smallcaps text-[10px] text-[#6a6258]">P(TVPI ≥ {fwd.tvpi_target}x)</div>
-              <div className="mono mt-2 text-[22px] text-[#191714]">{Math.round(fwd.p_tvpi_target * 100)}%</div>
-              <Small>IRR median {(fwd.irr.median * 100).toFixed(1)}%, IQR
-                [{(fwd.irr.iqr_low * 100).toFixed(1)}%, {(fwd.irr.iqr_high * 100).toFixed(1)}%]; mean not shown.</Small>
+              <div className="smallcaps text-[10px] text-[#6a6258]">Effective bets</div>
+              <div className="mono mt-2 text-[22px] text-[#191714]">
+                {result.risk ? result.risk.effective_bets_risk.toFixed(1) : "—"}
+              </div>
+              <Small>{result.risk
+                ? `of ${result.holdings.length} names (risk-based; spectrum ${result.risk.effective_bets_spectrum.toFixed(1)})`
+                : result.risk_note}</Small>
             </Card>
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-2">
-            <Card>
-              <div className="smallcaps text-[10px] text-[#6a6258]">The valuation bridge (M)</div>
-              <div className="mt-3">
-                <Bridge steps={[
-                  { label: "peer-implied EV", from: 0, to: mark.chain.enterprise_value },
-                  { label: "equity (net debt)", from: mark.chain.enterprise_value, to: mark.chain.equity_value },
-                  { label: "pro-rata stake", from: mark.chain.equity_value, to: mark.chain.pro_rata_stake },
-                  { label: "preference waterfall", from: mark.chain.pro_rata_stake, to: mark.chain.waterfall_stake },
-                  { label: `− DLOM (${Math.round(mark.dlom_applied * 100)}%)`, from: mark.chain.waterfall_stake, to: mark.band.central },
-                ]} />
-              </div>
-              <Small>Peers used: {mark.peer_set.join(", ")}</Small>
-            </Card>
-            <Card>
-              <div className="smallcaps text-[10px] text-[#6a6258]">An honest band vs a point</div>
-              <div className="mt-3">
-                <Hist edges={mark.density.edges} counts={mark.density.counts}
-                  band={[mark.band.low, mark.band.high]}
-                  marks={[
-                    { x: mark.band.central, label: "market-referenced", color: "#191714" },
-                    ...(num(stake.self_mark) !== null
-                      ? [{ x: num(stake.self_mark) as number, label: "your mark", color: OX, dash: true }]
-                      : []),
-                  ]}
-                  xLabel="stake value (M) · Monte Carlo over multiple, metric, discount" height={150} />
-              </div>
-              {mark.gap ? (
-                <Small>
-                  Gap vs your mark: {(mark.gap.relative * 100).toFixed(1)}% —
-                  comps {mark.gap.from_comps >= 0 ? "+" : ""}{mark.gap.from_comps.toFixed(2)} M,
-                  discount {mark.gap.from_dlom.toFixed(2)} M ({mark.gap.driver}-driven).
-                </Small>
-              ) : null}
-            </Card>
-          </div>
+          <Card className="p-0">
+            <table className="w-full text-[12.5px]">
+              <thead>
+                <tr className="border-b rule text-left">
+                  {["holding", "mark band (M)", "central", "DLOM", "gap", "reference", ""].map((h, i) => (
+                    <th key={i} className="smallcaps px-4 py-3 text-[9.5px] font-normal text-[#6a6258]">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {result.holdings.map((h) => (
+                  <tr key={h.name} className="border-b rule/50">
+                    <td className="px-4 py-2.5 text-[#191714]">{h.name}</td>
+                    <td className="mono px-4 py-2.5">{h.band.low.toFixed(2)} – {h.band.high.toFixed(2)}</td>
+                    <td className="mono px-4 py-2.5">{h.band.central.toFixed(2)}</td>
+                    <td className="mono px-4 py-2.5">{Math.round(h.dlom_applied * 100)}%</td>
+                    <td className="mono px-4 py-2.5" style={{ color: h.gap && h.gap.relative < -0.1 ? OX : "#6a6258" }}>
+                      {h.gap ? `${(h.gap.relative * 100).toFixed(1)}% (${h.gap.driver})` : "—"}
+                    </td>
+                    <td className="px-4 py-2.5 text-[11px]" style={{ color: h.illustrative ? OX : "#6a6258" }}>
+                      {h.illustrative ? "ILLUSTRATIVE" : "pasted comps"}
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <button type="button" className="text-[11px] text-[#6a6258] underline hover:text-[#191714]"
+                        onClick={() => setOpenHolding(openHolding === h.name ? null : h.name)}>
+                        {openHolding === h.name ? "close" : "payoff"}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {openHolding ? (() => {
+              const h = result.holdings.find((x) => x.name === openHolding);
+              return h ? (
+                <div className="border-t rule p-4">
+                  <div className="smallcaps text-[10px] text-[#6a6258]">{h.name} — payoff vs exit value</div>
+                  <div className="mx-auto mt-2 max-w-[560px]">
+                    <PayoffCurve x={h.curve.equity_values} y={h.curve.owned_class_proceeds}
+                      thresholdX={h.curve.preference_threshold} />
+                  </div>
+                </div>
+              ) : null;
+            })() : null}
+          </Card>
 
           <div className="grid gap-4 lg:grid-cols-2">
             <Card>
-              <div className="smallcaps text-[10px] text-[#6a6258]">Your payoff vs exit value</div>
+              <div className="smallcaps text-[10px] text-[#6a6258]">Book NAV — an honest band</div>
               <div className="mt-3">
-                <PayoffCurve x={result.payoff_curve.equity_values}
-                  y={result.payoff_curve.owned_class_proceeds}
-                  thresholdX={result.payoff_curve.preference_threshold} />
+                <Hist edges={result.nav_density.edges} counts={result.nav_density.counts}
+                  band={[result.nav.low, result.nav.high]}
+                  marks={[{ x: result.nav.central, label: "central", color: "#191714" }]}
+                  xLabel="book NAV (M) · correlated Monte Carlo" height={150} />
               </div>
             </Card>
             <Card>
-              <div className="smallcaps text-[10px] text-[#6a6258]">The honesty layer — calibration spread</div>
+              <div className="smallcaps text-[10px] text-[#6a6258]">Forward TVPI · {result.assumption_set} set</div>
+              <div className="mt-3">
+                <Hist edges={result.tvpi_density.edges} counts={result.tvpi_density.counts}
+                  marks={[{ x: fwd.tvpi.central, label: `median ${fwd.tvpi.central.toFixed(2)}x` }]}
+                  xLabel="TVPI (multiple on paid-in)" height={150} />
+              </div>
+            </Card>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            <Card>
+              <div className="smallcaps text-[10px] text-[#6a6258]">Calibration spread</div>
               <div className="mt-2">
                 <RangeDots entries={[
                   { label: "pessimistic", value: fwd.target_hit.by_set.pessimistic },
-                  { label: "base", value: fwd.target_hit.by_set.base, emphasized: true },
+                  { label: "base", value: fwd.target_hit.by_set.base, emphasized: result.assumption_set === "base" },
                   { label: "optimistic", value: fwd.target_hit.by_set.optimistic },
                 ]} />
               </div>
               <Small>{result.oracle.signal}</Small>
             </Card>
+            <Card>
+              <div className="smallcaps text-[10px] text-[#6a6258]">What the answer is hostage to</div>
+              <div className="mt-3">
+                <RangeBars rows={result.sensitivity.map((r) => ({
+                  label: r.assumption.replace(" (time-to-exit)", ""), lo: r.lo, hi: r.hi }))}
+                  baseline={fwd.target_hit.by_set.base} />
+              </div>
+            </Card>
+            <Card>
+              <div className="smallcaps text-[10px] text-[#6a6258]">J-curve · fan</div>
+              <div className="mt-3">
+                <Fan t={result.jcurve.t} q05={result.jcurve.q05} q25={result.jcurve.q25}
+                  q50={result.jcurve.q50} q75={result.jcurve.q75} q95={result.jcurve.q95} height={170} />
+              </div>
+            </Card>
           </div>
+
+          {result.risk ? (
+            <div className="grid gap-4 lg:grid-cols-3">
+              <Card>
+                <div className="smallcaps text-[10px] text-[#6a6258]">Risk contribution</div>
+                <div className="mt-3">
+                  <HBars rows={result.risk.contributions.map((c) => ({ label: c.name, value: c.share }))} accent />
+                </div>
+                <Small>portfolio σ {(result.risk.portfolio_vol_annual * 100).toFixed(1)}% annual ·
+                  NAV Herfindahl {result.risk.herfindahl_nav.toFixed(3)}</Small>
+              </Card>
+              <Card>
+                <div className="smallcaps text-[10px] text-[#6a6258]">Correlation (denoised)</div>
+                <div className="mt-3 flex justify-center">
+                  <Heatmap matrix={result.risk.heatmap.matrix} labels={result.risk.heatmap.names} size={260} />
+                </div>
+                <Small>{result.risk.note}</Small>
+              </Card>
+              <Card>
+                <div className="smallcaps text-[10px] text-[#6a6258]">Expected liquidity</div>
+                <div className="mt-3">
+                  <HBars rows={Object.entries(result.risk.liquidity_ladder).map(([k, v]) => ({ label: k, value: v }))}
+                    rowH={30} />
+                </div>
+                <Small>share of NAV becoming liquid, from the simulated exit times.</Small>
+              </Card>
+            </div>
+          ) : (
+            <Small>{result.risk_note}</Small>
+          )}
 
           <details className="px-1">
             <summary className="cursor-pointer text-[12px] text-[#6a6258] hover:text-[#191714]">
-              Method notes (engine, verbatim)
+              Method notes (engine, verbatim) · seed {result.seed}
             </summary>
             <ul className="mt-2 space-y-1 text-[11.5px] leading-relaxed text-[#4b443b]">
-              {result.method_notes.map((n: string, i: number) => <li key={i}>· {n}</li>)}
+              {result.method_notes.map((n, i) => <li key={i}>· {n}</li>)}
             </ul>
           </details>
         </div>
