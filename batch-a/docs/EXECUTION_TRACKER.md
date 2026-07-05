@@ -30,7 +30,7 @@ Status: ☐ not started · ◐ in progress · ☑ done · ⊘ blocked
 |---|---|---|---|---|
 | WO-1 | A1 freeze_learning × gradient 2×2 (§9.1) | ☑ | — | A1 framing, A1 figure, hero copy |
 | WO-4 | A3 lift population cap (real capacity vs artifact) | ☑ | — | whether A2/A3 birthplace results mean anything |
-| WO-2 | **Amended:** cap 2000, ≥20 seeds, within-world βₛ~Rₛ (absorbs WO-4 capacity) | ☐ | — | the headline result; WO-2 figures |
+| WO-2 | **Amended²:** cap 2000, ≥20 seeds; **crash-robust stable-tick hazard** is primary βₛ (raw demoted); moderator is **volatility** not R_s (pilot r=0.81); **selection promoted to lead**. | ☐ | (B) for compute | the headline result; WO-2 figures |
 | WO-3 | **Amended:** cap 2000, deaths-by-cause + A3-inheritance check | ☐ | — | individual vs demographic fragility; A4 redesign call |
 
 ## Track 2 — Presentation infrastructure (true regardless of results)
@@ -145,6 +145,16 @@ Infra: V3-AMEND ✓ → V1 ◐ → V3 ✓ → PLAYER ✓ → SKELETON ✓. Remai
   - **Pilot policy:** read early seeds as they land; if βₛ~Rₛ is huge and clean,
     that informs whether 20 is confirmatory — a call made *after* data, never a
     pre-emptive spec cut. (C) reduce-spec stays rejected.
+- **RESOLVED — WO-2 measurement (crash-robust pilot).** Primary estimator =
+  stable-tick mortality hazard (grouped Poisson, agent-clustered; Cox-on-age
+  cross-check agrees); raw βₛ → sensitivity. Moderator = **volatility** (pilot
+  βₛ~volatility r=0.81) not mean capacity (r=−0.23); log per-seed volatility +
+  oscillation period in the full 20 and disentangle from R_s. **Selection is the
+  lead result** (conservative wins; seed 2 flips under scarcity). Stable-epoch +
+  volatility instrument is shared with WO-3 (A3-inheritance). Read:
+  `docs/diagnostics/wo2_crashrobust_read.md`.
+- **NEW — full-20 horizon:** extend past 3000 ticks so climbing/crashing worlds
+  converge (censored seeds; affordable once B lands). Revisit at run time.
 - **RESOLVED — WO-2 cap = 2000, within-world design** (WO-2/WO-3 amendment). The
   standalone 20-seed WO-4 re-run is folded into WO-2 (per-seed capacity is a
   byproduct). WO-3 also runs at cap 2000 with the A3-inheritance check.
@@ -175,4 +185,5 @@ orders (WO-V1–5) · player build spec (locked aesthetic) · this tracker.
 | 2026-06-28 | amend | WO-2/WO-3 amendment applied: cap 400 declared a global confound; WO-2 → cap 2000 + within-world βₛ~Rₛ (absorbs 20-seed capacity); WO-3 → cap 2000 + A3-inheritance check, parallel; A4 numbers marked provisional. Saved `docs/WO2_WO3_AMENDMENT.md`. | Run amended WO-2 + WO-3 (compute-bound; checkpointed runners). |
 | 2026-06-28 | wo-2 setup | Built + pipeline-validated the checkpointed WO-2 runner (within-world βₛ~Rₛ, ablation decomp) and per-tick deaths-by-cause instrumentation for WO-3. **Compute blocker found:** cap-2000/3000t run = 415 s; full WO-2 ≈ 10–12 h and the container restarts faster than one run finishes → can't complete here. Smoke test (cap 400, below-spec) already shows the predicted negative βₛ~capacity slope. | DECISION NEEDED: run on a stable box, or vectorize perception (~10–30×). |
 | 2026-07-05 | a1 figure | A1 figure + figure pipeline (**V2-MACH**) built on settled WO-1 data; `design/tokens.json` now canonical (deterministic SVG + token-swap verified). A1 logbook entry (reactive baseline). **First published section (A1) standing** = plate + figure + logbook; merged to main (PR #18). | Land (B); keep pilot grinding. |
+| 2026-07-05 | crashrobust | Built the crash-robust estimator (stable-tick hazard + Cox cross-check + cycle-avg Rₛ + volatility), validated on the existing pilot (no new compute). **Passes its own no-regression test (7/7);** birthplace hazard tracks **volatility (r=0.81), not capacity (−0.23)** — deeper finding; effect small → **selection leads WO-2**. seed 2 contradiction confirmed real. Amended WO-2 measurement + promoted selection + shared instrument for WO-3. | Land (B); run full 20 with crash-robust hazard + volatility + extended horizon. |
 | 2026-07-05 | wo-2 pilot | WO-2 pilot COMPLETE (uniform×none, 8 seeds). βₛ~R_s: r=−0.35 (predicted sign) only after dropping crash/climb-flagged seeds, but **weak & noisy → full 20 warranted** (not "huge & clean"). Strong clean signal instead: **exploration selected down** (trait drift mean −0.33, 7/8 worlds), plausibly scarcity-dependent (poorest seed flips). Durable record: `docs/diagnostics/wo2_pilot_uniform_none_8seed.jsonl`. | Await go-ahead on (B) vectorization; then full WO-2 (20 seeds × 9 cells) + WO-3. |
