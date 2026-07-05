@@ -153,6 +153,12 @@ Infra: V3-AMEND ✓ → V1 ◐ → V3 ✓ → PLAYER ✓ → SKELETON ✓. Remai
   lead result** (conservative wins; seed 2 flips under scarcity). Stable-epoch +
   volatility instrument is shared with WO-3 (A3-inheritance). Read:
   `docs/diagnostics/wo2_crashrobust_read.md`.
+- **RESOLVED — collinearity gate = SEPARABLE.** corr(R_s, volatility) = −0.28 on
+  the 7 pilot worlds, with 3 off-diagonal disentanglers (s2 stable-poor, s5
+  volatile-rich, s6). The generator already breaks the capacity↔volatility
+  diagonal, so the full-20 (crash-robust hazard + volatility logged) can separate
+  βₛ~volatility from βₛ~R_s — **no volatility-at-fixed-capacity axis needed.**
+  Plot: `docs/diagnostics/wo2_collinearity_plane.svg`.
 - **NEW — full-20 horizon:** extend past 3000 ticks so climbing/crashing worlds
   converge (censored seeds; affordable once B lands). Revisit at run time.
 - **RESOLVED — WO-2 cap = 2000, within-world design** (WO-2/WO-3 amendment). The
@@ -185,5 +191,6 @@ orders (WO-V1–5) · player build spec (locked aesthetic) · this tracker.
 | 2026-06-28 | amend | WO-2/WO-3 amendment applied: cap 400 declared a global confound; WO-2 → cap 2000 + within-world βₛ~Rₛ (absorbs 20-seed capacity); WO-3 → cap 2000 + A3-inheritance check, parallel; A4 numbers marked provisional. Saved `docs/WO2_WO3_AMENDMENT.md`. | Run amended WO-2 + WO-3 (compute-bound; checkpointed runners). |
 | 2026-06-28 | wo-2 setup | Built + pipeline-validated the checkpointed WO-2 runner (within-world βₛ~Rₛ, ablation decomp) and per-tick deaths-by-cause instrumentation for WO-3. **Compute blocker found:** cap-2000/3000t run = 415 s; full WO-2 ≈ 10–12 h and the container restarts faster than one run finishes → can't complete here. Smoke test (cap 400, below-spec) already shows the predicted negative βₛ~capacity slope. | DECISION NEEDED: run on a stable box, or vectorize perception (~10–30×). |
 | 2026-07-05 | a1 figure | A1 figure + figure pipeline (**V2-MACH**) built on settled WO-1 data; `design/tokens.json` now canonical (deterministic SVG + token-swap verified). A1 logbook entry (reactive baseline). **First published section (A1) standing** = plate + figure + logbook; merged to main (PR #18). | Land (B); keep pilot grinding. |
+| 2026-07-05 | collinearity | Collinearity check (existing 7 worlds): **SEPARABLE** — corr(R_s,vol)=−0.28, 3 off-diagonal disentanglers (s2 stable-poor, s5 volatile-rich, s6). Full-20 as amended can separate volatility from capacity; no regen/drain axis needed. | Land (B); then full 20 (crash-robust hazard + volatility + extended horizon). |
 | 2026-07-05 | crashrobust | Built the crash-robust estimator (stable-tick hazard + Cox cross-check + cycle-avg Rₛ + volatility), validated on the existing pilot (no new compute). **Passes its own no-regression test (7/7);** birthplace hazard tracks **volatility (r=0.81), not capacity (−0.23)** — deeper finding; effect small → **selection leads WO-2**. seed 2 contradiction confirmed real. Amended WO-2 measurement + promoted selection + shared instrument for WO-3. | Land (B); run full 20 with crash-robust hazard + volatility + extended horizon. |
 | 2026-07-05 | wo-2 pilot | WO-2 pilot COMPLETE (uniform×none, 8 seeds). βₛ~R_s: r=−0.35 (predicted sign) only after dropping crash/climb-flagged seeds, but **weak & noisy → full 20 warranted** (not "huge & clean"). Strong clean signal instead: **exploration selected down** (trait drift mean −0.33, 7/8 worlds), plausibly scarcity-dependent (poorest seed flips). Durable record: `docs/diagnostics/wo2_pilot_uniform_none_8seed.jsonl`. | Await go-ahead on (B) vectorization; then full WO-2 (20 seeds × 9 cells) + WO-3. |
