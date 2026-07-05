@@ -4,10 +4,10 @@
 (2) update statuses, (3) append one line to the Handoff Log. Committed to the repo
 so nothing slips between the ephemeral containers.*
 
-**▶ NEXT ACTION: ruling needed — pick the WO-2 cap (see WO-4 result).** WO-1 and
-WO-4 are done. WO-4 found the default cap of 400 binds in every world, so WO-2's
-cap choice must be settled before it can mean anything. WO-3 (A4 deaths-by-cause)
-is independent and can run in parallel.
+**▶ NEXT ACTION: run amended WO-2 (cap 2000, ≥20 seeds, within-world βₛ~Rₛ
+design); run amended WO-3 (cap 2000, A3-inheritance check) in parallel.** WO-1
+and WO-4 done; cap ruling resolved (= 2000). See `docs/WO2_WO3_AMENDMENT.md`.
+Compute is the constraint — see the runtime note in that doc / below.
 
 Status: ☐ not started · ◐ in progress · ☑ done · ⊘ blocked
 
@@ -20,6 +20,7 @@ Status: ☐ not started · ◐ in progress · ☑ done · ⊘ blocked
 - **Batch B seams preserved:** memory stub, swappable `compute_weights`, action registry.
 - **Diagnostics are diagnostics:** report nulls honestly; never tune the world to rescue a result.
 - **≥ 20 seeds** for any headline number; median + bootstrap CI.
+- **Cap 400 is a confound.** No A1–A4 headline number is publishable until regenerated at a non-binding cap (or with cap-binding seeds flagged). Capacity for oscillating worlds is **cycle-averaged**, not single-tick. *(WO-4; A4 site/report numbers currently marked provisional.)*
 - **Visual:** structure not blur; color only where semantic (water = blue, stress/death = rust); one palette source, no color literals elsewhere. *(Player reads the site's CSS tokens at runtime — see V1 note.)*
 
 ---
@@ -29,8 +30,8 @@ Status: ☐ not started · ◐ in progress · ☑ done · ⊘ blocked
 |---|---|---|---|---|
 | WO-1 | A1 freeze_learning × gradient 2×2 (§9.1) | ☑ | — | A1 framing, A1 figure, hero copy |
 | WO-4 | A3 lift population cap (real capacity vs artifact) | ☑ | — | whether A2/A3 birthplace results mean anything |
-| WO-2 | A2/A3 birthplace × trait sweep, 3 conditions × 3 ablations, ≥20 seeds | ⊘ | cap ruling (WO-4) | the headline result; WO-2 figures |
-| WO-3 | A4 deaths-by-cause (individual vs demographic fragility) | ☐ | — | whether Batch B can address A4 / A4 redesign call |
+| WO-2 | **Amended:** cap 2000, ≥20 seeds, within-world βₛ~Rₛ (absorbs WO-4 capacity) | ☐ | — | the headline result; WO-2 figures |
+| WO-3 | **Amended:** cap 2000, deaths-by-cause + A3-inheritance check | ☐ | — | individual vs demographic fragility; A4 redesign call |
 
 ## Track 2 — Presentation infrastructure (true regardless of results)
 | ID | Task | Status | Blocked by | Unblocks |
@@ -121,15 +122,12 @@ varies wildly by seed and must be controlled/reported. **Cap choice is a ruling
 Science: **WO-1 ✓ → WO-4 ✓ → WO-2 (blocked on cap ruling) → WO-3.**
 Infra: V3-AMEND ✓ → V1 ◐ → V3 ✓ → PLAYER ✓ → SKELETON ✓. Remaining infra: finish V1 (`tokens.json`) with V2-MACH.
 
-## Open decisions (awaiting your ruling)
-- **WO-2 cap (raised by WO-4):** cap 400 binds every world; true capacity is
-  seed-variable (~500 to ≥1500). Options for WO-2: (a) uncap / very high cap so
-  resources set the population (real competition, but capacity varies by seed —
-  control by reporting per-seed capacity or by conditioning on it); (b) hold a
-  fixed high cap (e.g. 1500) and accept the boom/plateau variance; (c) keep 400
-  and reinterpret WO-2 as ceiling-replacement dynamics (weaker selection claim).
-  → your call. Also: re-run WO-4 at ≥20 seeds to characterize the capacity
-  distribution before committing.
+## Open decisions
+- **RESOLVED — WO-2 cap = 2000, within-world design** (WO-2/WO-3 amendment). The
+  standalone 20-seed WO-4 re-run is folded into WO-2 (per-seed capacity is a
+  byproduct). WO-3 also runs at cap 2000 with the A3-inheritance check.
+- **NEW FLAG — A4 numbers provisional.** The A4 contrast on the site/report is
+  cap-confounded; mark "provisional" until regenerated at the raised cap.
 - **§9.1 model call (raised by WO-1):** A1's learning mechanism is decorative for
   survival. Options: (a) accept "A1 = scripted gradient-following" as the framing
   (learning is a substrate for later cases, not an A1 result); or (b) give A1 a
@@ -152,3 +150,4 @@ orders (WO-V1–5) · player build spec (locked aesthetic) · this tracker.
 | 2026-06-28 | build | Built + shipped the walking skeleton and beyond: sim (A1–A4), schema-v2 playback exporter, locked-aesthetic `<SimPlayer>` with trace-as-timeline, all four plates live on `/batch-a` (V3-AMEND/V3/PLAYER/SKELETON done). Stripped page copy to labels + key. | Run WO-1. |
 | 2026-06-28 | wo-1 | Ran WO-1 (A1 2×2, 20 seeds): **A1 is scripted gradient-following; learning is inert for survival** (§9.1 answered). Committed diagnostic + results + this tracker. | Run WO-4 (A3 cap). |
 | 2026-06-28 | wo-4 | Ran WO-4 (A3 caps 400/800/1500, 5 seeds): **cap 400 binds every world; true capacity is seed-dependent (~500 to ≥1500)**. Bimodal — some worlds fill any cap, others plateau. WO-2 blocked on a cap ruling; recommend re-running WO-4 at ≥20 seeds. | Get WO-2 cap ruling; WO-3 can run in parallel. |
+| 2026-06-28 | amend | WO-2/WO-3 amendment applied: cap 400 declared a global confound; WO-2 → cap 2000 + within-world βₛ~Rₛ (absorbs 20-seed capacity); WO-3 → cap 2000 + A3-inheritance check, parallel; A4 numbers marked provisional. Saved `docs/WO2_WO3_AMENDMENT.md`. | Run amended WO-2 + WO-3 (compute-bound; checkpointed runners). |
