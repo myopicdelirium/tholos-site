@@ -1,0 +1,38 @@
+[
+  {
+    "cap": 400,
+    "n": 5,
+    "steady_median": 400.0,
+    "steady_ci": [
+      389.0,
+      400.0
+    ],
+    "saturation_median": 1.0,
+    "peak_median": 400,
+    "still_growing_median": 0
+  },
+  {
+    "cap": 800,
+    "n": 5,
+    "steady_median": 769.0,
+    "steady_ci": [
+      421.0,
+      800.0
+    ],
+    "saturation_median": 0.961,
+    "peak_median": 800,
+    "still_growing_median": -19.7
+  },
+  {
+    "cap": 1500,
+    "n": 5,
+    "steady_median": 794.0,
+    "steady_ci": [
+      412.0,
+      1500.0
+    ],
+    "saturation_median": 0.529,
+    "peak_median": 1251,
+    "still_growing_median": 0.4
+  }
+]

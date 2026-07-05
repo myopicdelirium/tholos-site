@@ -43,6 +43,7 @@ class Recorder:
         self._summary_rows = []
         self._env_series = []  # per-tick environment scalars
         self._fauna_rows = []  # per-tick predator positions (for visualization)
+        self.death_series = []  # per-tick deaths-by-cause (for WO-3 crash analysis)
 
     # -- per-tick per-agent (§6) ------------------------------------------
     def log_tick(self, tick, agent):
@@ -61,6 +62,11 @@ class Recorder:
 
     def log_env(self, tick, env_summary):
         self._env_series.append({"tick": tick, **env_summary})
+
+    def log_deaths(self, tick, by_cause):
+        """Per-tick deaths-by-cause — cheap; drives WO-3 crash/burstiness analysis."""
+        total = sum(by_cause.values())
+        self.death_series.append({"tick": tick, "total": total, **by_cause})
 
     def log_fauna(self, tick, world):
         """Per-tick predator positions — needed to *replay* A4 risk (not re-sim)."""

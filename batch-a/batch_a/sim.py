@@ -71,10 +71,12 @@ class Simulation:
 
         peak_pop = len(self.agents)
         ticks_run = 0
+        self.pop_series = []  # per-tick alive count (cheap; for diagnostics)
         for _ in range(max_ticks):
             alive = run_tick(self.world, self.agents, self.config, self.rng,
                              self.recorder)
             ticks_run += 1
+            self.pop_series.append(alive)
             peak_pop = max(peak_pop, alive)
             if stop_on_ext and alive == 0:
                 break

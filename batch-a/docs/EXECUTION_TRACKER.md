@@ -4,9 +4,10 @@
 (2) update statuses, (3) append one line to the Handoff Log. Committed to the repo
 so nothing slips between the ephemeral containers.*
 
-**▶ NEXT ACTION: run WO-4 (A3 lift population cap — real capacity vs. artifact).**
-WO-1 is done (see below). WO-4 is next on the science critical path and gates
-whether the A2/A3 birthplace results (WO-2) mean anything.
+**▶ NEXT ACTION: run amended WO-2 (cap 2000, ≥20 seeds, within-world βₛ~Rₛ
+design); run amended WO-3 (cap 2000, A3-inheritance check) in parallel.** WO-1
+and WO-4 done; cap ruling resolved (= 2000). See `docs/WO2_WO3_AMENDMENT.md`.
+Compute is the constraint — see the runtime note in that doc / below.
 
 Status: ☐ not started · ◐ in progress · ☑ done · ⊘ blocked
 
@@ -19,6 +20,7 @@ Status: ☐ not started · ◐ in progress · ☑ done · ⊘ blocked
 - **Batch B seams preserved:** memory stub, swappable `compute_weights`, action registry.
 - **Diagnostics are diagnostics:** report nulls honestly; never tune the world to rescue a result.
 - **≥ 20 seeds** for any headline number; median + bootstrap CI.
+- **Cap 400 is a confound.** No A1–A4 headline number is publishable until regenerated at a non-binding cap (or with cap-binding seeds flagged). Capacity for oscillating worlds is **cycle-averaged**, not single-tick. *(WO-4; A4 site/report numbers currently marked provisional.)*
 - **Visual:** structure not blur; color only where semantic (water = blue, stress/death = rust); one palette source, no color literals elsewhere. *(Player reads the site's CSS tokens at runtime — see V1 note.)*
 
 ---
@@ -27,19 +29,19 @@ Status: ☐ not started · ◐ in progress · ☑ done · ⊘ blocked
 | ID | Task | Status | Blocked by | Unblocks |
 |---|---|---|---|---|
 | WO-1 | A1 freeze_learning × gradient 2×2 (§9.1) | ☑ | — | A1 framing, A1 figure, hero copy |
-| WO-4 | A3 lift population cap (real capacity vs artifact) | ☐ | — | whether A2/A3 birthplace results mean anything |
-| WO-2 | A2/A3 birthplace × trait sweep, 3 conditions × 3 ablations, ≥20 seeds | ☐ | read *after* WO-4 | the headline result; WO-2 figures |
-| WO-3 | A4 deaths-by-cause (individual vs demographic fragility) | ☐ | — | whether Batch B can address A4 / A4 redesign call |
+| WO-4 | A3 lift population cap (real capacity vs artifact) | ☑ | — | whether A2/A3 birthplace results mean anything |
+| WO-2 | **Amended:** cap 2000, ≥20 seeds, within-world βₛ~Rₛ (absorbs WO-4 capacity) | ☐ | — | the headline result; WO-2 figures |
+| WO-3 | **Amended:** cap 2000, deaths-by-cause + A3-inheritance check | ☐ | — | individual vs demographic fragility; A4 redesign call |
 
 ## Track 2 — Presentation infrastructure (true regardless of results)
 | ID | Task | Status | Blocked by | Unblocks |
 |---|---|---|---|---|
 | V3-AMEND | Stable agent ids across ticks + per-agent need vectors in the data contract | ☑ | — | player trails + hover-to-inspect |
-| V1 | Design tokens → styling (see note) | ◐ | — | figures + player styling |
+| V1 | Design tokens → styling. `design/tokens.json` now canonical + read by figures. **Remaining:** site CSS should derive FROM it (one source). | ◐ | — | figures + player styling |
 | V3 | Playback exporter (`viz/export_playback.py`) + indexed-frame loader | ☑ | V3-AMEND | the player |
 | PLAYER | Build the approved `<SimPlayer>` (locked aesthetic spec) | ☑ | V1, V3 | walking skeleton |
 | SKELETON | Export a real A1 run → wire player → a real A1 plate renders | ☑ | V1, V3, PLAYER | proves sim→log→export→replay end-to-end |
-| V2-MACH | Figure-pipeline machinery (style + build target) | ☐ | V1 | figures (content deferred) |
+| V2-MACH | Figure-pipeline machinery (`design/tokens.json` + `viz/style.py` + `viz/build.py`) | ☑ | — | figures (content deferred) |
 
 **Track-2 note (reconciliation).** The walking skeleton is built and shipped: the
 `/batch-a` page replays real logged A1–A4 runs (schema-v2 playback: stable ids,
@@ -81,11 +83,73 @@ policy; within-lifetime learning (Q-gain updates on consummatory actions) is
 
 ---
 
+## WO-4 result — cap 400 binds everywhere; true capacity is higher and seed-dependent
+
+A3, caps 400 / 800 / 1500, 5 seeds each, 1500 ticks, `stop_on_extinction: false`.
+steady = median per-tick pop over the last 40%; saturation = steady / cap.
+
+| cap | steady (median) [CI] | saturation | per-seed steady |
+|-----|----------------------|-----------|-----------------|
+| 400 | 400 [389, 400] | **1.00** | 400, 400, 400, 400, 389 |
+| 800 | 769 [421, 800] | 0.96 | 800, 769, 515, 800, 421 |
+| 1500 | 794 [412, 1500] | 0.53 | 1500, 794, 515, 1500, 412 |
+
+**Reading (bimodal, not a clean verdict):**
+- **At cap 400 every world saturates the cap** — so 400 (the default used in *all*
+  prior A1–A4 runs) is a **binding ceiling**, not a resource limit. In that sense
+  A3-at-400 is ceiling-limited ("too easy" for real resource competition).
+- **Carrying capacity is a per-world property.** The *same seeds* behave
+  consistently across caps: seed 2 plateaus ≈515 whether cap is 800 or 1500
+  (resource-poor world); seeds 0 & 3 fill whatever cap you set (400→800→1500,
+  resource-rich). So true capacity ranges from ~500 to ≥1500 depending on the
+  procedural water/vegetation layout.
+- Some cap-1500 runs were **still climbing** at t=1500 (seed 1 end-slope +44) →
+  rich-world capacity may be even higher / needs a longer horizon. Some worlds
+  **boom-bust** (seed 4: peak 927 → 412) even though A3 is stationary.
+
+**Caveats:** n=5 (below the 20-seed bar) and the outcome is high-variance/bimodal,
+so the capacity *distribution* needs ≥20 seeds to characterize. Raw:
+`docs/diagnostics/wo4_a3_cap_{summary.json,runs.csv}`; reproduce
+`python -m experiments.wo4_a3_cap --caps 400,800,1500 --seeds 0-4`.
+
+**Consequence for WO-2:** at cap 400 the population is set by the ceiling, so
+birthplace/trait advantage is muted (everyone just fills a low ceiling → weak
+selection). WO-2 should use a cap high enough not to bind — but then capacity
+varies wildly by seed and must be controlled/reported. **Cap choice is a ruling
+(see Open decisions).**
+
 ## Critical path
-Science: **WO-1 ✓ → WO-4 → WO-2 → WO-3.**
+Science: **WO-1 ✓ → WO-4 ✓ → WO-2 (blocked on cap ruling) → WO-3.**
 Infra: V3-AMEND ✓ → V1 ◐ → V3 ✓ → PLAYER ✓ → SKELETON ✓. Remaining infra: finish V1 (`tokens.json`) with V2-MACH.
 
-## Open decisions (awaiting your ruling)
+## Open decisions
+- **COMPUTE — RESOLVED: do (A) *and* (B); they solve different problems.** One
+  cap-2000 / 3000-tick A3 run = **415 s**; full WO-2 ≈ 10–12 h, WO-3 ≈ 2–3 h.
+  - **(A) = trusted numbers now.** Run the amended WO-2/WO-3 on the current
+    (trusted scalar) implementation, checkpointed. In-container this is a
+    stop/start grind (relaunch after each restart; checkpoint resumes). Zero
+    correctness risk. Started as a βₛ~Rₛ **pilot** (uniform × none × 8 seeds).
+  - **(B) = the fast path, as infrastructure.** Vectorize the perception hot path
+    (~10–30×). Needed regardless of container — every large-N run (WO-2/3,
+    A4-regen, all Batch B memory/attention sweeps) depends on it. Build it, then
+    **diff it against (A)'s reference runs** (a real trusted reference, not a
+    smoke test).
+  - **Verification bar for (B) — no-regression, not correctness.** Bit-identity
+    proves "no regression from current behavior," NOT that the science is
+    correct: scalar & vectorized descend from the same source and can agree while
+    both wrong. A green diff must never be read as validating the model. Prove
+    **bit-identical full tick stream** across boundary-stressing cases at the
+    **full 3000-tick horizon** (divergence is cumulative): toroidal wraps, edge
+    agents, argmax tie-breaking, on **both a rich and a poor world**. Harness:
+    `experiments/verify_perception.py`.
+  - **Pilot policy:** read early seeds as they land; if βₛ~Rₛ is huge and clean,
+    that informs whether 20 is confirmatory — a call made *after* data, never a
+    pre-emptive spec cut. (C) reduce-spec stays rejected.
+- **RESOLVED — WO-2 cap = 2000, within-world design** (WO-2/WO-3 amendment). The
+  standalone 20-seed WO-4 re-run is folded into WO-2 (per-seed capacity is a
+  byproduct). WO-3 also runs at cap 2000 with the A3-inheritance check.
+- **NEW FLAG — A4 numbers provisional.** The A4 contrast on the site/report is
+  cap-confounded; mark "provisional" until regenerated at the raised cap.
 - **§9.1 model call (raised by WO-1):** A1's learning mechanism is decorative for
   survival. Options: (a) accept "A1 = scripted gradient-following" as the framing
   (learning is a substrate for later cases, not an A1 result); or (b) give A1 a
@@ -107,3 +171,7 @@ orders (WO-V1–5) · player build spec (locked aesthetic) · this tracker.
 | — | planning | Specs + diagnostics + viz work orders + approved player aesthetic authored. Nothing executed yet. | Run WO-1; start V3-AMEND. |
 | 2026-06-28 | build | Built + shipped the walking skeleton and beyond: sim (A1–A4), schema-v2 playback exporter, locked-aesthetic `<SimPlayer>` with trace-as-timeline, all four plates live on `/batch-a` (V3-AMEND/V3/PLAYER/SKELETON done). Stripped page copy to labels + key. | Run WO-1. |
 | 2026-06-28 | wo-1 | Ran WO-1 (A1 2×2, 20 seeds): **A1 is scripted gradient-following; learning is inert for survival** (§9.1 answered). Committed diagnostic + results + this tracker. | Run WO-4 (A3 cap). |
+| 2026-06-28 | wo-4 | Ran WO-4 (A3 caps 400/800/1500, 5 seeds): **cap 400 binds every world; true capacity is seed-dependent (~500 to ≥1500)**. Bimodal — some worlds fill any cap, others plateau. WO-2 blocked on a cap ruling; recommend re-running WO-4 at ≥20 seeds. | Get WO-2 cap ruling; WO-3 can run in parallel. |
+| 2026-06-28 | amend | WO-2/WO-3 amendment applied: cap 400 declared a global confound; WO-2 → cap 2000 + within-world βₛ~Rₛ (absorbs 20-seed capacity); WO-3 → cap 2000 + A3-inheritance check, parallel; A4 numbers marked provisional. Saved `docs/WO2_WO3_AMENDMENT.md`. | Run amended WO-2 + WO-3 (compute-bound; checkpointed runners). |
+| 2026-06-28 | wo-2 setup | Built + pipeline-validated the checkpointed WO-2 runner (within-world βₛ~Rₛ, ablation decomp) and per-tick deaths-by-cause instrumentation for WO-3. **Compute blocker found:** cap-2000/3000t run = 415 s; full WO-2 ≈ 10–12 h and the container restarts faster than one run finishes → can't complete here. Smoke test (cap 400, below-spec) already shows the predicted negative βₛ~capacity slope. | DECISION NEEDED: run on a stable box, or vectorize perception (~10–30×). |
+| 2026-07-05 | a1 figure | A1 figure + figure pipeline (**V2-MACH**) built on settled WO-1 data; `design/tokens.json` now canonical (deterministic SVG + token-swap both verified). A1 logbook entry added (reactive baseline). **First complete published section (A1) standing** = real plate + figure + logbook. WO-2 pilot still grinding (dir read at 4 seeds: βₛ~Rₛ noisy, crash-confounded → full 20 warranted; trait selection strong & scarcity-dependent). | Land (B) vectorization to unblock the amended WO-2/WO-3; keep the pilot grinding. |
