@@ -123,17 +123,28 @@ Science: **WO-1 ✓ → WO-4 ✓ → WO-2 (blocked on cap ruling) → WO-3.**
 Infra: V3-AMEND ✓ → V1 ◐ → V3 ✓ → PLAYER ✓ → SKELETON ✓. Remaining infra: finish V1 (`tokens.json`) with V2-MACH.
 
 ## Open decisions
-- **COMPUTE BLOCKER (new) — the amended runs can't complete in this container.**
-  Measured: one cap-2000 / 3000-tick A3 run = **415 s** (rich world, hits 2000).
-  Full amended WO-2 (9 cells × 20 seeds ≈ 180 runs) ≈ **10–12 h**; WO-3 ≈ 2–3 h.
-  The ephemeral container restarts every ~1–2 min — *shorter than a single run* —
-  so checkpoint-grinding thrashes (big runs never finish between restarts). The
-  WO-2 runner is written, pipeline-validated, and checkpointed (turnkey). Choices:
-  (a) run on a stable machine — `python -m experiments.wo2_a3_birthplace
-  --seeds 0-19` (+ WO-3), embarrassingly parallel by seed/cell; (b) invest in a
-  perception vectorization (~10–30× → runs ~15–40 s, feasible here; unblocks WO-2/
-  WO-3/A4-regen), guarded by the determinism test; (c) reduce spec (violates
-  cap-2000 / ≥20-seed invariants — not recommended). → your call.
+- **COMPUTE — RESOLVED: do (A) *and* (B); they solve different problems.** One
+  cap-2000 / 3000-tick A3 run = **415 s**; full WO-2 ≈ 10–12 h, WO-3 ≈ 2–3 h.
+  - **(A) = trusted numbers now.** Run the amended WO-2/WO-3 on the current
+    (trusted scalar) implementation, checkpointed. In-container this is a
+    stop/start grind (relaunch after each restart; checkpoint resumes). Zero
+    correctness risk. Started as a βₛ~Rₛ **pilot** (uniform × none × 8 seeds).
+  - **(B) = the fast path, as infrastructure.** Vectorize the perception hot path
+    (~10–30×). Needed regardless of container — every large-N run (WO-2/3,
+    A4-regen, all Batch B memory/attention sweeps) depends on it. Build it, then
+    **diff it against (A)'s reference runs** (a real trusted reference, not a
+    smoke test).
+  - **Verification bar for (B) — no-regression, not correctness.** Bit-identity
+    proves "no regression from current behavior," NOT that the science is
+    correct: scalar & vectorized descend from the same source and can agree while
+    both wrong. A green diff must never be read as validating the model. Prove
+    **bit-identical full tick stream** across boundary-stressing cases at the
+    **full 3000-tick horizon** (divergence is cumulative): toroidal wraps, edge
+    agents, argmax tie-breaking, on **both a rich and a poor world**. Harness:
+    `experiments/verify_perception.py`.
+  - **Pilot policy:** read early seeds as they land; if βₛ~Rₛ is huge and clean,
+    that informs whether 20 is confirmatory — a call made *after* data, never a
+    pre-emptive spec cut. (C) reduce-spec stays rejected.
 - **RESOLVED — WO-2 cap = 2000, within-world design** (WO-2/WO-3 amendment). The
   standalone 20-seed WO-4 re-run is folded into WO-2 (per-seed capacity is a
   byproduct). WO-3 also runs at cap 2000 with the A3-inheritance check.
