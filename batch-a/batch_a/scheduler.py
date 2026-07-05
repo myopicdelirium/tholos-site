@@ -190,6 +190,7 @@ def run_tick(world, agents, config, rng, recorder):
         a.memory.observe(a, perceptions[a.id], world)
 
     # 7. deaths, then births
+    deaths_by_cause: dict[str, int] = {}
     for a in living:
         if a.id in predated:
             a.alive = False
@@ -201,6 +202,8 @@ def run_tick(world, agents, config, rng, recorder):
                 a.cause_of_death = dead_need
         if not a.alive:
             recorder.log_summary(a)
+            deaths_by_cause[a.cause_of_death] = deaths_by_cause.get(a.cause_of_death, 0) + 1
+    recorder.log_deaths(tick, deaths_by_cause)
 
     newborns = reproduce(agents, world, config, rng, tick)
     agents.extend(newborns)
