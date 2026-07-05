@@ -37,11 +37,11 @@ Status: ☐ not started · ◐ in progress · ☑ done · ⊘ blocked
 | ID | Task | Status | Blocked by | Unblocks |
 |---|---|---|---|---|
 | V3-AMEND | Stable agent ids across ticks + per-agent need vectors in the data contract | ☑ | — | player trails + hover-to-inspect |
-| V1 | Design tokens → styling (see note) | ◐ | — | figures + player styling |
+| V1 | Design tokens → styling. `design/tokens.json` now canonical + read by figures. **Remaining:** site CSS should derive FROM it (one source). | ◐ | — | figures + player styling |
 | V3 | Playback exporter (`viz/export_playback.py`) + indexed-frame loader | ☑ | V3-AMEND | the player |
 | PLAYER | Build the approved `<SimPlayer>` (locked aesthetic spec) | ☑ | V1, V3 | walking skeleton |
 | SKELETON | Export a real A1 run → wire player → a real A1 plate renders | ☑ | V1, V3, PLAYER | proves sim→log→export→replay end-to-end |
-| V2-MACH | Figure-pipeline machinery (style + build target) | ☐ | V1 | figures (content deferred) |
+| V2-MACH | Figure-pipeline machinery (`design/tokens.json` + `viz/style.py` + `viz/build.py`) | ☑ | — | figures (content deferred) |
 
 **Track-2 note (reconciliation).** The walking skeleton is built and shipped: the
 `/batch-a` page replays real logged A1–A4 runs (schema-v2 playback: stable ids,
@@ -174,3 +174,4 @@ orders (WO-V1–5) · player build spec (locked aesthetic) · this tracker.
 | 2026-06-28 | wo-4 | Ran WO-4 (A3 caps 400/800/1500, 5 seeds): **cap 400 binds every world; true capacity is seed-dependent (~500 to ≥1500)**. Bimodal — some worlds fill any cap, others plateau. WO-2 blocked on a cap ruling; recommend re-running WO-4 at ≥20 seeds. | Get WO-2 cap ruling; WO-3 can run in parallel. |
 | 2026-06-28 | amend | WO-2/WO-3 amendment applied: cap 400 declared a global confound; WO-2 → cap 2000 + within-world βₛ~Rₛ (absorbs 20-seed capacity); WO-3 → cap 2000 + A3-inheritance check, parallel; A4 numbers marked provisional. Saved `docs/WO2_WO3_AMENDMENT.md`. | Run amended WO-2 + WO-3 (compute-bound; checkpointed runners). |
 | 2026-06-28 | wo-2 setup | Built + pipeline-validated the checkpointed WO-2 runner (within-world βₛ~Rₛ, ablation decomp) and per-tick deaths-by-cause instrumentation for WO-3. **Compute blocker found:** cap-2000/3000t run = 415 s; full WO-2 ≈ 10–12 h and the container restarts faster than one run finishes → can't complete here. Smoke test (cap 400, below-spec) already shows the predicted negative βₛ~capacity slope. | DECISION NEEDED: run on a stable box, or vectorize perception (~10–30×). |
+| 2026-07-05 | a1 figure | A1 figure + figure pipeline (**V2-MACH**) built on settled WO-1 data; `design/tokens.json` now canonical (deterministic SVG + token-swap both verified). A1 logbook entry added (reactive baseline). **First complete published section (A1) standing** = real plate + figure + logbook. WO-2 pilot still grinding (dir read at 4 seeds: βₛ~Rₛ noisy, crash-confounded → full 20 warranted; trait selection strong & scarcity-dependent). | Land (B) vectorization to unblock the amended WO-2/WO-3; keep the pilot grinding. |
