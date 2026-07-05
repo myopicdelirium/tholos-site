@@ -65,6 +65,18 @@ def run(caps, seeds, ticks, out_dir):
     base["run"]["stop_on_extinction"] = False
     base["logging"]["per_tick"] = False
 
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    ckpt = out / "wo4_checkpoint.jsonl"
+
+    # resume: load any completed (cap, seed) runs so a restart doesn't lose them
+    done = {}
+    if ckpt.exists():
+        for line in ckpt.read_text().splitlines():
+            if line.strip():
+                r = json.loads(line)
+                done[(r["cap"], r["seed"])] = r
+
     rows, summary = [], []
     for cap in caps:
         d = json.loads(json.dumps(base))
@@ -73,18 +85,24 @@ def run(caps, seeds, ticks, out_dir):
 
         steadies, sats, peaks, growing = [], [], [], []
         for seed in seeds:
-            sim = Simulation(cfg, seed, run_id=f"wo4_cap{cap}_s{seed}")
-            res = sim.run()
-            st = _steady(sim.pop_series)
-            steadies.append(st)
-            sats.append(st / cap)
-            peaks.append(res["peak_population"])
-            growing.append(_still_growing(sim.pop_series))
-            rows.append({"cap": cap, "seed": seed, "steady": st,
-                         "saturation": round(st / cap, 3),
-                         "peak": res["peak_population"],
-                         "final": res["final_population"],
-                         "still_growing": _still_growing(sim.pop_series)})
+            if (cap, seed) in done:
+                r = done[(cap, seed)]
+            else:
+                sim = Simulation(cfg, seed, run_id=f"wo4_cap{cap}_s{seed}")
+                res = sim.run()
+                r = {"cap": cap, "seed": seed, "steady": _steady(sim.pop_series),
+                     "saturation": round(_steady(sim.pop_series) / cap, 3),
+                     "peak": res["peak_population"], "final": res["final_population"],
+                     "still_growing": _still_growing(sim.pop_series)}
+                with open(ckpt, "a") as fh:  # checkpoint immediately
+                    fh.write(json.dumps(r) + "\n")
+                print(f"  cap {cap} seed {seed}: steady={r['steady']} "
+                      f"sat={r['saturation']} peak={r['peak']}", flush=True)
+            steadies.append(r["steady"])
+            sats.append(r["steady"] / cap)
+            peaks.append(r["peak"])
+            growing.append(r["still_growing"])
+            rows.append(r)
 
         ci = bootstrap_ci(steadies)
         summary.append({
