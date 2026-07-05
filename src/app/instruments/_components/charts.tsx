@@ -54,25 +54,40 @@ export function Hist({
 }
 
 export function PayoffCurve({
-  x, y, markX, markY, proRataSlope, width = 460, height = 190,
+  x, y, markX, markY, proRataSlope, thresholdX, width = 460, height = 190,
 }: {
-  x: number[]; y: number[]; markX: number; markY: number; proRataSlope: number;
-  width?: number; height?: number;
+  x: number[]; y: number[]; markX?: number; markY?: number; proRataSlope?: number;
+  thresholdX?: number; width?: number; height?: number;
 }) {
   const x1 = x[x.length - 1];
-  const yMax = Math.max(y[y.length - 1], proRataSlope * x1) * 1.06;
+  const yMax = Math.max(y[y.length - 1], (proRataSlope ?? 0) * x1, 1e-9) * 1.06;
   const px = (v: number) => (v / x1) * (width - 8) + 4;
   const py = (v: number) => height - 14 - (v / yMax) * (height - 26);
   const path = x.map((xv, i) => `${i === 0 ? "M" : "L"}${px(xv).toFixed(1)},${py(y[i]).toFixed(1)}`).join(" ");
   return (
     <svg viewBox={`0 0 ${width} ${height}`} className="w-full" role="img" aria-label="stake proceeds vs exit value">
-      <line x1={px(0)} y1={py(0)} x2={px(x1)} y2={py(proRataSlope * x1)}
-        stroke={MUTED} strokeWidth={1} strokeDasharray="4 3" opacity={0.75} />
-      <text x={width - 8} y={py(proRataSlope * x1) - 5} fontSize={9.5} fill={MUTED} textAnchor="end">naive pro-rata</text>
+      {proRataSlope !== undefined ? (
+        <>
+          <line x1={px(0)} y1={py(0)} x2={px(x1)} y2={py(proRataSlope * x1)}
+            stroke={MUTED} strokeWidth={1} strokeDasharray="4 3" opacity={0.75} />
+          <text x={width - 8} y={py(proRataSlope * x1) - 5} fontSize={9.5} fill={MUTED} textAnchor="end">naive pro-rata</text>
+        </>
+      ) : null}
+      {thresholdX !== undefined && thresholdX > 0 && thresholdX < x1 ? (
+        <>
+          <line x1={px(thresholdX)} x2={px(thresholdX)} y1={10} y2={height - 14}
+            stroke={OX} strokeWidth={1} strokeDasharray="5 3" opacity={0.8} />
+          <text x={px(thresholdX) + 4} y={18} fontSize={9} fill={OX}>your preference covered</text>
+        </>
+      ) : null}
       <path d={path} fill="none" stroke={INK} strokeWidth={1.8} />
-      <circle cx={px(markX)} cy={py(markY)} r={4.5} fill={OX} />
-      <text x={Math.min(px(markX) + 7, width - 4)} y={py(markY) - 7} fontSize={9.5} fill={OX}
-        textAnchor={px(markX) > width * 0.7 ? "end" : "start"}>today</text>
+      {markX !== undefined && markY !== undefined ? (
+        <>
+          <circle cx={px(markX)} cy={py(markY)} r={4.5} fill={OX} />
+          <text x={Math.min(px(markX) + 7, width - 4)} y={py(markY) - 7} fontSize={9.5} fill={OX}
+            textAnchor={px(markX) > width * 0.7 ? "end" : "start"}>today</text>
+        </>
+      ) : null}
       <line x1={0} x2={width} y1={height - 14} y2={height - 14} stroke={RULE} />
       <text x={width / 2} y={height - 2} fontSize={9.5} fill={MUTED} textAnchor="middle">exit equity value (M)</text>
     </svg>
