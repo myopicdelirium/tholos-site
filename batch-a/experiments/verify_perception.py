@@ -10,10 +10,19 @@ the fast path in without changing what the sim does.
 
 The bar (per the WO-2/WO-3 amendment review) is boundary-stressing + full-horizon,
 because divergence is cumulative — a short easy run can pass while a long one
-drifts:
-  * wrap_edge : tiny grid → agents live on edges and wrap constantly.
+drifts. Each case targets a specific way a batch path could silently diverge:
+  * wrap_edge : size-10 grid, radius 2 → most agents' Moore windows STRADDLE the
+                x/y=0 seam every tick (window is 5 wide on a 10-wide torus), so a
+                wrong (clamped / non-wrapping) gather diverges immediately — the
+                seam is crossed, not merely approached.
+  * tie       : water+vegetation saturated to a flat capacity plateau across the
+                whole grid (huge cluster_sigma, regen ≥ cap) → every window's
+                argmax is an N-way tie, forcing the first-in-scan-order tie-break
+                to match the scalar '>' scan exactly; veg and prey cue strengths
+                also tie (exercises the '>=' food-cue pick).
   * rich      : a resource-rich world (fills any cap) at the full horizon.
-  * poor      : a resource-poor world (plateaus below cap) at the full horizon.
+  * poor      : a resource-poor world (plateaus below cap) at the full horizon —
+                tighter dynamics amplify any cumulative float drift.
 Each runs the reference and the candidate and hashes the per-tick, per-agent
 stream (excluding the run_id column). Any single differing bit fails the case.
 
@@ -40,8 +49,14 @@ from batch_a.sim import Simulation                        # noqa: E402
 # (name, base_case, seed, overrides) — seeds 0/2 are rich/poor per WO-4.
 CASES = [
     ("wrap_edge", "a3.yaml", 1, {
+        "world": {"size": 10, "perception_radius": 2},
+        "init": {"n_agents": 40}, "reproduction": {"max_population": 200}}),
+    ("tie", "a3.yaml", 3, {
         "world": {"size": 16, "perception_radius": 2},
-        "init": {"n_agents": 30}, "reproduction": {"max_population": 200}}),
+        "init": {"n_agents": 40}, "reproduction": {"max_population": 400},
+        "entities": {
+            "water": {"cluster_sigma": 100.0, "regen_per_tick": 1.0},
+            "vegetation": {"cluster_sigma": 100.0, "regen_per_tick": 1.0}}}),
     ("rich", "a3.yaml", 0, {"reproduction": {"max_population": 1000}}),
     ("poor", "a3.yaml", 2, {"reproduction": {"max_population": 1000}}),
 ]
@@ -79,7 +94,7 @@ def main():
     ap.add_argument("--candidate", default="scalar",
                     help="perception.impl to test against the scalar reference")
     ap.add_argument("--ticks", type=int, default=3000)
-    ap.add_argument("--cases", default="wrap_edge,rich,poor")
+    ap.add_argument("--cases", default="wrap_edge,tie,rich,poor")
     args = ap.parse_args()
     wanted = set(args.cases.split(","))
 

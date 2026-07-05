@@ -5,9 +5,15 @@
 so nothing slips between the ephemeral containers.*
 
 **▶ NEXT ACTION: run amended WO-2 (cap 2000, ≥20 seeds, within-world βₛ~Rₛ
-design); run amended WO-3 (cap 2000, A3-inheritance check) in parallel.** WO-1
-and WO-4 done; cap ruling resolved (= 2000). See `docs/WO2_WO3_AMENDMENT.md`.
-Compute is the constraint — see the runtime note in that doc / below.
+design) on the vectorized perception path; run amended WO-3 (cap 2000,
+A3-inheritance check) in parallel.** WO-1 and WO-4 done; cap ruling resolved
+(= 2000); **(B) landed & verified — `perception.impl: vectorized` is bit-identical
+to scalar at the full 3000-tick horizon on all four bar cases**, so it is now the
+safe fast path. See `docs/WO2_WO3_AMENDMENT.md`. Compute is still the constraint:
+(B) trims per-run wall time ~1.5× (more at higher N), not the ~10× hoped for —
+the deeper win needs a struct-of-arrays agent rewrite that would move the
+reference (separate project). Full-20 still relies on the checkpoint grind (or a
+stable box).
 
 Status: ☐ not started · ◐ in progress · ☑ done · ⊘ blocked
 
@@ -30,7 +36,7 @@ Status: ☐ not started · ◐ in progress · ☑ done · ⊘ blocked
 |---|---|---|---|---|
 | WO-1 | A1 freeze_learning × gradient 2×2 (§9.1) | ☑ | — | A1 framing, A1 figure, hero copy |
 | WO-4 | A3 lift population cap (real capacity vs artifact) | ☑ | — | whether A2/A3 birthplace results mean anything |
-| WO-2 | **Amended²:** cap 2000, ≥20 seeds; **crash-robust stable-tick hazard** is primary βₛ (raw demoted); moderator is **volatility** not R_s (pilot r=0.81); **selection promoted to lead**. | ☐ | (B) for compute | the headline result; WO-2 figures |
+| WO-2 | **Amended²:** cap 2000, ≥20 seeds; **crash-robust stable-tick hazard** is primary βₛ (raw demoted); moderator is **volatility** not R_s (pilot r=0.81); **selection promoted to lead**. | ☐ | container restarts (checkpoint grind); (B) landed | the headline result; WO-2 figures |
 | WO-3 | **Amended:** cap 2000, deaths-by-cause + A3-inheritance check | ☐ | — | individual vs demographic fragility; A4 redesign call |
 
 ## Track 2 — Presentation infrastructure (true regardless of results)
@@ -145,6 +151,19 @@ Infra: V3-AMEND ✓ → V1 ◐ → V3 ✓ → PLAYER ✓ → SKELETON ✓. Remai
   - **Pilot policy:** read early seeds as they land; if βₛ~Rₛ is huge and clean,
     that informs whether 20 is confirmatory — a call made *after* data, never a
     pre-emptive spec cut. (C) reduce-spec stays rejected.
+- **RESOLVED — (B) landed & verified (`perception.impl: vectorized`).** Batch
+  perception (`perceive_all` in `agent/perception.py`) replicates the scalar scan
+  element-for-element (`%size` window gathers; argmax/argmin first-occurrence
+  matched to the dy-outer/dx-inner scan order and strict `>`/`<` tie-break;
+  cue-strength arithmetic written char-for-char). **Bit-identical to scalar at the
+  full 3000-tick horizon on all four bar cases** — `wrap_edge` (size-10 grid,
+  windows straddle the seam every tick), `tie` (saturated flat-capacity plateau →
+  N-way argmax ties), `rich`, `poor`. Only perception is vectorized; decision, RNG
+  draws, and conflict resolution stay on the scalar reference (their conditional
+  per-agent draws can't be vectorized without moving the reference). **Measured
+  ~1.47× at cap 500** (grows with N); the honest ceiling is ~1.7–2×, not 10–30× —
+  perception was ~43% of runtime, decision (RNG-bound, unchanged) ~31%. Reproduce:
+  `python -m experiments.verify_perception --candidate vectorized --ticks 3000`.
 - **RESOLVED — WO-2 measurement (crash-robust pilot).** Primary estimator =
   stable-tick mortality hazard (grouped Poisson, agent-clustered; Cox-on-age
   cross-check agrees); raw βₛ → sensitivity. Moderator = **volatility** (pilot
@@ -194,3 +213,4 @@ orders (WO-V1–5) · player build spec (locked aesthetic) · this tracker.
 | 2026-07-05 | collinearity | Collinearity check (existing 7 worlds): **SEPARABLE** — corr(R_s,vol)=−0.28, 3 off-diagonal disentanglers (s2 stable-poor, s5 volatile-rich, s6). Full-20 as amended can separate volatility from capacity; no regen/drain axis needed. | Land (B); then full 20 (crash-robust hazard + volatility + extended horizon). |
 | 2026-07-05 | crashrobust | Built the crash-robust estimator (stable-tick hazard + Cox cross-check + cycle-avg Rₛ + volatility), validated on the existing pilot (no new compute). **Passes its own no-regression test (7/7);** birthplace hazard tracks **volatility (r=0.81), not capacity (−0.23)** — deeper finding; effect small → **selection leads WO-2**. seed 2 contradiction confirmed real. Amended WO-2 measurement + promoted selection + shared instrument for WO-3. | Land (B); run full 20 with crash-robust hazard + volatility + extended horizon. |
 | 2026-07-05 | wo-2 pilot | WO-2 pilot COMPLETE (uniform×none, 8 seeds). βₛ~R_s: r=−0.35 (predicted sign) only after dropping crash/climb-flagged seeds, but **weak & noisy → full 20 warranted** (not "huge & clean"). Strong clean signal instead: **exploration selected down** (trait drift mean −0.33, 7/8 worlds), plausibly scarcity-dependent (poorest seed flips). Durable record: `docs/diagnostics/wo2_pilot_uniform_none_8seed.jsonl`. | Await go-ahead on (B) vectorization; then full WO-2 (20 seeds × 9 cells) + WO-3. |
+| 2026-07-05 | (B) vectorized perception | Built `perceive_all` (batched, behind `perception.impl`) + hardened `verify_perception.py` (added a seam-straddling `wrap_edge` and a saturated `tie` case). **Bit-identical to scalar at full 3000 ticks on all four bar cases (wrap/tie/rich/poor).** Decision+RNG+resolution stay scalar. Measured ~1.47× at cap 500; honest ceiling ~1.7–2× (perception was 43% of runtime; RNG-bound decision unchanged). Fast path is now safe to swap in. | Run full WO-2 (20 seeds × 9 cells, cap 2000, crash-robust hazard + volatility, extended horizon) + WO-3 on `impl: vectorized`, via the checkpoint grind. Regenerate provisional A4 numbers at cap 2000. Close V1 (site CSS ← tokens.json). |
