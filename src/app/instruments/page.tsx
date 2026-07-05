@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import EngineClient from "./_components/EngineClient";
 import data from "./_data/engine.json";
 
@@ -35,6 +36,26 @@ export default function InstrumentsPage() {
           true optimism drift is known by construction, so the instrument&rsquo;s readings can be checked against planted
           truth. Seed {data.meta.seed}, as-of {data.meta.as_of}; every number reproduces exactly.
         </p>
+      </div>
+
+      <div className="mt-8">
+        <Link
+          href="/instruments/terminal"
+          className="paper shadow-paper border rule block rounded-2xl p-6 transition hover:translate-y-[-1px]"
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <div>
+              <div className="smallcaps text-[10px] text-[#6a6258]">The terminal</div>
+              <div className="md-display mt-1 text-[22px] leading-tight text-[#191714]">
+                Run it on your own holding →
+              </div>
+            </div>
+            <p className="max-w-[46ch] text-[12.5px] leading-relaxed text-[#6a6258]">
+              Build a cap table and watch your payoff answer back live; paste your comparables; get a
+              mark with its band. Everything below is the demonstration — the terminal is the tool.
+            </p>
+          </div>
+        </Link>
       </div>
 
       <div className="mt-12">
