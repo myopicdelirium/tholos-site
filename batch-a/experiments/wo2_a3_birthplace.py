@@ -154,10 +154,9 @@ def run(seeds, conditions, ablations, cap, ticks, out_dir):
                 with open(ckpt, "a") as fh:
                     fh.write(json.dumps(row) + "\n")
                 rows.append(row)
+                bs = "na" if res["beta_surv"] is None else f"{res['beta_surv']:.0f}"
                 print(f"  {cond:10} {abl:15} s{seed:<2} | R_s={res['R_s']:>6.0f} "
-                      f"cap_bound={res['cap_bound']} beta_surv="
-                      f"{'na' if res['beta_surv'] is None else f'{res[\"beta_surv\"]:.0f}'}",
-                      flush=True)
+                      f"cap_bound={res['cap_bound']} beta_surv={bs}", flush=True)
 
     # ── across-seed headline: beta_surv ~ R_s, per cell ──
     summary = []

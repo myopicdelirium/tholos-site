@@ -123,6 +123,17 @@ Science: **WO-1 ✓ → WO-4 ✓ → WO-2 (blocked on cap ruling) → WO-3.**
 Infra: V3-AMEND ✓ → V1 ◐ → V3 ✓ → PLAYER ✓ → SKELETON ✓. Remaining infra: finish V1 (`tokens.json`) with V2-MACH.
 
 ## Open decisions
+- **COMPUTE BLOCKER (new) — the amended runs can't complete in this container.**
+  Measured: one cap-2000 / 3000-tick A3 run = **415 s** (rich world, hits 2000).
+  Full amended WO-2 (9 cells × 20 seeds ≈ 180 runs) ≈ **10–12 h**; WO-3 ≈ 2–3 h.
+  The ephemeral container restarts every ~1–2 min — *shorter than a single run* —
+  so checkpoint-grinding thrashes (big runs never finish between restarts). The
+  WO-2 runner is written, pipeline-validated, and checkpointed (turnkey). Choices:
+  (a) run on a stable machine — `python -m experiments.wo2_a3_birthplace
+  --seeds 0-19` (+ WO-3), embarrassingly parallel by seed/cell; (b) invest in a
+  perception vectorization (~10–30× → runs ~15–40 s, feasible here; unblocks WO-2/
+  WO-3/A4-regen), guarded by the determinism test; (c) reduce spec (violates
+  cap-2000 / ≥20-seed invariants — not recommended). → your call.
 - **RESOLVED — WO-2 cap = 2000, within-world design** (WO-2/WO-3 amendment). The
   standalone 20-seed WO-4 re-run is folded into WO-2 (per-seed capacity is a
   byproduct). WO-3 also runs at cap 2000 with the A3-inheritance check.
@@ -151,3 +162,4 @@ orders (WO-V1–5) · player build spec (locked aesthetic) · this tracker.
 | 2026-06-28 | wo-1 | Ran WO-1 (A1 2×2, 20 seeds): **A1 is scripted gradient-following; learning is inert for survival** (§9.1 answered). Committed diagnostic + results + this tracker. | Run WO-4 (A3 cap). |
 | 2026-06-28 | wo-4 | Ran WO-4 (A3 caps 400/800/1500, 5 seeds): **cap 400 binds every world; true capacity is seed-dependent (~500 to ≥1500)**. Bimodal — some worlds fill any cap, others plateau. WO-2 blocked on a cap ruling; recommend re-running WO-4 at ≥20 seeds. | Get WO-2 cap ruling; WO-3 can run in parallel. |
 | 2026-06-28 | amend | WO-2/WO-3 amendment applied: cap 400 declared a global confound; WO-2 → cap 2000 + within-world βₛ~Rₛ (absorbs 20-seed capacity); WO-3 → cap 2000 + A3-inheritance check, parallel; A4 numbers marked provisional. Saved `docs/WO2_WO3_AMENDMENT.md`. | Run amended WO-2 + WO-3 (compute-bound; checkpointed runners). |
+| 2026-06-28 | wo-2 setup | Built + pipeline-validated the checkpointed WO-2 runner (within-world βₛ~Rₛ, ablation decomp) and per-tick deaths-by-cause instrumentation for WO-3. **Compute blocker found:** cap-2000/3000t run = 415 s; full WO-2 ≈ 10–12 h and the container restarts faster than one run finishes → can't complete here. Smoke test (cap 400, below-spec) already shows the predicted negative βₛ~capacity slope. | DECISION NEEDED: run on a stable box, or vectorize perception (~10–30×). |
