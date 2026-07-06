@@ -17,6 +17,9 @@ const API = process.env.NEXT_PUBLIC_PVE_API_URL ??
   (process.env.NODE_ENV === "production" ? "https://api.myopicdelirium.com" : "http://127.0.0.1:8620");
 const OX = "#8a3033";
 const BOOK_FILE_VERSION = 1;
+// Session-only recall of the access code; the gate itself is the SERVER's —
+// every compute endpoint refuses without the header, so this page holds no secret.
+const CODE_KEY = "md-pve-access-code";
 
 const SECTORS = ["SOFTWARE_SAAS", "FINTECH", "HEALTHTECH", "CONSUMER", "INDUSTRIAL_TECH",
   "CLEANTECH_ENERGY", "BIOTECH_PHARMA", "MEDIA_GAMING", "LOGISTICS_MOBILITY", "OTHER"];
@@ -198,6 +201,11 @@ const pillCls = (on: boolean) =>
 
 export default function Terminal() {
   const [apiUp, setApiUp] = useState<boolean | null>(null);
+  const [gateRequired, setGateRequired] = useState(false);
+  const [code, setCode] = useState<string | null>(null);
+  const [gateInput, setGateInput] = useState("");
+  const [gateChecking, setGateChecking] = useState(false);
+  const [gateError, setGateError] = useState<string | null>(null);
   const [draft, setDraft] = useState<Draft>(freshDraft());
   const [book, setBook] = useState<Draft[]>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -216,8 +224,51 @@ export default function Terminal() {
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    fetch(`${API}/health`).then((r) => setApiUp(r.ok)).catch(() => setApiUp(false));
+    (async () => {
+      try {
+        const r = await fetch(`${API}/health`);
+        if (!r.ok) { setApiUp(false); return; }
+        const body = await r.json();
+        if (body.access_code_required) {
+          setGateRequired(true);
+          // a code remembered this session still has to pass the server
+          const stored = sessionStorage.getItem(CODE_KEY);
+          if (stored) {
+            const ok = await fetch(`${API}/access-check`,
+              { headers: { "x-pve-access-code": stored } });
+            if (ok.ok) setCode(stored);
+            else sessionStorage.removeItem(CODE_KEY);
+          }
+        }
+        setApiUp(true);
+      } catch { setApiUp(false); }
+    })();
   }, []);
+
+  const regate = (msg: string) => {
+    sessionStorage.removeItem(CODE_KEY);
+    setCode(null);
+    setGateError(msg);
+  };
+
+  const submitCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const attempt = gateInput.trim();
+    if (!attempt) return;
+    setGateChecking(true); setGateError(null);
+    try {
+      const r = await fetch(`${API}/access-check`,
+        { headers: { "x-pve-access-code": attempt } });
+      if (r.ok) {
+        sessionStorage.setItem(CODE_KEY, attempt);
+        setCode(attempt);
+        setGateInput("");
+      } else {
+        setGateError("The engine refused that code. Try again.");
+        setGateInput("");
+      }
+    } catch { setApiUp(false); } finally { setGateChecking(false); }
+  };
 
   useEffect(() => {
     if (!running) { setElapsed(0); return; }
@@ -247,16 +298,20 @@ export default function Terminal() {
 
   // the live payoff curve while building (server-computed, debounced)
   useEffect(() => {
-    if (!apiUp) return;
+    if (!apiUp || (gateRequired && !code)) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       try {
         const r = await fetch(`${API}/payoff-curve`, {
-          method: "POST", headers: { "content-type": "application/json" },
+          method: "POST",
+          headers: { "content-type": "application/json",
+            ...(code ? { "x-pve-access-code": code } : {}) },
           body: JSON.stringify({ cap_table: classPayload(), owned_class: draft.stake.owned_class }),
         });
         const body = await r.json();
-        if (r.status === 422) {
+        if (r.status === 401) {
+          regate("The code was refused — it may have been rotated. Enter the current one.");
+        } else if (r.status === 422) {
           setCurve(null);
           setCurveGuidance(body.detail?.guidance ?? ["Invalid cap table."]);
         } else if (r.ok) {
@@ -267,7 +322,7 @@ export default function Terminal() {
       } catch { setApiUp(false); }
     }, 450);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [draft.classes, draft.stake.owned_class, apiUp, classPayload]);
+  }, [draft.classes, draft.stake.owned_class, apiUp, classPayload, gateRequired, code]);
 
   const updateClass = (i: number, patch: Partial<ClassRow>) =>
     setDraft((d) => ({ ...d, classes: d.classes.map((c, j) => (j === i ? { ...c, ...patch } : c)) }));
@@ -296,11 +351,15 @@ export default function Terminal() {
         ...(num(paths) !== null ? { n_paths: num(paths) } : {}),
       };
       const r = await fetch(`${API}/book`, {
-        method: "POST", headers: { "content-type": "application/json" },
+        method: "POST",
+        headers: { "content-type": "application/json",
+          ...(code ? { "x-pve-access-code": code } : {}) },
         body: JSON.stringify(payload),
       });
       const body = await r.json();
-      if (r.status === 422 || r.status === 403) {
+      if (r.status === 401) {
+        regate("The code was refused — it may have been rotated. Enter the current one.");
+      } else if (r.status === 422 || r.status === 403) {
         setRunGuidance(body.detail?.guidance ?? ["Invalid input."]);
       } else if (r.status === 429) {
         setRunGuidance(["Rate limit reached — the public tier is deliberately paced. Retry shortly."]);
@@ -356,6 +415,33 @@ export default function Terminal() {
     );
   }
   if (apiUp === null) return <Card><Small>Reaching the engine…</Small></Card>;
+
+  if (gateRequired && !code) {
+    return (
+      <Card>
+        <div className="smallcaps text-[10px]" style={{ color: OX }}>Access code</div>
+        <p className="mt-2 max-w-[64ch] text-[13.5px] leading-relaxed text-[#4b443b]">
+          The engine is live, but it computes only with the code — and the refusal is the
+          server&rsquo;s, not this page&rsquo;s. The demonstration above runs on precomputed
+          output and needs no code.
+        </p>
+        <form onSubmit={submitCode} className="mt-4 flex max-w-sm gap-2">
+          <label htmlFor="pve-access-code" className="sr-only">Access code</label>
+          <input id="pve-access-code" type="password" autoComplete="off"
+            className={inputCls} placeholder="Enter code" value={gateInput}
+            onChange={(e) => { setGateInput(e.target.value); setGateError(null); }} />
+          <button type="submit" disabled={gateChecking || gateInput.trim() === ""}
+            className="rounded-full border rule bg-[#191714] px-6 py-2 text-[11px] uppercase tracking-[0.22em] text-[#f4f1ea] transition-opacity disabled:opacity-40">
+            {gateChecking ? "Checking…" : "Enter"}
+          </button>
+        </form>
+        {gateError ? (
+          <div className="mt-3 text-[12px]" style={{ color: OX }}>{gateError}</div>
+        ) : null}
+        <Small>Request the code via Connect.</Small>
+      </Card>
+    );
+  }
 
   const fwd = result?.forward;
 
