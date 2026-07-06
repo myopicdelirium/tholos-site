@@ -1,22 +1,30 @@
 {
   "primary_beta": "hazard_beta",
-  "n_seeds_uncensored_base": 13,
-  "beta_vs_volatility_marginal_r": 0.17,
-  "beta_vs_capacity_marginal_r": 0.17,
+  "n_seeds_uncensored_base": 15,
+  "beta_vs_volatility_marginal_r": 0.16,
+  "beta_vs_capacity_marginal_r": 0.19,
   "disentangled": {
-    "std_coef_volatility": 1.121,
-    "std_coef_capacity": 1.119,
-    "R2": 0.39
+    "std_coef_volatility": 0.875,
+    "std_coef_capacity": 0.892,
+    "R2": 0.32,
+    "ci_volatility": [
+      -0.468,
+      1.634
+    ],
+    "ci_capacity": [
+      0.252,
+      1.526
+    ]
   },
   "selection": {
-    "survivor_trait_drift_median": -0.3498,
+    "survivor_trait_drift_median": -0.3546,
     "survivor_trait_vs_volatility_r": -0.15,
-    "survivor_trait_vs_capacity_r": -0.21
+    "survivor_trait_vs_capacity_r": -0.29
   },
   "ablation_drift": {
     "none": {
-      "n": 49,
-      "drift_median": -0.3498
+      "n": 52,
+      "drift_median": -0.3546
     },
     "freeze_learning": {
       "n": 36,
@@ -27,7 +35,7 @@
       "drift_median": 0.0
     }
   },
-  "n_total_cells": 130,
+  "n_total_cells": 133,
   "conditions": [
     "uniform",
     "born_rich",
@@ -38,5 +46,5 @@
     "freeze_learning",
     "freeze_traits"
   ],
-  "verdict": "neither moderator dominates once both are in the model (volatility +1.12, capacity +1.12) \u2014 birthplace is a weak, non-specific moderator; lead with the selection result."
+  "verdict": "CAPACITY is the moderator (+0.89, CI [0.252, 1.526]) \u2014 volatility's coefficient (+0.88, CI [-0.468, 1.634]) does not exclude zero; the pilot's volatility signal was tracking capacity after all."
 }
