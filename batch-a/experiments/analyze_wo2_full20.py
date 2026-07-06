@@ -47,10 +47,7 @@ def _corr(x, y):
     return round(float(np.corrcoef(x, y)[0, 1]), 2)
 
 
-def _multi(beta, vol, rs):
-    """Standardized β ~ z(vol) + z(rs). Returns (coef_vol, coef_rs, R2) or Nones."""
-    if len(beta) < 5:
-        return None, None, None
+def _fit_multi(beta, vol, rs):
     y = _z(beta)
     X = np.column_stack([np.ones(len(y)), _z(vol), _z(rs)])
     coef, *_ = np.linalg.lstsq(X, y, rcond=None)
@@ -58,7 +55,36 @@ def _multi(beta, vol, rs):
     ss_res = float(((y - yhat) ** 2).sum())
     ss_tot = float(((y - y.mean()) ** 2).sum())
     r2 = 1 - ss_res / ss_tot if ss_tot > 1e-9 else None
-    return round(float(coef[1]), 3), round(float(coef[2]), 3), (round(r2, 2) if r2 is not None else None)
+    return float(coef[1]), float(coef[2]), r2
+
+
+def _multi(beta, vol, rs, n_boot=2000):
+    """Standardized β ~ z(vol) + z(rs) with seed-resampling bootstrap CIs.
+
+    The headline invariant: no number without a CI. Resamples SEEDS with
+    replacement (the unit of independence) and refits; deterministic RNG.
+    Returns dict with point estimates, 95% CIs, and R².
+    """
+    if len(beta) < 5:
+        return {"std_coef_volatility": None, "std_coef_capacity": None, "R2": None,
+                "ci_volatility": None, "ci_capacity": None}
+    beta, vol, rs = np.asarray(beta, float), np.asarray(vol, float), np.asarray(rs, float)
+    cv, cr, r2 = _fit_multi(beta, vol, rs)
+    rng = np.random.default_rng(20260706)          # deterministic bootstrap
+    n = len(beta)
+    bs_v, bs_c = [], []
+    for _ in range(n_boot):
+        idx = rng.integers(0, n, n)
+        if vol[idx].std() < 1e-9 or rs[idx].std() < 1e-9:
+            continue
+        v, c, _ = _fit_multi(beta[idx], vol[idx], rs[idx])
+        bs_v.append(v)
+        bs_c.append(c)
+    ci = lambda a: [round(float(np.percentile(a, 2.5)), 3),
+                    round(float(np.percentile(a, 97.5)), 3)] if a else None
+    return {"std_coef_volatility": round(cv, 3), "std_coef_capacity": round(cr, 3),
+            "R2": (round(r2, 2) if r2 is not None else None),
+            "ci_volatility": ci(bs_v), "ci_capacity": ci(bs_c)}
 
 
 def _bkey(rows):
@@ -82,7 +108,7 @@ def analyze(rows):
     vol = [r["volatility_cv"] for r in base]
     rs = [r["R_s"] for r in base]
     marg_vol, marg_rs = _corr(beta, vol), _corr(beta, rs)
-    cvol, crs, r2 = _multi(beta, vol, rs)
+    dis = _multi(beta, vol, rs)
 
     st = [r["survivor_trait"] for r in base if r.get("survivor_trait") is not None]
     st_vol = _corr([r["survivor_trait"] for r in base if r.get("survivor_trait") is not None],
@@ -104,7 +130,7 @@ def analyze(rows):
         "n_seeds_uncensored_base": len(base),
         "beta_vs_volatility_marginal_r": marg_vol,
         "beta_vs_capacity_marginal_r": marg_rs,
-        "disentangled": {"std_coef_volatility": cvol, "std_coef_capacity": crs, "R2": r2},
+        "disentangled": dis,
         "selection": {
             "survivor_trait_drift_median": abl_drift.get("none", {}).get("drift_median"),
             "survivor_trait_vs_volatility_r": st_vol,
@@ -119,18 +145,26 @@ def analyze(rows):
 def _verdict(a):
     d = a["disentangled"]
     cv, cr = d["std_coef_volatility"], d["std_coef_capacity"]
+    civ, cic = d.get("ci_volatility"), d.get("ci_capacity")
     if cv is None:
         return "insufficient uncensored seeds for the disentangling regression — grind further."
-    if abs(cv) >= 0.3 and abs(cv) > 1.6 * abs(cr):
-        return (f"VOLATILITY is the moderator: with both in one model its standardized "
-                f"coefficient ({cv:+.2f}) dominates capacity's ({cr:+.2f}). The pilot's "
-                f"β~volatility was not a capacity confound — n=20 separated them.")
-    if abs(cr) >= 0.3 and abs(cr) > 1.6 * abs(cv):
-        return (f"CAPACITY is the moderator ({cr:+.2f} vs volatility {cv:+.2f}) — the "
-                f"pilot's volatility signal was tracking capacity after all.")
-    return (f"neither moderator dominates once both are in the model "
-            f"(volatility {cv:+.2f}, capacity {cr:+.2f}) — birthplace is a weak, "
-            f"non-specific moderator; lead with the selection result.")
+    excl = lambda ci: ci is not None and (ci[0] > 0 or ci[1] < 0)   # CI excludes zero
+    v_sig, c_sig = excl(civ), excl(cic)
+    if v_sig and not c_sig:
+        return (f"VOLATILITY is the moderator: its standardized coefficient ({cv:+.2f}, "
+                f"95% CI {civ}) excludes zero while capacity's ({cr:+.2f}, CI {cic}) does "
+                f"not. The pilot's β~volatility was not a capacity confound — n=20 separated them.")
+    if c_sig and not v_sig:
+        return (f"CAPACITY is the moderator ({cr:+.2f}, CI {cic}) — volatility's coefficient "
+                f"({cv:+.2f}, CI {civ}) does not exclude zero; the pilot's volatility signal "
+                f"was tracking capacity after all.")
+    if v_sig and c_sig:
+        return (f"BOTH moderators carry independent signal (volatility {cv:+.2f} CI {civ}; "
+                f"capacity {cr:+.2f} CI {cic}) — birthplace matters through two separable "
+                f"channels; report both.")
+    return (f"NEITHER coefficient's CI excludes zero (volatility {cv:+.2f} CI {civ}, "
+            f"capacity {cr:+.2f} CI {cic}) — birthplace is a weak, non-specific moderator "
+            f"at n=20; lead with the selection result.")
 
 
 def write_readout(a, out_dir, complete):
@@ -147,8 +181,8 @@ Disentangling regression on **{a['n_seeds_uncensored_base']}** uncensored `ablat
 |---|---|
 | βₛ ~ volatility (marginal r) | {a['beta_vs_volatility_marginal_r']} |
 | βₛ ~ capacity R_s (marginal r) | {a['beta_vs_capacity_marginal_r']} |
-| **βₛ ~ z(volatility) + z(capacity)** — std coef volatility | **{d['std_coef_volatility']}** |
-| — std coef capacity | {d['std_coef_capacity']} |
+| **βₛ ~ z(volatility) + z(capacity)** — std coef volatility | **{d['std_coef_volatility']}** (95% CI {d.get('ci_volatility')}) |
+| — std coef capacity | {d['std_coef_capacity']} (95% CI {d.get('ci_capacity')}) |
 | model R² | {d['R2']} |
 
 **{verdict}**
