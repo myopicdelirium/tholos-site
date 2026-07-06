@@ -34,7 +34,9 @@ type CompanyForm = { name: string; sector: string; stage: string; geography: str
   revenue_ltm: string; revenue_growth_yoy: string; gross_margin: string;
   ebitda_ltm: string; cash_balance: string; monthly_burn: string };
 type StakeForm = { owned_class: string; shares_owned: string; cost_basis: string; self_mark: string };
+type LastRoundForm = { pre_money: string; post_money: string; amount_raised: string };
 type Draft = { company: CompanyForm; classes: ClassRow[]; stake: StakeForm;
+  lastRound: LastRoundForm;
   refMode: "pasted" | "synthetic"; comps: CompRow[]; dlomOverride: string; blendOverride: string };
 
 type Band = { low: number; central: number; high: number; alpha: number };
@@ -84,6 +86,7 @@ const freshDraft = (): Draft => ({
       participation_cap_multiple: "", shares_outstanding: "10", invested_capital: "0" },
   ],
   stake: { owned_class: "Series A", shares_owned: "2", cost_basis: "6", self_mark: "" },
+  lastRound: { pre_money: "", post_money: "", amount_raised: "" },
   refMode: "pasted",
   comps: [
     { ticker: "PEERA", ev_to_revenue: "8.0", ev_to_ebitda: "24", revenue_growth_yoy: "0.35", gross_margin: "0.75" },
@@ -115,6 +118,13 @@ function draftToApiHolding(d: Draft) {
     })),
     stake: { owned_class: d.stake.owned_class, shares_owned: num(d.stake.shares_owned),
       cost_basis: num(d.stake.cost_basis) ?? 0, self_mark: num(d.stake.self_mark) },
+    ...([d.lastRound.pre_money, d.lastRound.post_money, d.lastRound.amount_raised]
+        .some((v) => v.trim() !== "")
+      ? { last_round: { round_name: "Last round",
+          pre_money: num(d.lastRound.pre_money),
+          post_money: num(d.lastRound.post_money),
+          amount_raised: num(d.lastRound.amount_raised) } }
+      : {}),
     market: d.refMode === "pasted"
       ? { mode: "pasted", comps: d.comps.filter((c) => c.ticker.trim()).map((c) => ({
           ticker: c.ticker.trim().toUpperCase(), ev_to_revenue: num(c.ev_to_revenue),
@@ -122,6 +132,40 @@ function draftToApiHolding(d: Draft) {
           gross_margin: num(c.gross_margin) })) }
       : { mode: "synthetic" },
     ...(Object.keys(levers).length ? { levers } : {}),
+  };
+}
+
+type ApiHolding = ReturnType<typeof draftToApiHolding>;
+
+function apiHoldingToDraft(h: ApiHolding): Draft {
+  const s = (v: number | null | undefined) => (v === null || v === undefined ? "" : String(v));
+  const lr = (h as { last_round?: { pre_money: number | null; post_money: number | null; amount_raised: number | null } }).last_round;
+  const levers = (h as { levers?: { dlom_central?: number; blend_weight_revenue?: number } }).levers;
+  return {
+    company: { name: h.company.name, sector: h.company.sector, stage: h.company.stage,
+      geography: h.company.geography, revenue_ltm: s(h.company.revenue_ltm),
+      revenue_growth_yoy: s(h.company.revenue_growth_yoy),
+      gross_margin: s(h.company.gross_margin), ebitda_ltm: s(h.company.ebitda_ltm),
+      cash_balance: s(h.company.cash_balance), monthly_burn: s(h.company.monthly_burn) },
+    classes: h.cap_table.map((c) => ({
+      name: c.name, class_type: c.class_type as ClassRow["class_type"],
+      seniority_rank: c.seniority_rank,
+      liquidation_preference_multiple: s(c.liquidation_preference_multiple),
+      participating: Boolean(c.participating),
+      participation_cap_multiple: s(c.participation_cap_multiple),
+      shares_outstanding: s(c.shares_outstanding),
+      invested_capital: s(c.invested_capital),
+    })),
+    stake: { owned_class: h.stake.owned_class, shares_owned: s(h.stake.shares_owned),
+      cost_basis: s(h.stake.cost_basis), self_mark: s(h.stake.self_mark) },
+    lastRound: { pre_money: s(lr?.pre_money), post_money: s(lr?.post_money),
+      amount_raised: s(lr?.amount_raised) },
+    refMode: h.market.mode === "synthetic" ? "synthetic" : "pasted",
+    comps: (h.market.mode === "pasted" && h.market.comps ? h.market.comps : []).map((c) => ({
+      ticker: c.ticker, ev_to_revenue: s(c.ev_to_revenue), ev_to_ebitda: s(c.ev_to_ebitda),
+      revenue_growth_yoy: s(c.revenue_growth_yoy), gross_margin: s(c.gross_margin),
+    })),
+    dlomOverride: s(levers?.dlom_central), blendOverride: s(levers?.blend_weight_revenue),
   };
 }
 
@@ -164,6 +208,7 @@ export default function Terminal() {
   const [seed, setSeed] = useState("20240115");
   const [paths, setPaths] = useState("");
   const [running, setRunning] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
   const [runGuidance, setRunGuidance] = useState<string[]>([]);
   const [result, setResult] = useState<BookBody | null>(null);
   const [openHolding, setOpenHolding] = useState<string | null>(null);
@@ -173,6 +218,30 @@ export default function Terminal() {
   useEffect(() => {
     fetch(`${API}/health`).then((r) => setApiUp(r.ok)).catch(() => setApiUp(false));
   }, []);
+
+  useEffect(() => {
+    if (!running) { setElapsed(0); return; }
+    const id = setInterval(() => setElapsed((e) => e + 1), 1000);
+    return () => clearInterval(id);
+  }, [running]);
+
+  const loadExampleBook = async () => {
+    try {
+      const r = await fetch(`${API}/example-book`);
+      if (!r.ok) throw new Error();
+      const payload = await r.json();
+      setBook(payload.holdings.map(apiHoldingToDraft));
+      setSeed(String(payload.seed ?? "20240115"));
+      setScen({ compress: false, window: false, writeoff: false });
+      setAssumptionSet("base");
+      setPaths("");
+      setEditIndex(null);
+      setResult(null);
+      setRunGuidance([]);
+    } catch {
+      setRunGuidance(["Couldn't load the example book — is the engine reachable?"]);
+    }
+  };
 
   const classPayload = useCallback(() => draftToApiHolding(draft).cap_table, [draft]);
 
@@ -300,6 +369,9 @@ export default function Terminal() {
             {book.length === 0 ? " (the holding below runs solo until you add more)" : ""}
           </div>
           <div className="flex flex-wrap gap-2">
+            <button type="button" className={pillCls(false)} onClick={loadExampleBook}>
+              Load the example book
+            </button>
             <button type="button" className={pillCls(false)} onClick={exportBook}>Export book</button>
             <button type="button" className={pillCls(false)} onClick={() => fileRef.current?.click()}>
               Import book
@@ -362,6 +434,19 @@ export default function Terminal() {
             </div>
           ))}
         </div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {([["pre_money", "last round pre-money (M, opt.)"],
+             ["post_money", "post-money (M)"],
+             ["amount_raised", "raised (M)"]] as const).map(([k, label]) => (
+            <div key={k}>
+              <label className={labelCls}>{label}</label>
+              <input className={inputCls} inputMode="decimal" value={draft.lastRound[k]}
+                onChange={(e) => setDraft({ ...draft, lastRound: { ...draft.lastRound, [k]: e.target.value } })} />
+            </div>
+          ))}
+        </div>
+        <Small>The last round anchors the exit simulation&rsquo;s valuation base; without it the
+          engine falls back to the comps-implied equity and says so in the method notes.</Small>
       </Card>
 
       {/* ------------------ 2 · cap table + live curve --------------------- */}
@@ -584,9 +669,14 @@ export default function Terminal() {
           <button type="button" disabled={running}
             className="rounded-full border rule bg-[#191714] px-6 py-2.5 text-[11px] uppercase tracking-[0.22em] text-[#f4f1ea] transition-opacity disabled:opacity-40"
             onClick={runBook}>
-            {running ? "The engine is running…" :
+            {running ? `The engine is running… ${elapsed}s` :
               `Run the ${book.length > 1 ? `book (${book.length} holdings)` : "engine"}`}
           </button>
+          {running ? (
+            <Small>First run on a new book builds each holding&rsquo;s payoff curve and runs
+              twelve simulations — typically ~20 seconds, longer if the engine was asleep.
+              Repeats of any book you&rsquo;ve run before are instant, exactly, from the cache.</Small>
+          ) : null}
         </div>
         {runGuidance.length > 0 ? <Guidance lines={runGuidance} /> : null}
       </Card>
