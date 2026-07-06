@@ -1,0 +1,30 @@
+/* GENERATED from batch-a/design/tokens.json — do not edit by hand.
+   Regenerate: (cd batch-a && python -m design.build_css)  */
+
+:root {
+  /* legacy names (RGB triplets — used as rgb(var(--x) / a)) */
+  --ivory: 240 234 224;
+  --ink: 12 14 16;
+  --teal: 0 57 79;
+  --insurgent: 194 58 43;
+  --brass: 133 118 101;
+  --taupe: 137 120 102;
+  --mist: 224 219 215;
+
+  /* semantic Batch A names (hex — canvas/new work) */
+  --ba-paper: #F0EAE0;
+  --ba-ink: #0C0E10;
+  --ba-water: #00394F;
+  --ba-rust: #C23A2B;
+  --ba-brass: #857665;
+  --ba-taupe: #897866;
+  --ba-mist: #E0DBD7;
+  --ba-case-a1: #00394F;
+  --ba-case-a2: #857665;
+  --ba-case-a3: #857665;
+  --ba-case-a4: #C23A2B;
+  --ba-death-energy: #857665;
+  --ba-death-hydration: #00394F;
+  --ba-death-temperature-comfort: #6E8B9E;
+  --ba-death-predation: #C23A2B;
+}
