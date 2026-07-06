@@ -13,12 +13,19 @@ function cx(...xs: Array<string | false | null | undefined>) {
 export default function SiteNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [projectsOpen, setProjectsOpen] = useState(false);
 
-  const items: NavItem[] = useMemo(
+  const projectItems: NavItem[] = useMemo(
     () => [
       { href: "/artifacts", label: "Artifacts" },
       { href: "/batch-a", label: "Batch A" },
       { href: "/instruments", label: "Instruments" },
+    ],
+    []
+  );
+
+  const items: NavItem[] = useMemo(
+    () => [
       { href: "/logbook", label: "Logbook" },
       { href: "/roster", label: "Roster" },
       { href: "/events", label: "Events" },
@@ -50,6 +57,12 @@ export default function SiteNav() {
   }, [open]);
 
   const isActive = (href: string) => pathname === href || pathname?.startsWith(href + "/");
+
+  const projectActive = projectItems.some((it) => isActive(it.href));
+
+  useEffect(() => {
+    if (open && projectActive) setProjectsOpen(true);
+  }, [open, projectActive]);
 
   return (
     <>
@@ -127,6 +140,48 @@ export default function SiteNav() {
                     >
                       Home
                     </Link>
+                  </li>
+
+                  <li>
+                    <button
+                      type="button"
+                      aria-expanded={projectsOpen}
+                      onClick={() => setProjectsOpen((v) => !v)}
+                      className={cx(
+                        "flex w-full items-center justify-between gap-3 px-3 py-3 text-[11px] uppercase tracking-[0.32em] transition-colors border rule",
+                        projectActive ? "bg-black/5 text-[#1b1b1b]" : "text-[#5f564d] hover:bg-black/5 hover:text-[#1b1b1b]"
+                      )}
+                    >
+                      <span>Projects</span>
+                      <span
+                        aria-hidden
+                        className={cx(
+                          "block text-[10px] transition-transform duration-200",
+                          projectsOpen && "rotate-90"
+                        )}
+                      >
+                        ›
+                      </span>
+                    </button>
+
+                    {projectsOpen ? (
+                      <ul className="mt-1 space-y-1 pl-4">
+                        {projectItems.map((it) => (
+                          <li key={it.href}>
+                            <Link
+                              href={it.href}
+                              onClick={() => setOpen(false)}
+                              className={cx(
+                                "block px-3 py-3 text-[11px] uppercase tracking-[0.32em] transition-colors border rule",
+                                isActive(it.href) ? "bg-black/5 text-[#1b1b1b]" : "text-[#5f564d] hover:bg-black/5 hover:text-[#1b1b1b]"
+                              )}
+                            >
+                              {it.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
                   </li>
 
                   {items.map((it) => (
