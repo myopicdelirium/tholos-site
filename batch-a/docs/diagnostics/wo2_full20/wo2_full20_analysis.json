@@ -1,41 +1,41 @@
 {
   "primary_beta": "hazard_beta",
-  "n_seeds_uncensored_base": 15,
-  "beta_vs_volatility_marginal_r": 0.16,
-  "beta_vs_capacity_marginal_r": 0.19,
+  "n_seeds_uncensored_base": 18,
+  "beta_vs_volatility_marginal_r": -0.14,
+  "beta_vs_capacity_marginal_r": 0.34,
   "disentangled": {
-    "std_coef_volatility": 0.875,
-    "std_coef_capacity": 0.892,
-    "R2": 0.32,
+    "std_coef_volatility": 0.468,
+    "std_coef_capacity": 0.732,
+    "R2": 0.19,
     "ci_volatility": [
-      -0.468,
-      1.634
+      -0.684,
+      1.275
     ],
     "ci_capacity": [
-      0.252,
-      1.526
+      0.149,
+      1.3
     ]
   },
   "selection": {
-    "survivor_trait_drift_median": -0.3546,
-    "survivor_trait_vs_volatility_r": -0.15,
-    "survivor_trait_vs_capacity_r": -0.29
+    "survivor_trait_drift_median": -0.3489,
+    "survivor_trait_vs_volatility_r": -0.05,
+    "survivor_trait_vs_capacity_r": -0.3
   },
   "ablation_drift": {
     "none": {
-      "n": 52,
-      "drift_median": -0.3546
+      "n": 59,
+      "drift_median": -0.3489
     },
     "freeze_learning": {
-      "n": 36,
+      "n": 53,
       "drift_median": 0.2368
     },
     "freeze_traits": {
-      "n": 38,
+      "n": 58,
       "drift_median": 0.0
     }
   },
-  "n_total_cells": 133,
+  "n_total_cells": 180,
   "conditions": [
     "uniform",
     "born_rich",
@@ -46,5 +46,5 @@
     "freeze_learning",
     "freeze_traits"
   ],
-  "verdict": "CAPACITY is the moderator (+0.89, CI [0.252, 1.526]) \u2014 volatility's coefficient (+0.88, CI [-0.468, 1.634]) does not exclude zero; the pilot's volatility signal was tracking capacity after all."
+  "verdict": "CAPACITY is the moderator (+0.73, CI [0.149, 1.3]) \u2014 volatility's coefficient (+0.47, CI [-0.684, 1.275]) does not exclude zero; the pilot's volatility signal was tracking capacity after all."
 }

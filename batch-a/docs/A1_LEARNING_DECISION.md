@@ -1,9 +1,34 @@
 # §9.1 decision memo — what to do about A1's inert learning
 
-*Status: OPEN — this is the one conceptual question the model has raised about
-itself. Decision owner: you. This memo assembles the evidence and the options so
-the call can be made once, with everything on the table. No sim code changes
-until it's made (and none while the full-20 is in flight).*
+*Status: EVIDENCE IN — the full-20's freeze_learning column has landed and it is
+decisive (see "Resolution evidence" below). Decision owner: you; the memo's
+recommendation is now grounded rather than provisional.*
+
+## Resolution evidence (WO-2 full-20, 2026-07-06)
+
+**Learning is NOT decorative in A3 — freezing it reverses the direction of
+selection on exploration.** Survivor−founder trait drift, median across seeds,
+stable in every spawn condition:
+
+| ablation | trait drift (median) | reading |
+|---|---|---|
+| none | **−0.349** | with learning ON, exploration is selected DOWN hard |
+| freeze_learning | **+0.237** | with learning OFF, exploration is selected UP |
+| freeze_traits | 0.0 | mechanical zero (no variation to select on) — instrument validates |
+
+Learning and heritable exploration are **substitutes**: when agents can learn,
+wandering is a cost and conservatives win; when they cannot, exploration is the
+only adaptation channel left and it becomes what selection favours. This is
+exactly the interaction case the decision record anticipated ("if neither
+channel alone reproduces a result, that result is an interaction — reported as
+such").
+
+**Consequence for §9.1: option (a) is now evidenced, not just default.** A1's
+learning is inert *because A1's world is too simple to make it bind* (WO-1),
+and it demonstrably binds once the world is rich enough (A3). The published
+framing — "A1 = reactive baseline; learning is substrate" — stands with data
+behind it. (b1) discoverable-value remains attractive as a *Batch B* experiment,
+not an A1 retrofit. (b2)/(b3) are off the table.
 
 ## The finding (WO-1, settled)
 
