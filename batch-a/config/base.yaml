@@ -24,7 +24,8 @@ world:
 # floor lets a faint-but-correct gradient still commit the agent to a heading,
 # which is what makes long-range "follow moisture to water" navigation work.
 perception:
-  impl: scalar             # 'scalar' (per-agent reference) or 'vectorized' (batched, bit-identical)
+  impl: vectorized         # bit-identical to 'scalar' at full horizon (verify_perception, all 4 cases);
+                           # 'scalar' stays selectable as the reference for the diff harness.
   gradient_cue_gain: 8.0
   gradient_cue_floor: 0.35
 
