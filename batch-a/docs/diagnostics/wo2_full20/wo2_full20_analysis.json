@@ -1,0 +1,42 @@
+{
+  "primary_beta": "hazard_beta",
+  "n_seeds_uncensored_base": 12,
+  "beta_vs_volatility_marginal_r": -0.1,
+  "beta_vs_capacity_marginal_r": 0.42,
+  "disentangled": {
+    "std_coef_volatility": 0.834,
+    "std_coef_capacity": 1.117,
+    "R2": 0.39
+  },
+  "selection": {
+    "survivor_trait_drift_median": -0.3498,
+    "survivor_trait_vs_volatility_r": 0.01,
+    "survivor_trait_vs_capacity_r": -0.35
+  },
+  "ablation_drift": {
+    "none": {
+      "n": 45,
+      "drift_median": -0.3498
+    },
+    "freeze_learning": {
+      "n": 36,
+      "drift_median": 0.2368
+    },
+    "freeze_traits": {
+      "n": 38,
+      "drift_median": 0.0
+    }
+  },
+  "n_total_cells": 126,
+  "conditions": [
+    "uniform",
+    "born_rich",
+    "born_poor"
+  ],
+  "ablations": [
+    "none",
+    "freeze_learning",
+    "freeze_traits"
+  ],
+  "verdict": "neither moderator dominates once both are in the model (volatility +0.83, capacity +1.12) \u2014 birthplace is a weak, non-specific moderator; lead with the selection result."
+}
