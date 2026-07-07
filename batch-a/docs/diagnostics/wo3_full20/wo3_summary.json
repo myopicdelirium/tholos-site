@@ -1,0 +1,43 @@
+{
+  "per_case": {
+    "a3": {
+      "n": 20,
+      "median_fano": 1.824,
+      "median_burst_share": 0.121,
+      "median_max_drawdown": 0.416,
+      "median_volatility": 0.05,
+      "extinct_seeds": 0,
+      "dominant_causes": {
+        "hydration": 20
+      }
+    },
+    "a4": {
+      "n": 20,
+      "median_fano": 3.752,
+      "median_burst_share": 0.169,
+      "median_max_drawdown": 0.872,
+      "median_volatility": 0.269,
+      "extinct_seeds": 6,
+      "dominant_causes": {
+        "hydration": 18,
+        "temperature_comfort": 2
+      }
+    }
+  },
+  "inheritance": {
+    "n_paired": 20,
+    "a4_drawdown_vs_a3_oscamp": {
+      "slope": 0.1599,
+      "r": 0.13
+    },
+    "a4_drawdown_vs_a3_volatility": {
+      "slope": 0.5862,
+      "r": 0.14
+    },
+    "a4_fano_vs_a3_fano": {
+      "slope": 0.9293,
+      "r": 0.24
+    },
+    "reading": "A4 crash severity is weakly related to A3 oscillation \u2014 A4's non-stationarity (seasons/fauna/drought) is the driver, not the inherited world"
+  }
+}
