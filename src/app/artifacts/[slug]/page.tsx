@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { getArtifact } from "@/lib/artifacts"
 import { notFound } from "next/navigation"
 import AccessRequestForm from "./AccessRequestFormClient"
@@ -14,78 +15,86 @@ export default async function ArtifactPage({ params }: { params: Promise<{ slug:
   const previewSrc = (artifact as any).previewImage ?? (artifact as any).preview ?? null
 
   return (
-    <section className="mx-auto max-w-6xl px-6 pt-12 pb-24">
-      <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr]">
-        <div>
-          <div className="smallcaps text-[11px] text-[#6a6258]">
-            {status}
-            {updated ? ` · updated ${updated}` : ""}
-            {year ? ` · ${year}` : ""}
-          </div>
-
-          <h1 className="mt-4 md-display md-hero-title text-[#191714]">{artifact.title}</h1>
-
-          {authors ? (
-            <div className="mt-5 flex items-center gap-3">
-              <div className="smallcaps text-[11px] text-[#6a6258]">Authors</div>
-              <div className="text-[13px] text-[#3f3a33]">{authors}</div>
+    <div className="min-h-screen bg-[var(--site-bg)]">
+      <section className="mx-auto max-w-6xl px-6 pt-12 pb-24">
+        <Link
+          href="/artifacts"
+          className="mb-8 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.28em] text-[var(--site-muted)] transition-colors hover:text-[var(--site-ink)]"
+        >
+          <span aria-hidden>←</span> Artifacts
+        </Link>
+        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr]">
+          <div>
+            <div className="smallcaps text-[11px] text-[var(--site-muted)]">
+              {status}
+              {updated ? ` · updated ${updated}` : ""}
+              {year ? ` · ${year}` : ""}
             </div>
-          ) : null}
 
-          <div className="mt-10 space-y-3">
-            <div className="smallcaps text-[11px] text-[#6a6258]">Abstract</div>
-            <div className="paper shadow-paper border rule rounded-2xl bg-white/70 p-6 text-[14px] leading-relaxed text-[#3a352f]">
-              {artifact.abstract}
-            </div>
-          </div>
+            <h1 className="mt-4 md-display md-hero-title text-[var(--site-ink)]">{artifact.title}</h1>
 
-          {artifact.keywords?.length ? (
-            <div className="mt-10">
-              <div className="smallcaps text-[11px] text-[#6a6258]">Keywords</div>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {artifact.keywords.map((k) => (
-                  <span
-                    key={k}
-                    className="smallcaps rounded-full border border-[rgba(133,118,101,0.22)] bg-white/55 px-3 py-1 text-[10px] text-[#5c544a]"
-                  >
-                    {k}
-                  </span>
-                ))}
+            {authors ? (
+              <div className="mt-5 flex items-center gap-3">
+                <div className="smallcaps text-[11px] text-[var(--site-muted)]">Authors</div>
+                <div className="text-[13px] text-[var(--site-body)]">{authors}</div>
+              </div>
+            ) : null}
+
+            <div className="mt-10 space-y-3">
+              <div className="smallcaps text-[11px] text-[var(--site-muted)]">Abstract</div>
+              <div className="relative border border-[var(--site-line)] p-6 text-[14px] leading-relaxed text-[var(--site-body)]">
+                <span aria-hidden className="absolute left-0 top-0 h-full w-[3px] bg-[var(--site-accent)]" />
+                {artifact.abstract}
               </div>
             </div>
-          ) : null}
 
-          <div className="mt-10">
-            <div className="smallcaps text-[11px] text-[#6a6258]">Access</div>
-            <div className="paper shadow-paper border rule mt-3 rounded-2xl bg-white/55 p-6">
-              <p className="text-[13px] leading-relaxed text-[#4b443b]">
+            {artifact.keywords?.length ? (
+              <div className="mt-10">
+                <div className="smallcaps text-[11px] text-[var(--site-muted)]">Keywords</div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {artifact.keywords.map((k) => (
+                    <span
+                      key={k}
+                      className="smallcaps rounded-full border border-[var(--site-pill-bd)] bg-[var(--site-pill-bg)] px-3 py-1 text-[10px] text-[var(--site-muted)]"
+                    >
+                      {k}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            <div className="mt-10">
+              <div className="smallcaps text-[11px] text-[var(--site-muted)]">Access</div>
+              <p className="mt-3 max-w-[60ch] text-[13px] leading-relaxed text-[var(--site-body)]">
                 Full text is restricted during active development and submission cycles. Request access on the right.
               </p>
             </div>
           </div>
-        </div>
 
-        <div className="paper shadow-paper border rule rounded-2xl bg-white/55 p-6">
-          <div className="smallcaps text-[11px] text-[#6a6258]">Preview</div>
+          <div className="relative border border-[var(--site-line)] p-6">
+            <span aria-hidden className="absolute left-0 top-0 h-full w-[3px] bg-[var(--site-accent)]" />
+            <div className="smallcaps text-[11px] text-[var(--site-muted)]">Preview</div>
 
-          <div className="relative mt-3 overflow-hidden rounded-2xl border rule bg-black/10">
-            {previewSrc ? (
-              <img src={previewSrc} alt="" className="h-[420px] w-full object-cover blur-[6px] brightness-[0.75]" />
-            ) : (
-              <div className="h-[420px] w-full bg-black/15" />
-            )}
+            <div className="relative mt-3 overflow-hidden border border-[var(--site-line)] bg-black/20">
+              {previewSrc ? (
+                <img src={previewSrc} alt="" className="h-[420px] w-full object-cover blur-[6px] brightness-[0.7]" />
+              ) : (
+                <div className="h-[420px] w-full bg-black/25" />
+              )}
 
-            <div className="absolute bottom-4 left-4 right-4 rounded-2xl bg-black/55 p-4 text-white/90">
-              <div className="smallcaps text-[10px] opacity-80">Restricted</div>
-              <div className="mt-1 text-[13px] leading-snug">
-                Preview intentionally obscured. Request full access to read the paper.
+              <div className="absolute bottom-4 left-4 right-4 bg-black/55 p-4">
+                <div className="smallcaps text-[10px] text-[var(--site-accent)]">Restricted</div>
+                <div className="mt-1 text-[13px] leading-snug text-[#efe9dc]">
+                  Preview intentionally obscured. Request full access to read the paper.
+                </div>
               </div>
             </div>
-          </div>
 
-          <AccessRequestForm title={artifact.title} slug={slug} />
+            <AccessRequestForm title={artifact.title} slug={slug} />
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   )
 }
