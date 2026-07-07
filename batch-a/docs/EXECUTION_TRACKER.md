@@ -4,19 +4,14 @@
 (2) update statuses, (3) append one line to the Handoff Log. Committed to the repo
 so nothing slips between the ephemeral containers.*
 
-**▶ NEXT ACTION: (1) WO-2 full-20 is RUNNING in-container as a resume-loop grind
-(`experiments/run_wo2_grind.sh`); relaunch it after each container restart —
-`--check-complete` + the pushed checkpoint resume it. (2) BUILD `wo3_a4_mortality.py`
-(no runner exists yet) then run WO-3. (3) On WO-2 completion, produce the figures +
-regenerate A4 at cap 2000.** WO-1 and WO-4 done; cap ruling = 2000; **(B) landed,
-verified, and now the default** (`perception.impl: vectorized`, bit-identical to
-scalar at full 3000-tick horizon on all four bar cases). Compute is still the
-constraint: (B) trims per-cell wall time ~1.5× (~415s→~280s), NOT the ~10× hoped —
-so a 280s cell still exceeds the container's restart window; (B) did not clear the
-structural blocker, it made each interrupted cell less doomed. The deeper win needs
-a struct-of-arrays agent rewrite that would move the trusted reference (a bad trade
-right before a headline run). Full-20 completes by attrition here (push-per-cell so
-nothing is lost) or unattended on a stable box. See `docs/WO2_WO3_AMENDMENT.md`.
+**▶ NEXT ACTION: read the full-20 results together and decide the publication
+package. WO-2 (180/180) and WO-3 (40/40) are COMPLETE; A4 regenerated at cap 2000
+(provisional flag retired; report table auto-upgraded). Open calls now on the
+evidence: (1) §9.1 — resolved-by-evidence memo awaits your sign-off
+(`A1_LEARNING_DECISION.md`); (2) whether to extend the horizon on a stable box
+before publishing the moderator number (~48% of seeds censored at 3000 ticks);
+(3) site publication of the WO-2/WO-3 figures (wired on-branch, publishes on
+merge); (4) SoA rewrite preconditions nearly met (`SOA_REWRITE_PLAN.md`).**
 
 Status: ☐ not started · ◐ in progress · ☑ done · ⊘ blocked
 
@@ -29,7 +24,7 @@ Status: ☐ not started · ◐ in progress · ☑ done · ⊘ blocked
 - **Batch B seams preserved:** memory stub, swappable `compute_weights`, action registry.
 - **Diagnostics are diagnostics:** report nulls honestly; never tune the world to rescue a result.
 - **≥ 20 seeds** for any headline number; median + bootstrap CI.
-- **Cap 400 is a confound.** No A1–A4 headline number is publishable until regenerated at a non-binding cap (or with cap-binding seeds flagged). Capacity for oscillating worlds is **cycle-averaged**, not single-tick. *(WO-4; A4 site/report numbers currently marked provisional.)*
+- **Cap 400 is a confound.** No A1–A4 headline number is publishable until regenerated at a non-binding cap (or with cap-binding seeds flagged). Capacity for oscillating worlds is **cycle-averaged**, not single-tick. *(WO-4; RESOLVED — A4 regenerated at cap 2000×20 seeds via WO-3; report table auto-upgraded, provisional flag retired.)*
 - **Visual:** structure not blur; color only where semantic (water = blue, stress/death = rust); one palette source, no color literals elsewhere. *(Player reads the site's CSS tokens at runtime — see V1 note.)*
 
 ---
@@ -39,8 +34,8 @@ Status: ☐ not started · ◐ in progress · ☑ done · ⊘ blocked
 |---|---|---|---|---|
 | WO-1 | A1 freeze_learning × gradient 2×2 (§9.1) | ☑ | — | A1 framing, A1 figure, hero copy |
 | WO-4 | A3 lift population cap (real capacity vs artifact) | ☑ | — | whether A2/A3 birthplace results mean anything |
-| WO-2 | **Amended²:** cap 2000, ≥20 seeds; **crash-robust stable-tick hazard** is primary βₛ (raw demoted); moderator is **volatility** not R_s (pilot r=0.81); **selection promoted to lead**. | ◐ running | container restarts (checkpoint grind) | the headline result; WO-2 figures |
-| WO-3 | **Amended:** cap 2000, deaths-by-cause + A3-inheritance check | ☐ | **no runner built yet** (`wo3_a4_mortality.py` absent) | individual vs demographic fragility; A4 redesign call |
+| WO-2 | **DONE (180/180).** Disentangling regression overturns the pilot: **capacity** is the moderator (+0.73 CI [0.15,1.30]); volatility CI spans zero — the n=7 volatility signal was capacity in disguise. Effect small (R²=0.19). **Selection lead:** drift −0.349; freeze_learning REVERSES it (+0.237) → learning×exploration are substitutes; §9.1 resolved by evidence. ~48% seeds censored at 3000t (stated limitation). | ☑ | — | figures live; §9.1 memo evidenced |
+| WO-3 | **DONE (40/40).** A4 mortality is demographic: Fano 3.75 vs A3 1.82, drawdown 0.872 vs 0.416, 6/20 extinct vs 0/20. **A3-inheritance WEAK (r≈0.13)** → A4 fragility is CREATED by non-stationarity, not inherited from world instability — answers the A4-redesign question. Doubles as the cap-2000 A4 regeneration. | ☑ | — | A4 numbers final; report auto-upgraded |
 
 ## Track 2 — Presentation infrastructure (true regardless of results)
 | ID | Task | Status | Blocked by | Unblocks |
@@ -219,3 +214,4 @@ orders (WO-V1–5) · player build spec (locked aesthetic) · this tracker.
 | 2026-07-05 | (B) vectorized perception | Built `perceive_all` (batched, behind `perception.impl`) + hardened `verify_perception.py` (added a seam-straddling `wrap_edge` and a saturated `tie` case). **Bit-identical to scalar at full 3000 ticks on all four bar cases (wrap/tie/rich/poor).** Decision+RNG+resolution stay scalar. Measured ~1.47× at cap 500; honest ceiling ~1.7–2× (perception was 43% of runtime; RNG-bound decision unchanged). Fast path is now safe to swap in. | Run full WO-2 (20 seeds × 9 cells, cap 2000, crash-robust hazard + volatility, extended horizon) + WO-3 on `impl: vectorized`, via the checkpoint grind. Regenerate provisional A4 numbers at cap 2000. Close V1 (site CSS ← tokens.json). |
 | 2026-07-06 | full-20 launch | Made `perception.impl: vectorized` the **default** (22 tests green). Rebuilt the WO-2 runner for the ephemeral container: `--impl`, `--check-complete`, per-seed volatility_cv/osc_period/end_slope/censored, and the amended **crash-robust hazard fitted INLINE** (per-agent panel consumed in memory, only scalars persisted — verified vs pilot: s0 +0.002, s2 −0.049). Checkpoint → tracked `docs/diagnostics/wo2_full20/` (experiments/results is gitignored) so it survives restarts. **Launched WO-2 full-20** via `run_wo2_grind.sh` (resume-loop + push-per-cell). Horizon kept at 3000 + censoring (extension costs grind time 1:1 here). **(B)'s 1.47× did NOT clear the restart-vs-cell-time blocker** — honest call surfaced to user; running here is attrition, a stable box would finish unattended. | **WO-3 runner does not exist — build `wo3_a4_mortality.py`.** Keep relaunching the grind after restarts. On completion: WO-2 figures, regenerate A4 at cap 2000, close V1. |
 | 2026-07-06 | extended build | Full-autonomy sweep while the grind runs (sim code FROZEN mid-grind for provenance). Built: **WO-3 runner** (`wo3_a4_mortality.py` — Fano/burst/drawdown + sign-aware A3-inheritance) + chained launcher (idles until WO-2 completes; both grinds self-push). **WO-2 analyzer** (`analyze_wo2_full20.py` — the disentangling regression βₛ~z(vol)+z(cap) with seed-bootstrap CIs; CI-aware verdict). **A4 regeneration readout** (`analyze_a4_cap2000.py` — paired within-seed A3↔A4 contrast; retires provisional flag at 40/40). **Figures**: WO-2 (selection lead + moderator) and WO-3 (paired-Fano slopegraph + inheritance), registered in `viz.build` behind data gates; A1 SVG regenerated byte-identical. **V1 CLOSED** (tokens.json → tokens.css generator + drift-guard test; Next build green). **Tests 22→41+2**: field-level perceive_all≡perceive on live seam/tie worlds; every WO instrument recovers synthetic ground truth (incl. planted-sign crash-robust recovery). **Docs**: `SOA_REWRITE_PLAN.md` (deferred 10×, 5-rung verification ladder, preconditions) + `A1_LEARNING_DECISION.md` (§9.1 options; full-20 freeze_learning column decides). | Wakeup loop drives completion: at WO-2 180/180 run analyzer+figure+report headline; WO-3 auto-starts; at 40/40 run WO-3 analyzer + A4 readout + figure. Then: report regen, §9.1 call on evidence. |
+| 2026-07-07 | full-20 COMPLETE | **WO-2 180/180 + WO-3 40/40 landed** (grind survived a container restart at 154/180 with zero loss — push-per-cell worked). WO-2: **capacity is the moderator** (+0.73 CI[0.15,1.30]; volatility CI spans 0 — pilot story overturned, small effect R²=0.19); **selection×learning interaction** (drift −0.349 on, +0.237 frozen, 0.0 traits-frozen) → **§9.1 resolved: learning binds in A3**; ~48% censored (horizon limitation, stated). WO-3: A4 mortality is **demographic** (Fano 3.75 vs 1.82; drawdown 0.872 vs 0.416; 6/20 vs 0/20 extinct); **inheritance weak (r≈0.13) → non-stationarity CREATES the fragility**; cap-2000 A4 extinct=0.30 (cap-400's ≈0.6 exaggerated it) — **provisional flag retired, report table auto-upgraded**. All three figures final in public/figures. | Read results together; §9.1 sign-off; horizon-extension call; merge for site publication; SoA when preconditions met. |

@@ -1,0 +1,98 @@
+{
+  "a3": {
+    "n_seeds": 20,
+    "extinct_fraction": 0.0,
+    "R_s": {
+      "median": 735.3,
+      "ci_low": 507.6,
+      "ci_high": 1042.85,
+      "n": 20
+    },
+    "final_pop": {
+      "median": 725.5,
+      "ci_low": 494.0,
+      "ci_high": 1047.0,
+      "n": 20
+    },
+    "max_drawdown": {
+      "median": 0.41600000000000004,
+      "ci_low": 0.2955,
+      "ci_high": 0.6005,
+      "n": 20
+    },
+    "volatility_cv": {
+      "median": 0.0495,
+      "ci_low": 0.0446,
+      "ci_high": 0.07,
+      "n": 20
+    },
+    "fano_deaths": {
+      "median": 1.8239999999999998,
+      "ci_low": 1.6655,
+      "ci_high": 1.948,
+      "n": 20
+    },
+    "dominant_causes": {
+      "hydration": 20
+    }
+  },
+  "a4": {
+    "n_seeds": 20,
+    "extinct_fraction": 0.3,
+    "R_s": {
+      "median": 418.65,
+      "ci_low": 156.05,
+      "ci_high": 728.3,
+      "n": 20
+    },
+    "final_pop": {
+      "median": 321.5,
+      "ci_low": 1.0,
+      "ci_high": 548.5,
+      "n": 20
+    },
+    "max_drawdown": {
+      "median": 0.872,
+      "ci_low": 0.8485,
+      "ci_high": 0.999,
+      "n": 20
+    },
+    "volatility_cv": {
+      "median": 0.26890000000000003,
+      "ci_low": 0.1399,
+      "ci_high": 0.3908,
+      "n": 20
+    },
+    "fano_deaths": {
+      "median": 3.752,
+      "ci_low": 2.8435,
+      "ci_high": 4.869,
+      "n": 20
+    },
+    "dominant_causes": {
+      "hydration": 18,
+      "temperature_comfort": 2
+    }
+  },
+  "paired_contrast": {
+    "n_paired": 20,
+    "dR_s": {
+      "median": -401.45000000000005,
+      "ci_low": -576.75,
+      "ci_high": -124.0,
+      "n": 20
+    },
+    "d_drawdown": {
+      "median": 0.4635,
+      "ci_low": 0.33999999999999997,
+      "ci_high": 0.5315,
+      "n": 20
+    },
+    "d_volatility": {
+      "median": 0.1963,
+      "ci_low": 0.07919999999999999,
+      "ci_high": 0.3626,
+      "n": 20
+    }
+  }
+}
