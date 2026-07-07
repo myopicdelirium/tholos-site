@@ -32,14 +32,20 @@ export default function AccessRequestForm({ title, slug, contactEmail }: Props) 
     return `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
   }, [to, title, slug, name, affiliation, email, message])
 
+  const inputCls =
+    "w-full rounded-md border border-[var(--site-field-bd)] bg-[var(--site-field-bg)] px-4 py-3 text-[14px] text-[var(--site-field-ink)] outline-none placeholder:text-[#6f685b] focus:border-[rgba(20,16,10,0.35)]"
+
   return (
     <div className="mt-6 space-y-3">
-      <input value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-2xl border border-[rgba(133,118,101,0.18)] bg-white/70 px-4 py-3 text-[14px] outline-none" placeholder="Name" />
-      <input value={affiliation} onChange={(e) => setAffiliation(e.target.value)} className="w-full rounded-2xl border border-[rgba(133,118,101,0.18)] bg-white/70 px-4 py-3 text-[14px] outline-none" placeholder="Affiliation" />
-      <input value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-2xl border border-[rgba(133,118,101,0.18)] bg-white/70 px-4 py-3 text-[14px] outline-none" placeholder="Email" />
-      <textarea value={message} onChange={(e) => setMessage(e.target.value)} className="min-h-[120px] w-full rounded-2xl border border-[rgba(133,118,101,0.18)] bg-white/70 px-4 py-3 text-[14px] outline-none" placeholder="What are you asking for, and why?" />
+      <input value={name} onChange={(e) => setName(e.target.value)} className={inputCls} placeholder="Name" />
+      <input value={affiliation} onChange={(e) => setAffiliation(e.target.value)} className={inputCls} placeholder="Affiliation" />
+      <input value={email} onChange={(e) => setEmail(e.target.value)} className={inputCls} placeholder="Email" />
+      <textarea value={message} onChange={(e) => setMessage(e.target.value)} className={inputCls + " min-h-[120px]"} placeholder="What are you asking for, and why?" />
 
-      <a href={mailto} className="inline-flex w-full items-center justify-center rounded-2xl bg-[#00394F] px-5 py-3 text-[12px] uppercase tracking-[0.22em] text-[#E8E5E0] shadow-[0_18px_55px_rgba(0,0,0,0.16)] transition hover:translate-y-[-1px]">
+      <a
+        href={mailto}
+        className="inline-flex w-full items-center justify-center rounded-md bg-[var(--site-accent)] px-5 py-3 text-[12px] uppercase tracking-[0.22em] text-[var(--site-on-accent)] transition hover:translate-y-[-1px]"
+      >
         Request full text
       </a>
     </div>

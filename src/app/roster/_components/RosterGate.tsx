@@ -36,24 +36,24 @@ export default function RosterGate({ children }: { children: React.ReactNode }) 
   if (unlocked) return <>{children}</>;
 
   return (
-    <main className="flex min-h-[80vh] items-center justify-center px-6">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--site-bg)] px-6">
       <div className="w-full max-w-sm">
-        <div className="text-[11px] uppercase tracking-[0.55em] text-brass">
+        <div className="text-[11px] uppercase tracking-[0.55em] text-[var(--site-accent)]">
           Myopic Delirium
         </div>
 
-        <h1 className="mt-4 md-display text-4xl tracking-tight">
+        <h1 className="mt-4 md-display text-4xl tracking-tight text-[var(--site-ink)]">
           Roster
         </h1>
 
-        <p className="mt-4 text-sm text-[#1b1b1b]/60 leading-relaxed">
+        <p className="mt-4 text-sm leading-relaxed text-[var(--site-body)]">
           This section is not yet public. Enter the access code to continue.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8">
           <label
             htmlFor="roster-code"
-            className="block text-[11px] uppercase tracking-[0.32em] text-[#1b1b1b]/45"
+            className="block text-[11px] uppercase tracking-[0.32em] text-[var(--site-muted)]"
           >
             Access code
           </label>
@@ -69,12 +69,12 @@ export default function RosterGate({ children }: { children: React.ReactNode }) 
                 setValue(e.target.value);
                 setError(false);
               }}
-              className="flex-1 border rule bg-transparent px-4 py-3 text-sm tracking-wide text-[#1b1b1b] placeholder:text-[#1b1b1b]/30 focus:outline-none focus:ring-2 focus:ring-black/15"
+              className="flex-1 border border-[var(--site-line)] bg-transparent px-4 py-3 text-sm tracking-wide text-[var(--site-ink)] placeholder:text-[var(--site-muted)] focus:outline-none focus:ring-2 focus:ring-white/20"
               placeholder="Enter code"
             />
             <button
               type="submit"
-              className="border rule bg-[#1b1b1b] px-6 py-3 text-[11px] uppercase tracking-[0.28em] text-[rgb(var(--ivory))] hover:bg-[#333] focus:outline-none focus:ring-2 focus:ring-black/15"
+              className="border border-[var(--site-accent)] bg-[var(--site-accent)] px-6 py-3 text-[11px] uppercase tracking-[0.28em] text-[var(--site-on-accent)] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/20"
             >
               Enter
             </button>
@@ -87,9 +87,9 @@ export default function RosterGate({ children }: { children: React.ReactNode }) 
           )}
         </form>
 
-        <div className="mt-10 h-px w-full bg-black/10" />
+        <div className="mt-10 h-px w-full bg-[var(--site-line)]" />
 
-        <div className="mt-4 text-[12px] text-[#1b1b1b]/35">
+        <div className="mt-4 text-[12px] text-[var(--site-muted)]">
           Request access via Connect.
         </div>
       </div>
