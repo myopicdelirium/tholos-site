@@ -106,8 +106,14 @@ def build(out_dir: Path) -> Path:
     fig.suptitle("WO-2 — exploration is selected down; birthplace is a weak moderator" + tag,
                  x=0.075, y=0.95, ha="left", fontsize=14.5, fontfamily=style.DISPLAY, color=ink)
     drift = analysis.get("selection", {}).get("survivor_trait_drift_median")
-    sub = ("Survivors are less explorative than founders in almost every world "
-           f"(median drift {drift}); the exception is the scarcest seed.")
+    n_up = sum(1 for r in base
+               if r.get("survivor_trait") is not None and r.get("founder_trait") is not None
+               and r["survivor_trait"] > r["founder_trait"])
+    n_all = sum(1 for r in base
+                if r.get("survivor_trait") is not None and r.get("founder_trait") is not None)
+    sub = (f"Survivors are less explorative than founders in {n_all - n_up}/{n_all} worlds "
+           f"(median drift {drift}); the {n_up} exception{'s' if n_up != 1 else ''} are the "
+           f"scarcest worlds.")
     fig.text(0.075, 0.875, sub, ha="left", fontsize=8.5, fontfamily=style.BODY,
              color=style.rgba("ink", 0.62))
 

@@ -2048,7 +2048,7 @@ z
    <text style="font-size: 14.5px; font-family: 'Ibarra Real Nova'; text-anchor: start; fill: #0c0e10" x="41.013477" y="18.217734" transform="rotate(-0 41.013477 18.217734)">WO-2 — exploration is selected down; birthplace is a weak moderator</text>
   </g>
   <g id="text_33">
-   <text style="font-size: 8.5px; font-family: 'Inter'; text-anchor: start; fill: #0c0e10; opacity: 0.62" x="41.013477" y="31.5" transform="rotate(-0 41.013477 31.5)">Survivors are less explorative than founders in almost every world (median drift -0.3489); the exception is the scarcest seed.</text>
+   <text style="font-size: 8.5px; font-family: 'Inter'; text-anchor: start; fill: #0c0e10; opacity: 0.62" x="41.013477" y="31.5" transform="rotate(-0 41.013477 31.5)">Survivors are less explorative than founders in 18/20 worlds (median drift -0.3489); the 2 exceptions are the scarcest worlds.</text>
   </g>
  </g>
  <defs>

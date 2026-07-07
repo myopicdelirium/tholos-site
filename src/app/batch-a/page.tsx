@@ -57,9 +57,44 @@ export default function BatchAPage() {
           </article>
         ))}
       </div>
+
+      {/* diagnostics — measured results, rendered from committed run data */}
+      <section className="mt-20">
+        <div className="smallcaps text-[11px] text-[#6a6258]">Diagnostics</div>
+        <div className="mt-5 space-y-12">
+          {FIGURES.map((f) => (
+            <figure key={f.src} className="m-0">
+              <img src={f.src} alt={f.alt} className="w-full" loading="lazy" />
+              <figcaption className="mono mt-2 text-[10px] tracking-[0.06em] text-[#6a6258]">
+                {f.caption}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
+
+const FIGURES = [
+  {
+    src: "/figures/a1_learning_gradient_2x2.svg",
+    alt: "A1 learning × gradient 2×2",
+    caption: "WO-1 · A1 · freeze_learning × gradient 2×2 · 20 seeds/cell · 1500 ticks",
+  },
+  {
+    src: "/figures/wo2_selection_moderator.svg",
+    alt: "WO-2 selection and birthplace moderator",
+    caption:
+      "WO-2 · A3 · 3 spawn × 3 ablation × 20 seeds · cap 2000 · 3000 ticks · crash-robust stable-tick hazard · bootstrap CIs",
+  },
+  {
+    src: "/figures/wo3_mortality_structure.svg",
+    alt: "WO-3 mortality structure A3 vs A4",
+    caption:
+      "WO-3 · A3↔A4 paired · 20 seeds · cap 2000 · 3000 ticks · Fano of per-tick deaths · drawdown vs A3 oscillation",
+  },
+];
 
 /* ── legend swatches (CSS-token driven, no JS) ── */
 function Key({ swatch, children }: { swatch: React.ReactNode; children: React.ReactNode }) {
