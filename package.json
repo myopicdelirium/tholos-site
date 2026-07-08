@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:preview": "NEXT_DIST_DIR=.next-preview next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -12,6 +13,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.26.2",
     "gray-matter": "^4.0.3",
+    "lenis": "^1.3.25",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",

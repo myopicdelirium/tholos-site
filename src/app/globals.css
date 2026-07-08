@@ -228,6 +228,46 @@ body{font-family:var(--font-display),ui-serif,Georgia,Cambria,"Times New Roman",
   opacity:.45;
 }
 
+/* ─── lenis smooth scroll ─── */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+/* ─── homepage substrate ─── */
+@keyframes md-substrate-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes md-scrollcue {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50%      { transform: translateY(6px); opacity: 1; }
+}
+
+.md-scrollcue { animation: md-scrollcue 2.2s ease-in-out infinite; }
+
+/* huge editorial display type for the immersive homepage */
+.md-home-display {
+  font-family: var(--font-display), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  font-weight: 600;
+}
+
+.md-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .md-scrollcue { animation: none; }
+}
+
 .md-gridplate{
   background-image:
     linear-gradient(to right, rgba(133,118,101,0.10) 1px, transparent 1px),
@@ -308,4 +348,88 @@ body{font-family:var(--font-display),ui-serif,Georgia,Cambria,"Times New Roman",
 
 .md-sep{
   opacity:.45;
+}
+
+/* ─── site themes (Morning / Evening) — consumed by /artifacts for now ─── */
+:root,
+[data-theme="morning"] {
+  --site-bg: #4a7c6f;
+  --site-ink: #f4eeda;
+  --site-body: #e4ebde;
+  --site-muted: #cfe0d2;
+  --site-accent: #f6b545;
+  --site-on-accent: #241d15;
+  --site-line: rgba(244, 238, 216, 0.28);
+  --site-pill-bd: rgba(244, 238, 216, 0.40);
+  --site-pill-bg: rgba(244, 238, 216, 0.06);
+  --site-hover: rgba(244, 238, 216, 0.05);
+  --site-field-bg: #f4efe4;
+  --site-field-ink: #241d15;
+  --site-field-bd: rgba(20, 16, 10, 0.15);
+  --nav-bg: #1b3a4b;
+  --nav-ink: #f4eeda;
+  --nav-muted: #b6c9d2;
+  --nav-line: rgba(244, 238, 216, 0.16);
+  --nav-active-bg: rgba(244, 238, 216, 0.10);
+  /* homepage art plate — expressive figures theme with the light (data plates stay fixed cream) */
+  --plate-bg: 244 239 228;
+  --plate-ink: 38 30 20;
+  --plate-acc: 246 181 69;
+}
+[data-theme="evening"] {
+  --site-bg: #1b2129;
+  --site-ink: #ece4d5;
+  --site-body: #ccd2d3;
+  --site-muted: #9aa3a8;
+  --site-accent: #d99a3a;
+  --site-on-accent: #20180d;
+  --site-line: rgba(236, 228, 213, 0.18);
+  --site-pill-bd: rgba(236, 228, 213, 0.30);
+  --site-pill-bg: rgba(236, 228, 213, 0.05);
+  --site-hover: rgba(236, 228, 213, 0.05);
+  --site-field-bg: #f1ece2;
+  --site-field-ink: #241d15;
+  --site-field-bd: rgba(20, 16, 10, 0.15);
+  --nav-bg: #262c42;
+  --nav-ink: #ece4d5;
+  --nav-muted: #9fa9bb;
+  --nav-line: rgba(236, 228, 213, 0.14);
+  --nav-active-bg: rgba(236, 228, 213, 0.08);
+  /* inverted night plate — deep indigo ground, pale glowing strokes, amber agent */
+  --plate-bg: 29 39 64;
+  --plate-ink: 214 208 192;
+  --plate-acc: 236 158 64;
+}
+[data-theme="noon"] {
+  --site-bg: #ece4d0;
+  --site-ink: #29331f;
+  --site-body: #3b4630;
+  --site-muted: #4c5739;
+  --site-accent: #8c7355;
+  --site-on-accent: #f0eae0;
+  --site-line: rgba(41, 51, 31, 0.24);
+  --site-pill-bd: rgba(41, 51, 31, 0.32);
+  --site-pill-bg: rgba(41, 51, 31, 0.06);
+  --site-hover: rgba(41, 51, 31, 0.06);
+  --site-field-bg: #f6f1e6;
+  --site-field-ink: #29331f;
+  --site-field-bd: rgba(41, 51, 31, 0.20);
+  --nav-bg: #313d2b;
+  --nav-ink: #f0eae0;
+  --nav-muted: #bcc6b0;
+  --nav-line: rgba(240, 234, 224, 0.15);
+  --nav-active-bg: rgba(240, 234, 224, 0.09);
+  /* noon plate — "fern": inverted deep-green field, pale strokes, gold agent */
+  --plate-bg: 40 58 40;
+  --plate-ink: 214 226 206;
+  --plate-acc: 233 174 70;
+}
+
+/* smooth cross-fade when switching themes — armed only during the switch */
+html.theme-anim,
+html.theme-anim *,
+html.theme-anim *::before,
+html.theme-anim *::after {
+  transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease,
+    fill 0.45s ease, stroke 0.45s ease !important;
 }
