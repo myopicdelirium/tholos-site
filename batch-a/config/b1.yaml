@@ -1,0 +1,58 @@
+# B1 — terminal commitment (§B1): the first Batch B case.
+#
+# The A3 stationary ecology unchanged, plus the two B mechanisms: bounded
+# attention with an inertial band, and a grief latch on bereavement. Predation
+# supplies the losses. No death is scripted; the question is whether the
+# coupling (latch × shared attention budget × a body that keeps drying)
+# produces deaths of thirst in bereaved parents — and whether the ablations
+# erase them the two predicted ways.
+extends: a3.yaml
+case: b1
+
+run:
+  max_ticks: 2000
+
+init:
+  n_agents: 40
+
+reproduction:
+  max_population: 250      # binding cap is acceptable here: the outcome is
+                           # per-bereaved-agent, not a capacity estimate, and
+                           # every sweep cell shares it (documented in the spec)
+
+# Calibration (§B1, settled after probes — the path is a finding, see spec):
+# the stage must let unbereaved adults live so the latch's MARGINAL mortality is
+# the signal. Water/vegetation abundant (ambient self-neglect among unbereaved
+# parents ≈ 0.28 at slots=1, vs 0.95 for the bereaved); temperature disabled — a
+# slow ambient drain that only fights the attention budget with no role in the
+# loss story; predators supply the bereavements.
+fields:
+  temperature:
+    enabled: false
+entities:
+  water:
+    sources: 16
+    cluster_sigma: 3.0
+    regen_per_tick: 0.4
+  vegetation:
+    patches: 16
+    regen_per_tick: 0.06
+  predators:
+    enabled: true
+    count: 10
+    predation_prob: 0.3
+
+decision:
+  attention:
+    enabled: true
+    slots: 2
+    hysteresis: 0.08
+    exempt: []
+
+grief:
+  enabled: true
+  drive: 2.5
+  release: 0.3
+  decay_attended: 0.004    # ~550 attended ticks to release — the sweep axis
+  decay_ambient: 0.0
+  site_cue_gain: 1.0

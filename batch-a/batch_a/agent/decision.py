@@ -29,16 +29,67 @@ class Decision:
 
 
 # --------------------------------------------------------------------------
-# The swappable weight function (Maslow gating drops in here for Batch B).
+# The swappable weight function — Batch B's gating drops in here, as designed.
 # --------------------------------------------------------------------------
-def compute_weights(needs, decision_cfg) -> dict:
-    """Deficit-proportional need weights w_i(t), normalized to sum 1."""
+def compute_weights(needs, decision_cfg, agent=None, config=None) -> dict:
+    """Drive weights w_i(t), normalized to sum 1.
+
+    Batch A: deficit-proportional over the need vector (byte-identical to the
+    original when the B blocks are disabled — guarded by tests/test_a_pinned).
+
+    Batch B (§B1), when enabled in config:
+      * a latched GRIEF drive joins the raw pool before normalization, competing
+        with the body's alarms on equal terms;
+      * BOUNDED ATTENTION then gates the normalized weights: only ``slots``
+        drives keep weight, an incumbent holds its slot until a challenger
+        beats it by ``hysteresis`` (the inertial band), and ``exempt`` drives
+        bypass the budget (the private-channel ablation). Everything else is
+        zeroed and the kept weights renormalized.
+    """
     deficits = needs.deficits()
-    total = sum(deficits.values())
+
+    grief_on = (config is not None and config.grief.enabled
+                and agent is not None and agent.grief is not None)
+    attention = decision_cfg.get("attention")
+    attention_on = attention is not None and bool(attention.enabled)
+
+    if not grief_on and not attention_on:
+        # the exact Batch A path — do not touch
+        total = sum(deficits.values())
+        if total <= 1e-9:
+            n = len(deficits)
+            return {k: 1.0 / n for k in deficits}
+        return {k: v / total for k, v in deficits.items()}
+
+    raw = dict(deficits)
+    if grief_on:
+        raw["grief"] = float(agent.grief["drive"])
+    total = sum(raw.values())
     if total <= 1e-9:
-        n = len(deficits)
-        return {k: 1.0 / n for k in deficits}
-    return {k: v / total for k, v in deficits.items()}
+        w = {k: 1.0 / len(raw) for k in raw}
+    else:
+        w = {k: v / total for k, v in raw.items()}
+
+    if attention_on and agent is not None:
+        names = list(w)
+        exempt = [n for n in list(attention.get("exempt", []) or []) if n in w]
+        pool = [n for n in names if n not in exempt]
+        slots = min(int(attention.slots), len(pool))
+        h = float(attention.hysteresis)
+        incumbents = set(agent.attention_band)
+        # incumbency bonus implements the inertial band; ties broken by drive order
+        eff = {n: w[n] + (h if n in incumbents else 0.0) for n in pool}
+        band = sorted(pool, key=lambda n: (-eff[n], names.index(n)))[:slots]
+        kept = set(band) | set(exempt)
+        gated = {n: (w[n] if n in kept else 0.0) for n in names}
+        gtot = sum(gated.values())
+        if gtot > 1e-9:
+            w = {n: v / gtot for n, v in gated.items()}
+        else:
+            w = {n: (1.0 / len(kept) if n in kept else 0.0) for n in names}
+        agent.attention_band = band
+
+    return w
 
 
 def _alignment(cue, dstar) -> float:
@@ -50,9 +101,19 @@ def _alignment(cue, dstar) -> float:
 
 def decide(agent, world, perception, config, rng) -> Decision:
     needs = agent.state
-    weights = compute_weights(needs, config.decision)
+    weights = compute_weights(needs, config.decision, agent=agent, config=config)
     learner = agent.learner
     cues = perception.cues
+
+    # --- grief (Batch B): a cue toward the loss site joins the vote --------
+    if agent.grief is not None and config.grief.enabled:
+        from .perception import Cue, _step_toward
+        gx, gy = _step_toward(agent.x, agent.y, agent.grief["site"][0],
+                              agent.grief["site"][1], world.size)
+        strength = min(1.0, float(agent.grief["drive"])
+                       * float(config.grief.site_cue_gain))
+        cues = dict(cues)                    # copy — A path keeps the original
+        cues["grief"] = Cue(gx, gy, strength)
 
     # --- desired move direction: weighted vote over per-need cues ----------
     vote_x = vote_y = 0.0
@@ -68,6 +129,8 @@ def decide(agent, world, perception, config, rng) -> Decision:
     for need_name in needs.names():
         aff["move"][need_name] = (
             cues[need_name].strength * _alignment(cues[need_name], dstar))
+    if "grief" in cues:                      # searching IS moving toward the site
+        aff["move"]["grief"] = cues["grief"].strength * _alignment(cues["grief"], dstar)
     aff["drink"]["hydration"] = perception.water_here
     aff["eat"]["energy"] = perception.food_here
     aff["rest"]["energy"] = min(1.0, rest_amount * 10.0)  # constant capability
@@ -113,7 +176,9 @@ def decide(agent, world, perception, config, rng) -> Decision:
             contrib = weights.get(need_name, 0.0) * learner.q(
                 need_name, action, affordance)
             u += contrib
-            if contrib >= best_contrib:
+            # grief never becomes the learning target (its outcome is unresolvable
+            # by construction; letting the learner habituate it would confound B1)
+            if need_name != "grief" and contrib >= best_contrib:
                 best_need, best_contrib = need_name, contrib
         utilities[action] = u
         primary[action] = best_need
