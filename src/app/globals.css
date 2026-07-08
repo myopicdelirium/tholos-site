@@ -371,6 +371,10 @@ html.lenis, html.lenis body { height: auto; }
   --nav-muted: #b6c9d2;
   --nav-line: rgba(244, 238, 216, 0.16);
   --nav-active-bg: rgba(244, 238, 216, 0.10);
+  /* homepage art plate — expressive figures theme with the light (data plates stay fixed cream) */
+  --plate-bg: 244 239 228;
+  --plate-ink: 38 30 20;
+  --plate-acc: 246 181 69;
 }
 [data-theme="evening"] {
   --site-bg: #1b2129;
@@ -391,6 +395,10 @@ html.lenis, html.lenis body { height: auto; }
   --nav-muted: #9fa9bb;
   --nav-line: rgba(236, 228, 213, 0.14);
   --nav-active-bg: rgba(236, 228, 213, 0.08);
+  /* inverted night plate — deep indigo ground, pale glowing strokes, amber agent */
+  --plate-bg: 29 39 64;
+  --plate-ink: 214 208 192;
+  --plate-acc: 236 158 64;
 }
 [data-theme="noon"] {
   --site-bg: #ece4d0;
@@ -411,6 +419,10 @@ html.lenis, html.lenis body { height: auto; }
   --nav-muted: #bcc6b0;
   --nav-line: rgba(240, 234, 224, 0.15);
   --nav-active-bg: rgba(240, 234, 224, 0.09);
+  /* noon plate — "fern": inverted deep-green field, pale strokes, gold agent */
+  --plate-bg: 40 58 40;
+  --plate-ink: 214 226 206;
+  --plate-acc: 233 174 70;
 }
 
 /* smooth cross-fade when switching themes — armed only during the switch */
