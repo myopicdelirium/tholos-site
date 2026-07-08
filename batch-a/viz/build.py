@@ -11,7 +11,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .figures import (
-    a1_learning_gradient, wo2_selection_moderator, wo2_selection_reversal,
+    a1_learning_gradient, b1_phase, wo2_selection_moderator, wo2_selection_reversal,
     wo3_mortality_structure, wo3_death_raster, world_gallery,
 )
 
@@ -30,6 +30,7 @@ FIGURES = [
     (world_gallery, _WO2),
     (wo3_mortality_structure, _WO3),
     (wo3_death_raster, _DIAG / "wo3_full20" / "wo3_raster_s13.json"),
+    (b1_phase, _DIAG / "b1_pilot" / "b1_checkpoint.jsonl"),
 ]
 
 
