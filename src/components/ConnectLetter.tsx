@@ -34,8 +34,8 @@ function CopyButton({ value }: { value: string }) {
       }}
       className={cx(
         "inline-flex items-center justify-center px-3 py-2 text-[11px] uppercase tracking-[0.28em]",
-        "border border-black/15 bg-transparent text-black/55 hover:bg-black/5 hover:text-black/75",
-        "focus:outline-none focus:ring-2 focus:ring-black/15"
+        "border border-[var(--nav-line)] bg-transparent text-[var(--nav-muted)] hover:bg-[var(--nav-active-bg)] hover:text-[var(--nav-ink)]",
+        "focus:outline-none focus:ring-2 focus:ring-white/20"
       )}
     >
       {copied ? "Copied" : "Copy"}
@@ -140,7 +140,7 @@ export default function ConnectLetter() {
         type="button"
         aria-label="Close correspondence"
         onClick={() => setOpen(false)}
-        className="absolute inset-0 bg-black/35"
+        className="absolute inset-0 bg-black/40"
       />
 
       <div className="absolute inset-x-0 top-0 px-4 sm:px-6 pt-6 sm:pt-10">
@@ -150,8 +150,8 @@ export default function ConnectLetter() {
           aria-modal="true"
           className={cx(
             "relative z-[1] mx-auto w-full max-w-xl",
-            "border border-black/15 shadow-paper",
-            "bg-[rgb(var(--ivory))] text-[#1b1b1b]"
+            "border border-[var(--nav-line)] shadow-paper",
+            "bg-[var(--nav-bg)] text-[var(--nav-ink)]"
           )}
           style={{
             animation: "mdDrop 900ms cubic-bezier(0.16, 1, 0.3, 1) both",
@@ -172,8 +172,8 @@ export default function ConnectLetter() {
             className={cx(
               "absolute right-4 top-4 z-10",
               "h-10 w-10 grid place-items-center",
-              "border border-black/15 bg-transparent text-black/55 hover:bg-black/5 hover:text-black/75",
-              "focus:outline-none focus:ring-2 focus:ring-black/15"
+              "border border-[var(--nav-line)] bg-transparent text-[var(--nav-muted)] hover:bg-[var(--nav-active-bg)] hover:text-[var(--nav-ink)]",
+              "focus:outline-none focus:ring-2 focus:ring-white/20"
             )}
             data-autofocus="true"
           >
@@ -181,29 +181,29 @@ export default function ConnectLetter() {
           </button>
 
           <div className="relative px-6 sm:px-8 py-8">
-            <div className="text-[11px] uppercase tracking-[0.55em] text-black/55">
+            <div className="text-[11px] uppercase tracking-[0.55em] text-[var(--site-accent)]">
               MYOPIC DELIRIUM
             </div>
 
-            <h2 className="mt-5 font-serif tracking-tight leading-[0.92] text-[42px] sm:text-[54px]">
+            <h2 className="mt-5 font-serif tracking-tight leading-[0.92] text-[42px] sm:text-[54px] text-[var(--nav-ink)]">
               Connect
             </h2>
 
-            <div className="mt-6 h-px w-full bg-black/10" />
+            <div className="mt-6 h-px w-full bg-[var(--nav-line)]" />
 
             <div className="mt-6 space-y-5">
               {channels.map((ch, i) => (
                 <div key={ch.label}>
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
-                      <div className="text-[11px] uppercase tracking-[0.32em] text-black/45">
+                      <div className="text-[11px] uppercase tracking-[0.32em] text-[var(--nav-muted)]">
                         {ch.label}
                       </div>
                       <a
                         href={ch.href}
                         target={ch.href.startsWith("http") ? "_blank" : undefined}
                         rel={ch.href.startsWith("http") ? "noreferrer" : undefined}
-                        className="mt-1 block text-[18px] sm:text-[20px] font-semibold tracking-tight text-black/85 hover:text-black"
+                        className="mt-1 block text-[18px] sm:text-[20px] font-semibold tracking-tight text-[var(--nav-ink)] hover:text-[var(--site-accent)]"
                       >
                         {ch.value}
                       </a>
@@ -213,21 +213,21 @@ export default function ConnectLetter() {
                     </div>
                   </div>
                   {i !== channels.length - 1 && (
-                    <div className="mt-5 h-px w-full bg-black/10" />
+                    <div className="mt-5 h-px w-full bg-[var(--nav-line)]" />
                   )}
                 </div>
               ))}
             </div>
 
-            <div className="mt-6 h-px w-full bg-black/10" />
+            <div className="mt-6 h-px w-full bg-[var(--nav-line)]" />
 
-            <p className="mt-4 text-[11px] leading-relaxed tracking-[0.02em] text-black/30 max-w-sm">
+            <p className="mt-4 text-[11px] leading-relaxed tracking-[0.02em] text-[var(--nav-muted)] opacity-70 max-w-sm">
               This is a temporary, publicly available space encompassing up to model
               6. Models 6.9–11.2 are not publicly available. We reserve our
               intellectual property rights.
             </p>
 
-            <div className="mt-4 flex items-center justify-between text-[12px] text-black/40">
+            <div className="mt-4 flex items-center justify-between text-[12px] text-[var(--nav-muted)]">
               <div>&copy; 2026 Myopic Delirium</div>
               <div className="mono">Press ESC to close.</div>
             </div>

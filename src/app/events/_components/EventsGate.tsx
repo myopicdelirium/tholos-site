@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 
-const STORAGE_KEY = "md-logbook-access";
+const STORAGE_KEY = "md-events-access";
 const PASSCODE = "myopic228";
 
-export default function LogbookGate({ children }: { children: React.ReactNode }) {
+export default function EventsGate({ children }: { children: React.ReactNode }) {
   const [unlocked, setUnlocked] = useState(false);
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
@@ -43,7 +43,7 @@ export default function LogbookGate({ children }: { children: React.ReactNode })
         </div>
 
         <h1 className="mt-4 md-display text-4xl tracking-tight text-[var(--site-ink)]">
-          Logbook
+          Events
         </h1>
 
         <p className="mt-4 text-sm leading-relaxed text-[var(--site-body)]">
@@ -52,7 +52,7 @@ export default function LogbookGate({ children }: { children: React.ReactNode })
 
         <form onSubmit={handleSubmit} className="mt-8">
           <label
-            htmlFor="logbook-code"
+            htmlFor="events-code"
             className="block text-[11px] uppercase tracking-[0.32em] text-[var(--site-muted)]"
           >
             Access code
@@ -60,7 +60,7 @@ export default function LogbookGate({ children }: { children: React.ReactNode })
 
           <div className="mt-2 flex gap-2">
             <input
-              id="logbook-code"
+              id="events-code"
               type="password"
               autoFocus
               autoComplete="off"
