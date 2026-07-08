@@ -10,6 +10,8 @@ export const metadata: Metadata = {
 };
 
 const reports = [
+  ["The register — every parameter, with provenance", "/instruments/register"],
+  ["The user's manual", "/engine/users-manual.pdf"],
   ["Valuation & waterfall", "/engine/build-report-valuation.pdf"],
   ["Uncertainty", "/engine/build-report-uncertainty.pdf"],
   ["Exit simulation", "/engine/build-report-exits.pdf"],
@@ -92,13 +94,14 @@ export default function InstrumentsPage() {
                 Built in seven gated stages, each closed by an acceptance test: schemas and synthetic data with planted
                 ground truth; an oracle-checked liquidation waterfall; regression-implied comparables; correlated Monte
                 Carlo; a Gaussian-copula exit simulation with a full calibration-honesty audit; a Marchenko–Pastur
-                denoised risk model that recovers the planted factor structure. 154 tests. The full desk build adds live
-                levers — editable comparable sets, discount assumptions — over the same engines; a hosted release of that
-                terminal will follow here.
+                denoised risk model that recovers the planted factor structure. 211 tests. The terminal above is the
+                hosted release of the full desk build — the same engines behind an access code, with every lever
+                exposed. The register alongside discloses every parameter the engine runs on, with its source and its
+                honesty class; what is assumed is labeled assumed.
               </p>
             </div>
             <div>
-              <div className="smallcaps text-[10px] text-[var(--site-muted)]">Build reports</div>
+              <div className="smallcaps text-[10px] text-[var(--site-muted)]">The paper trail</div>
               <ul className="mt-2 space-y-1.5">
                 {reports.map(([label, href]) => (
                   <li key={href}>
