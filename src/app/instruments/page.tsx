@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 const reports = [
-  ["The register — every parameter, with provenance", "/engine/parameter-register.pdf"],
+  ["The register — every parameter, with provenance", "/instruments/register"],
   ["The user's manual", "/engine/users-manual.pdf"],
   ["Valuation & waterfall", "/engine/build-report-valuation.pdf"],
   ["Uncertainty", "/engine/build-report-uncertainty.pdf"],
