@@ -75,7 +75,7 @@ const FIGURES = [
     src: "/figures/b1_phase.svg",
     alt: "B1 phase structure: martyrdom rate over latch persistence × attention bandwidth",
     caption:
-      "B1 · latch decay × attention slots × 8 seeds · martyr rate among bereaved parents vs matched non-bereaved baseline · grief-off + private-channel ablations · cap 250 · 2000 ticks",
+      "B1 · latch decay × attention slots × 8 seeds · self-neglect deaths while latched vs matched non-bereaved parents · grief-off ablation (0.82→0.36) and hydration-exempt ablation (thirst-deaths 0.33→0.04, re-routed to energy 0.78) · cap 250 · 2000 ticks",
   },
 ];
 

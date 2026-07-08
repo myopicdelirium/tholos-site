@@ -81,24 +81,43 @@ def build(out_dir: Path) -> Path:
                  fontfamily=style.MONO, color=style.rgba("ink", 0.75))
     axA.text(-0.72, 2.95, "latch decay", ha="right", fontsize=7.5,
              fontfamily=style.MONO, color=style.rgba("ink", 0.5))
-    # ablation strip
-    ab_y = -1.35
-    for k, (name, lab) in enumerate([("baseline_s1", "grief OFF (s1)"),
-                                     ("private_channel", "private channel (s1)")]):
+    # ablation strip — grief-off erases the phenomenon; the private channel
+    # erases THIRST-martyrdom specifically (the shielded alarm's deaths), while
+    # the vigil persists and kills through the unguarded channel instead.
+    def _cause_rate(name, cause):
         cr = cell(name)
-        m = (_med([r["martyr_selfneglect"] for r in cr]) if name != "baseline_s1"
-             else _med([r["nonb_selfneglect"] for r in cr]))
-        x = 0.5 + k * 1.4
-        if m is not None:
-            axA.add_patch(plt.Rectangle((x - 0.46, ab_y - 0.42), 0.92, 0.84,
-                                        facecolor=style.rgba("rust", 0.12 + 0.75 * m),
-                                        edgecolor=style.rgba("ink", 0.25), lw=0.7))
-            axA.text(x, ab_y + 0.06, f"{m:.2f}", ha="center", va="center",
-                     fontsize=13, fontfamily=style.DISPLAY,
-                     color=(paper if m > 0.55 else ink))
-        axA.text(x, ab_y - 0.62, lab, ha="center", fontsize=7,
-                 fontfamily=style.MONO, color=style.rgba("ink", 0.65))
-    axA.text(1.0, -0.62, "ablations — the two erasures", ha="center", fontsize=7.5,
+        nb = sum(r["n_bereaved"] for r in cr)
+        d = sum(r.get("died_latched", {}).get(cause, 0) for r in cr)
+        return d / nb if nb else None
+
+    ab_y = -1.35
+    # grief OFF: the martyr rate is simply the world's parent self-neglect
+    m_off = _med([r["nonb_selfneglect"] for r in cell("baseline_s1")])
+    axA.add_patch(plt.Rectangle((0.04, ab_y - 0.42), 0.92, 0.84,
+                                facecolor=style.rgba("rust", 0.12 + 0.75 * (m_off or 0)),
+                                edgecolor=style.rgba("ink", 0.25), lw=0.7))
+    axA.text(0.5, ab_y + 0.06, f"{m_off:.2f}", ha="center", va="center",
+             fontsize=13, fontfamily=style.DISPLAY, color=ink)
+    axA.text(0.5, ab_y - 0.62, "grief OFF (s1)", ha="center", fontsize=7,
+             fontfamily=style.MONO, color=style.rgba("ink", 0.65))
+
+    # private channel: show the cause split — the collapsed alarm vs the re-route
+    t_ref = _cause_rate("d0.004_s1", "hydration")
+    t_pc = _cause_rate("private_channel", "hydration")
+    e_pc = _cause_rate("private_channel", "energy")
+    axA.add_patch(plt.Rectangle((1.44, ab_y - 0.42), 1.12, 0.84,
+                                facecolor=style.rgba("rust", 0.12 + 0.75 * (t_pc or 0)),
+                                edgecolor=style.rgba("ink", 0.25), lw=0.7))
+    if t_pc is not None and t_ref is not None:
+        axA.text(2.0, ab_y + 0.13, f"thirst {t_ref:.2f} → {t_pc:.2f}",
+                 ha="center", va="center", fontsize=10.5,
+                 fontfamily=style.DISPLAY, color=ink)
+        axA.text(2.0, ab_y - 0.20, f"(shifts to energy {e_pc:.2f})", ha="center",
+                 va="center", fontsize=7, fontfamily=style.MONO,
+                 color=style.rgba("ink", 0.6))
+    axA.text(2.0, ab_y - 0.62, "hydration exempt (s1)", ha="center", fontsize=7,
+             fontfamily=style.MONO, color=style.rgba("ink", 0.65))
+    axA.text(1.25, -0.62, "ablations — the two erasures", ha="center", fontsize=7.5,
              fontfamily=style.MONO, color=style.rgba("ink", 0.5))
     axA.set_title("martyr rate among bereaved parents", fontsize=9,
                   fontfamily=style.MONO, color=style.rgba("ink", 0.75), pad=18)
@@ -134,7 +153,8 @@ def build(out_dir: Path) -> Path:
                    fontfamily=style.MONO)
     from matplotlib.patches import Patch
     axB.legend(handles=[Patch(facecolor=c, label=lab) for lab, c in cats],
-               frameon=False, fontsize=7.5, loc="upper right",
+               frameon=False, fontsize=7.5, loc="upper center",
+               bbox_to_anchor=(0.5, 1.14), ncol=3,
                labelcolor=style.rgba("ink", 0.75))
 
     tag = "" if complete else "  · PARTIAL"
