@@ -126,7 +126,18 @@ def _apply_drains(world, living, decisions, config):
     """Step 5. Endogenous drains, exposure, and movement cost."""
     move_cost = float(config.actions.move_cost_per_tile)
     flee_cost = float(config.actions.flee_cost_per_tile)
+    grief_on = bool(config.grief.enabled)
+    if grief_on:
+        g_att = float(config.grief.decay_attended)
+        g_amb = float(config.grief.decay_ambient)
+        g_rel = float(config.grief.release)
     for a in living:
+        # grief decays only while it holds an attention slot (Batch B, §B1);
+        # below the release threshold the latch lets go.
+        if grief_on and a.grief is not None:
+            a.grief["drive"] -= g_att if "grief" in a.attention_band else g_amb
+            if a.grief["drive"] < g_rel:
+                a.grief = None
         for need in a.state:
             if need.drain_per_tick:
                 a.state.drain(need.name, need.drain_per_tick)
@@ -208,6 +219,24 @@ def run_tick(world, agents, config, rng, recorder):
             recorder.log_summary(a)
             deaths_by_cause[a.cause_of_death] = deaths_by_cause.get(a.cause_of_death, 0) + 1
     recorder.log_deaths(tick, deaths_by_cause)
+
+    # --- bereavement latch (Batch B, §B1) ---------------------------------
+    # A parent whose child died this tick latches a grief drive anchored to the
+    # loss site. The drive competes in the same attention budget as the body's
+    # alarms; nothing here schedules a death.
+    if config.grief.enabled:
+        died_here = {a.id: (a.x, a.y) for a in living if not a.alive}
+        if died_here:
+            g0 = float(config.grief.drive)
+            for a in living:
+                if not a.alive or not a.children:
+                    continue
+                lost = [cid for cid in a.children if cid in died_here]
+                if lost:
+                    a.grief = {"drive": g0, "site": died_here[lost[-1]],
+                               "since": tick}
+                    if a.bereaved_at is None:
+                        a.bereaved_at = tick
 
     newborns = reproduce(agents, world, config, rng, tick)
     agents.extend(newborns)
