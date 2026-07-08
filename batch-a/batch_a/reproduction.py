@@ -46,6 +46,8 @@ def reproduce(agents, world, config, rng, tick):
         parent.state.drain("energy", cost)
         parent.repro_cooldown = int(repro.cooldown)
         parent.offspring_count += 1
+        child.parent_id = parent.id          # kinship (Batch B) — no RNG/float effect
+        parent.children.append(child.id)
         newborns.append(child)
 
     return newborns

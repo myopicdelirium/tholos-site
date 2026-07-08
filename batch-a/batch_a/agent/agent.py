@@ -39,6 +39,13 @@ class Agent:
         self.repro_cooldown = 0
         self.last_action = None
 
+        # kinship + grief (Batch B, §B1) — pure bookkeeping unless grief.enabled
+        self.parent_id = None
+        self.children: list[int] = []
+        self.grief = None            # {"drive", "site", "since"} while latched
+        self.bereaved_at = None      # tick of first bereavement (for measurement)
+        self.attention_band: list[str] = []  # drives holding slots last tick
+
         # filled each tick for the learner update after resolution
         self._pending = None
 

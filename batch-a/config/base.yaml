@@ -153,6 +153,28 @@ decision:
   epsilon: 0.05            # base ε for ε-stochastic action choice
   risk_weight: 1.0         # coefficient on Risk(a) in U(a)
   move_cost_weight: 1.0    # coefficient on MoveCost(a) in U(a)
+  # Bounded attention (Batch B, §B1): only `slots` drives receive weight each
+  # tick; an incumbent keeps its slot unless a challenger beats it by
+  # `hysteresis` (the inertial band). Drives in `exempt` bypass the budget
+  # entirely (the "private channel" ablation). Disabled → Batch A unchanged.
+  attention:
+    enabled: false
+    slots: 2
+    hysteresis: 0.08
+    exempt: []
+
+# Grief latch (Batch B, §B1). On a child's death the parent's search drive
+# latches at `drive` (competing in the SAME attention budget as the body's
+# alarms), anchored to the loss site. It decays only while attended; the latch
+# releases below `release`. No death is scripted anywhere in this block —
+# martyrdom, if it occurs, is emergent from the coupling. Disabled → A unchanged.
+grief:
+  enabled: false
+  drive: 2.5               # initial drive on bereavement (deficits are ≤ 1)
+  release: 0.3             # latch releases when drive decays below this
+  decay_attended: 0.004    # drive decay per tick while grief HOLDS a slot
+  decay_ambient: 0.0       # decay while unattended (0 = perfect latch)
+  site_cue_gain: 1.0       # strength of the movement cue toward the loss site
 
 # Within-lifetime learning (§3.5). One flag disables it for ablations.
 learning:
