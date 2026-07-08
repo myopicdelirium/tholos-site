@@ -16,7 +16,11 @@
 # next.js
 /.next/
 /.next-preview/
+/.next-build/
 /out/
+
+# local agent config
+/.claude/
 
 # production
 /build

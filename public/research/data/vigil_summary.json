@@ -1,0 +1,81 @@
+{
+  "engine": "vigil-1.0",
+  "generated": "2026-07-07",
+  "ticks_per_run": 20000,
+  "seeds": [
+    1152019,
+    2408767,
+    3874973,
+    4293889,
+    5550637,
+    7016843,
+    8273591,
+    8692507,
+    10158713,
+    10577629
+  ],
+  "doseCurve": [
+    {
+      "forget_slider": 0,
+      "mean_rate": 0.921,
+      "sd": 0.066,
+      "n_seeds": 10
+    },
+    {
+      "forget_slider": 0.125,
+      "mean_rate": 0.63,
+      "sd": 0.153,
+      "n_seeds": 10
+    },
+    {
+      "forget_slider": 0.25,
+      "mean_rate": 0.4,
+      "sd": 0.126,
+      "n_seeds": 10
+    },
+    {
+      "forget_slider": 0.375,
+      "mean_rate": 0.199,
+      "sd": 0.078,
+      "n_seeds": 10
+    },
+    {
+      "forget_slider": 0.5,
+      "mean_rate": 0.087,
+      "sd": 0.074,
+      "n_seeds": 10
+    },
+    {
+      "forget_slider": 0.75,
+      "mean_rate": 0.033,
+      "sd": 0.052,
+      "n_seeds": 10
+    },
+    {
+      "forget_slider": 1,
+      "mean_rate": 0.013,
+      "sd": 0.038,
+      "n_seeds": 10
+    }
+  ],
+  "ablSummary": {
+    "intact": {
+      "martyrs_total": 47,
+      "grief_survived_total": 70,
+      "children_taken_total": 178,
+      "search_ticks_total": 54051
+    },
+    "gate_ablated": {
+      "martyrs_total": 0,
+      "grief_survived_total": 0,
+      "children_taken_total": 175,
+      "search_ticks_total": 0
+    },
+    "private_alarm_channel": {
+      "martyrs_total": 1,
+      "grief_survived_total": 116,
+      "children_taken_total": 183,
+      "search_ticks_total": 43597
+    }
+  }
+}

@@ -22,6 +22,7 @@ export default function SiteNav() {
       { href: "/artifacts", label: "Artifacts" },
       { href: "/batch-a", label: "Batches" },
       { href: "/instruments", label: "Instruments" },
+      { href: "/research", label: "Research" },
     ],
     []
   );
