@@ -208,15 +208,7 @@ took several measured iterations:
    brief survivable pulses moved the system from guaranteed collapse to
    **precarious persistence**.
 
-### Measured A3 → A4 contrast (2500-tick horizon)
-
-| Metric | A3 (stationary) | A4 (non-stationary) |
-|--------|-----------------|---------------------|
-| extinct by horizon | 0 / 2–3 seeds | ≈ 3 / 5 seeds |
-| mean population over run | ≈ 360–383 (near cap) | 50–379; typ. ≈ 300 then crash |
-| min population over run | ≈ 30–38 | 1–58 (teeters at the edge) |
-| median individual survival | 176–502 ticks | 113–175 ticks (high turnover) |
-| trajectory | rises and **stabilises** | **violent oscillation**, deep crashes |
+%A4_CONTRAST%
 
 **Interpretation.** A3 is uniformly stable; A4 is fragile. Surviving A4 seeds
 persist *precariously* — substantial populations that crash to a handful and claw
@@ -286,6 +278,53 @@ cd batch-a && python -m pytest tests/ -q        # 22 passed
 """
 
 
+# cap-400 turnaround-check numbers (n = 2–5 seeds) — PROVISIONAL per the WO-2/WO-3
+# amendment (cap 400 is a global confound). Used only until the cap-2000 × 20-seed
+# regeneration (WO-3's A4 arm) lands in docs/diagnostics/a4_cap2000_analysis.json.
+_A4_PROVISIONAL = r"""### Measured A3 → A4 contrast (2500-tick horizon; cap 400 — PROVISIONAL)
+
+*These numbers are cap-confounded (WO-4) and marked provisional; the cap-2000 ×
+20-seed regeneration replaces this table automatically when its data lands.*
+
+| Metric | A3 (stationary) | A4 (non-stationary) |
+|--------|-----------------|---------------------|
+| extinct by horizon | 0 / 2–3 seeds | ≈ 3 / 5 seeds |
+| mean population over run | ≈ 360–383 (near cap) | 50–379; typ. ≈ 300 then crash |
+| min population over run | ≈ 30–38 | 1–58 (teeters at the edge) |
+| median individual survival | 176–502 ticks | 113–175 ticks (high turnover) |
+| trajectory | rises and **stabilises** | **violent oscillation**, deep crashes |"""
+
+
+def _a4_contrast_section(read):
+    """The A3→A4 contrast table — regenerated numbers when available, else the
+    provisional cap-400 table with the flag stated in the report itself."""
+    import json
+    try:
+        a = json.loads(read("diagnostics/a4_cap2000_analysis.json"))
+    except Exception:
+        return _A4_PROVISIONAL
+    if a.get("a4", {}).get("n_seeds", 0) < 20 or a.get("a3", {}).get("n_seeds", 0) < 20:
+        return _A4_PROVISIONAL
+
+    def fmt(case, key, nd=3):
+        c = a[case][key]
+        if c["median"] is None:
+            return "—"
+        return f"{round(c['median'], nd)} [{round(c['ci_low'], nd)}, {round(c['ci_high'], nd)}]"
+    return f"""### Measured A3 → A4 contrast (cap 2000 × 20 seeds, 3000 ticks)
+
+*Medians with bootstrap 95% CIs over seeds; same-seed pairing, so the contrast is
+the cost of non-stationarity itself. Supersedes the provisional cap-400 numbers.*
+
+| Metric | A3 (stationary) | A4 (non-stationary) |
+|--------|-----------------|---------------------|
+| extinct fraction | {a['a3']['extinct_fraction']} | {a['a4']['extinct_fraction']} |
+| carrying capacity R_s | {fmt('a3', 'R_s', 0)} | {fmt('a4', 'R_s', 0)} |
+| max drawdown (crash severity) | {fmt('a3', 'max_drawdown')} | {fmt('a4', 'max_drawdown')} |
+| volatility (CV) | {fmt('a3', 'volatility_cv')} | {fmt('a4', 'volatility_cv')} |
+| Fano of per-tick deaths | {fmt('a3', 'fano_deaths', 1)} | {fmt('a4', 'fano_deaths', 1)} |"""
+
+
 def build_markdown(read, grab, file_tree):
     parts = []
 
@@ -315,8 +354,8 @@ def build_markdown(read, grab, file_tree):
     # Experimental design.
     parts.append(read("EXPERIMENTAL_DESIGN.md"))
 
-    # Results narrative.
-    parts.append(RESULTS)
+    # Results narrative (A4 contrast auto-upgrades when cap-2000 data lands).
+    parts.append(RESULTS.replace("%A4_CONTRAST%", _a4_contrast_section(read)))
 
     # How to run.
     parts.append(HOWTO)

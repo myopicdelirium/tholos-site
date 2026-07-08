@@ -1,14 +1,7 @@
 @import "tailwindcss";
-
-:root {
-  --teal: 0 57 79;
-  --brass: 133 118 101;
-  --taupe: 137 120 102;
-  --ivory: 240 234 224;
-  --mist: 224 219 215;
-  --ink: 12 14 16;
-  --insurgent: 194 58 43;
-}
+/* palette derives from batch-a/design/tokens.json (single source) —
+   regenerate with: cd batch-a && python -m design.build_css */
+@import "./tokens.css";
 
 html, body {
   background: rgb(var(--ivory));

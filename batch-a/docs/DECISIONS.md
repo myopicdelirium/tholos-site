@@ -30,3 +30,15 @@ ablation, which is why `freeze_learning` and `freeze_traits` are first-class
 config overlays and the experiment driver runs them as controls. If neither
 channel alone reproduces a result, that result is an **interaction** — reported
 as such, not papered over.
+
+## Performance & verification rulings (2026-07-06)
+
+| Question | Ruling |
+|----------|--------|
+| Fast path scope | **Vectorize perception only** (`perception.impl: vectorized`, now default). Decision, RNG draws, and conflict resolution stay on the scalar reference — their conditional per-agent draws cannot be batched without moving the reference. Proven **bit-identical at the full 3000-tick horizon** on seam-straddling wrap, saturated-tie, rich, and poor worlds (`experiments/verify_perception.py`); guarded at field level by `tests/test_perception_equivalence.py`. |
+| What bit-identity means | **No-regression, not correctness.** Both impls descend from the same source and can agree while both wrong. A green diff licenses swapping the fast path in; it never validates the model. |
+| The deferred 10× | **Struct-of-arrays rewrite is design-frozen** (`docs/SOA_REWRITE_PLAN.md`): it necessarily moves the RNG-consumption reference (R1→R2 via counter-based keying), so it waits until the current result set is closed and archived. Enabling tooling (RNG trace/replay, rung 3) is built and tested (`experiments/rng_trace.py`). |
+| Code freeze during headline runs | **`batch_a/` sim internals are frozen while a full-N grind is in flight.** Cells must not span two code versions; each checkpoint row records its `impl` for provenance. |
+| Estimator of record for WO-2 βₛ | **Crash-robust stable-tick hazard** (grouped Poisson over stable ticks; Cox-on-age cross-check), fitted inline per cell; raw OLS βₛ demoted to sensitivity. Validated on the pilot (7/7 sign agreement) and on planted-sign synthetic data (`tests/test_wo_instruments.py`). |
+| Headline moderator question | Decided by the full-20's **disentangling regression** βₛ ~ z(volatility) + z(capacity) with seed-bootstrap CIs; a moderator wins only if its CI excludes zero (`experiments/analyze_wo2_full20.py`). |
+| One palette source | `design/tokens.json` → figures (`viz/style.py`) AND site CSS (`design/build_css.py` → `src/app/tokens.css`); drift is test-guarded. |

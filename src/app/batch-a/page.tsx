@@ -58,10 +58,68 @@ export default function BatchAPage() {
             </article>
           ))}
         </div>
+
+        {/* diagnostics — measured results, rendered from committed run data.
+            Each figure is a mounted paper plate (field-bg) so it reads as
+            deliberate on the themed page rather than a bare image. */}
+        <section className="mt-20">
+          <div className="smallcaps text-[11px] text-[var(--site-muted)]">Diagnostics</div>
+          <div className="mt-5 space-y-8">
+            {FIGURES.map((f) => (
+              <figure
+                key={f.src}
+                className="m-0 overflow-hidden rounded-[6px] border border-[rgba(20,16,10,0.12)] bg-[var(--site-field-bg)] p-4"
+              >
+                <img src={f.src} alt={f.alt} className="w-full" loading="lazy" />
+                <figcaption className="mono mt-3 text-[10px] tracking-[0.06em] text-[var(--site-field-ink)]/60">
+                  {f.caption}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
       </main>
     </div>
   );
 }
+
+const FIGURES = [
+  {
+    src: "/figures/a1_learning_gradient_2x2.svg",
+    alt: "A1 learning × gradient 2×2",
+    caption: "WO-1 · A1 · freeze_learning × gradient 2×2 · 20 seeds/cell · 1500 ticks",
+  },
+  {
+    src: "/figures/world_gallery.svg",
+    alt: "Twenty A3 endowment fields ordered by measured carrying capacity",
+    caption:
+      "A3 · 20 seeds · resource-endowment field at t=0 · ordered by cycle-averaged R̂ₛ · cap 2000",
+  },
+  {
+    src: "/figures/wo2_selection_reversal.svg",
+    alt: "WO-2 selection reverses when learning is frozen",
+    caption:
+      "WO-2 · A3 uniform · survivor−founder exploration drift · learning on / frozen / traits frozen · 20 seeds · cap 2000",
+  },
+  {
+    src: "/figures/wo2_selection_moderator.svg",
+    alt: "WO-2 selection and birthplace moderator",
+    caption:
+      "WO-2 · A3 · 3 spawn × 3 ablation × 20 seeds · cap 2000 · 3000 ticks · crash-robust stable-tick hazard · bootstrap CIs",
+  },
+  {
+    src: "/figures/wo3_mortality_structure.svg",
+    alt: "WO-3 mortality structure A3 vs A4",
+    caption:
+      "WO-3 · A3↔A4 paired · 20 seeds · cap 2000 · 3000 ticks · Fano of per-tick deaths · drawdown vs A3 oscillation",
+  },
+  {
+    src: "/figures/wo3_death_raster.svg",
+    alt: "WO-3 per-tick deaths and population, one seed, A3 vs A4",
+    caption:
+      "WO-3 · seed 13 · per-tick deaths (stacked by cause) + population · A3 vs A4 · cap 2000 · 3000 ticks",
+  },
+];
 
 /* ── legend swatches (CSS-token driven, no JS) ── */
 function Key({ swatch, children }: { swatch: React.ReactNode; children: React.ReactNode }) {

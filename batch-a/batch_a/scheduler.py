@@ -166,8 +166,12 @@ def run_tick(world, agents, config, rng, recorder):
     living = [a for a in agents if a.alive]
     prev_pos = {a.id: (a.x, a.y) for a in living}
 
-    # 2. perceive (snapshot)
-    perceptions = {a.id: a.perceive(world) for a in living}
+    # 2. perceive (snapshot) — scalar reference, or the bit-identical batch path
+    if config.perception.get("impl", "scalar") == "vectorized":
+        from .agent.perception import perceive_all
+        perceptions = perceive_all(world, living, config)
+    else:
+        perceptions = {a.id: a.perceive(world) for a in living}
 
     # 3. choose
     decisions = {a.id: a.choose(world, perceptions[a.id], rng.agent)
