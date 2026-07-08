@@ -1,0 +1,2149 @@
+{
+ "meta": {
+  "generated": "2026-07-08",
+  "seed": 20240115,
+  "audit": {
+   "cited": 0,
+   "anchored": 14,
+   "assumed": 3,
+   "total": 17
+  },
+  "n_register_entries": 26
+ },
+ "probabilities": [
+  {
+   "stage": "SEED",
+   "values": {
+    "IPO": 0.01,
+    "trade sale": 0.15,
+    "secondary": 0.04,
+    "stay private": 0.25,
+    "down round": 0.15,
+    "write-off": 0.4
+   },
+   "cls": "anchored",
+   "source": "Anchored: Correlation Ventures realized US VC outcomes 2004-2013 (~65% of financings return <1x); CB Insights seed-cohort funnels. Per-type split at this stage ASSUMED."
+  },
+  {
+   "stage": "SERIES_A",
+   "values": {
+    "IPO": 0.02,
+    "trade sale": 0.22,
+    "secondary": 0.05,
+    "stay private": 0.25,
+    "down round": 0.16,
+    "write-off": 0.3
+   },
+   "cls": "anchored",
+   "source": "Anchored: Correlation Ventures outcome distribution; PitchBook-NVCA Venture Monitor exit composition (acquisitions dominate exit count, IPOs a small minority). Per-stage interpolation ASSUMED."
+  },
+  {
+   "stage": "SERIES_B",
+   "values": {
+    "IPO": 0.04,
+    "trade sale": 0.28,
+    "secondary": 0.07,
+    "stay private": 0.24,
+    "down round": 0.15,
+    "write-off": 0.22
+   },
+   "cls": "anchored",
+   "source": "Anchored: PitchBook-NVCA exit composition; failure rates decline with stage (Correlation Ventures). Per-stage interpolation ASSUMED."
+  },
+  {
+   "stage": "SERIES_C",
+   "values": {
+    "IPO": 0.07,
+    "trade sale": 0.32,
+    "secondary": 0.08,
+    "stay private": 0.22,
+    "down round": 0.14,
+    "write-off": 0.17
+   },
+   "cls": "anchored",
+   "source": "Anchored: PitchBook-NVCA exit composition by stage. Per-stage interpolation ASSUMED."
+  },
+  {
+   "stage": "GROWTH",
+   "values": {
+    "IPO": 0.12,
+    "trade sale": 0.34,
+    "secondary": 0.1,
+    "stay private": 0.2,
+    "down round": 0.12,
+    "write-off": 0.12
+   },
+   "cls": "anchored",
+   "source": "Anchored: late-stage exit rates and IPO share rise with maturity (PitchBook-NVCA). Per-stage interpolation ASSUMED."
+  },
+  {
+   "stage": "PRE_IPO",
+   "values": {
+    "IPO": 0.22,
+    "trade sale": 0.3,
+    "secondary": 0.12,
+    "stay private": 0.18,
+    "down round": 0.1,
+    "write-off": 0.08
+   },
+   "cls": "anchored",
+   "source": "Anchored: pre-IPO cohorts show the highest IPO incidence; residual failure remains non-trivial (PitchBook-NVCA). Split ASSUMED."
+  }
+ ],
+ "weibull": [
+  {
+   "stage": "SEED",
+   "shape": 1.5,
+   "scale": 8.0,
+   "cls": "anchored",
+   "source": "Anchored: PitchBook median time from first VC financing to exit ~5.3-6.9y; rising hazard consistent with VC duration studies (Giot & Schwienbacher 2007). Stage scale interpolation and shape value ASSUMED."
+  },
+  {
+   "stage": "SERIES_A",
+   "shape": 1.5,
+   "scale": 7.0,
+   "cls": "anchored",
+   "source": "Anchored: PitchBook median holding periods; shape ASSUMED (see SEED row)."
+  },
+  {
+   "stage": "SERIES_B",
+   "shape": 1.5,
+   "scale": 6.0,
+   "cls": "anchored",
+   "source": "Anchored: PitchBook median holding periods; shape ASSUMED (see SEED row)."
+  },
+  {
+   "stage": "SERIES_C",
+   "shape": 1.5,
+   "scale": 5.0,
+   "cls": "anchored",
+   "source": "Anchored: PitchBook median holding periods; shape ASSUMED (see SEED row)."
+  },
+  {
+   "stage": "GROWTH",
+   "shape": 1.6,
+   "scale": 4.0,
+   "cls": "anchored",
+   "source": "Anchored: late-stage positions exit faster (PitchBook); values ASSUMED."
+  },
+  {
+   "stage": "PRE_IPO",
+   "shape": 1.8,
+   "scale": 2.5,
+   "cls": "anchored",
+   "source": "Anchored: pre-IPO time-to-liquidity typically 1-3y; values ASSUMED."
+  }
+ ],
+ "multiples": [
+  {
+   "exit_type": "IPO",
+   "mu_log": 0.92,
+   "sigma_log": 0.6,
+   "cls": "anchored",
+   "source": "Anchored: IPO step-ups over last private round are typically well above 1x (PitchBook up-round step-up medians ~1.4-1.8x between rounds; IPO step-ups higher). Level and dispersion ASSUMED."
+  },
+  {
+   "exit_type": "TRADE_SALE",
+   "mu_log": 0.59,
+   "sigma_log": 0.55,
+   "cls": "anchored",
+   "source": "Anchored: acquisition step-ups over last round; median up-round step-up data (PitchBook). Level and dispersion ASSUMED."
+  },
+  {
+   "exit_type": "SECONDARY",
+   "mu_log": 0.1,
+   "sigma_log": 0.35,
+   "cls": "assumed",
+   "source": "ASSUMED: secondaries trade near or modestly above last round with a discount range; no clean published distribution used."
+  },
+  {
+   "exit_type": "DOWN_ROUND",
+   "mu_log": -0.51,
+   "sigma_log": 0.35,
+   "cls": "assumed",
+   "source": "ASSUMED magnitude (mean ~0.6x). Down-round frequency is anchored (PitchBook/Cooley ~15-20% of rounds) but the severity distribution is a guess."
+  }
+ ],
+ "copula": {
+  "type_loading": 0.45,
+  "time_loading": 0.35,
+  "multiple_loading": 0.25,
+  "cls": "assumed",
+  "source": "ASSUMED. No published estimate of exit-window co-movement at this granularity; kept coherent with the Stage 3 common-factor variance weight (0.40). This is the single most important parameter in the stage \u2014 it controls how much diversification the book really has."
+ },
+ "modules": [
+  {
+   "module": "exits.assumptions",
+   "entries": [
+    {
+     "name": "exits.probabilities.SEED",
+     "value": "IPO 0.01, TRADE_SALE 0.15, SECONDARY 0.04, STAY_PRIVATE 0.25, DOWN_ROUND 0.15, WRITE_OFF 0.4",
+     "units": "probability",
+     "source": "Anchored: Correlation Ventures realized US VC outcomes 2004-2013 (~65% of financings return <1x); CB Insights seed-cohort funnels. Per-type split at this stage ASSUMED."
+    },
+    {
+     "name": "exits.probabilities.SERIES_A",
+     "value": "IPO 0.02, TRADE_SALE 0.22, SECONDARY 0.05, STAY_PRIVATE 0.25, DOWN_ROUND 0.16, WRITE_OFF 0.3",
+     "units": "probability",
+     "source": "Anchored: Correlation Ventures outcome distribution; PitchBook-NVCA Venture Monitor exit composition (acquisitions dominate exit count, IPOs a small minority). Per-stage interpolation ASSUMED."
+    },
+    {
+     "name": "exits.probabilities.SERIES_B",
+     "value": "IPO 0.04, TRADE_SALE 0.28, SECONDARY 0.07, STAY_PRIVATE 0.24, DOWN_ROUND 0.15, WRITE_OFF 0.22",
+     "units": "probability",
+     "source": "Anchored: PitchBook-NVCA exit composition; failure rates decline with stage (Correlation Ventures). Per-stage interpolation ASSUMED."
+    },
+    {
+     "name": "exits.probabilities.SERIES_C",
+     "value": "IPO 0.07, TRADE_SALE 0.32, SECONDARY 0.08, STAY_PRIVATE 0.22, DOWN_ROUND 0.14, WRITE_OFF 0.17",
+     "units": "probability",
+     "source": "Anchored: PitchBook-NVCA exit composition by stage. Per-stage interpolation ASSUMED."
+    },
+    {
+     "name": "exits.probabilities.GROWTH",
+     "value": "IPO 0.12, TRADE_SALE 0.34, SECONDARY 0.1, STAY_PRIVATE 0.2, DOWN_ROUND 0.12, WRITE_OFF 0.12",
+     "units": "probability",
+     "source": "Anchored: late-stage exit rates and IPO share rise with maturity (PitchBook-NVCA). Per-stage interpolation ASSUMED."
+    },
+    {
+     "name": "exits.probabilities.PRE_IPO",
+     "value": "IPO 0.22, TRADE_SALE 0.3, SECONDARY 0.12, STAY_PRIVATE 0.18, DOWN_ROUND 0.1, WRITE_OFF 0.08",
+     "units": "probability",
+     "source": "Anchored: pre-IPO cohorts show the highest IPO incidence; residual failure remains non-trivial (PitchBook-NVCA). Split ASSUMED."
+    },
+    {
+     "name": "exits.weibull.SEED",
+     "value": "shape 1.5, scale 8",
+     "units": "years (scale)",
+     "source": "Anchored: PitchBook median time from first VC financing to exit ~5.3-6.9y; rising hazard consistent with VC duration studies (Giot & Schwienbacher 2007). Stage scale interpolation and shape value ASSUMED."
+    },
+    {
+     "name": "exits.weibull.SERIES_A",
+     "value": "shape 1.5, scale 7",
+     "units": "years (scale)",
+     "source": "Anchored: PitchBook median holding periods; shape ASSUMED (see SEED row)."
+    },
+    {
+     "name": "exits.weibull.SERIES_B",
+     "value": "shape 1.5, scale 6",
+     "units": "years (scale)",
+     "source": "Anchored: PitchBook median holding periods; shape ASSUMED (see SEED row)."
+    },
+    {
+     "name": "exits.weibull.SERIES_C",
+     "value": "shape 1.5, scale 5",
+     "units": "years (scale)",
+     "source": "Anchored: PitchBook median holding periods; shape ASSUMED (see SEED row)."
+    },
+    {
+     "name": "exits.weibull.GROWTH",
+     "value": "shape 1.6, scale 4",
+     "units": "years (scale)",
+     "source": "Anchored: late-stage positions exit faster (PitchBook); values ASSUMED."
+    },
+    {
+     "name": "exits.weibull.PRE_IPO",
+     "value": "shape 1.8, scale 2.5",
+     "units": "years (scale)",
+     "source": "Anchored: pre-IPO time-to-liquidity typically 1-3y; values ASSUMED."
+    },
+    {
+     "name": "exits.multiples.IPO",
+     "value": "mu_log 0.92, sigma_log 0.6",
+     "units": "log multiple on last-round post-money",
+     "source": "Anchored: IPO step-ups over last private round are typically well above 1x (PitchBook up-round step-up medians ~1.4-1.8x between rounds; IPO step-ups higher). Level and dispersion ASSUMED."
+    },
+    {
+     "name": "exits.multiples.TRADE_SALE",
+     "value": "mu_log 0.59, sigma_log 0.55",
+     "units": "log multiple on last-round post-money",
+     "source": "Anchored: acquisition step-ups over last round; median up-round step-up data (PitchBook). Level and dispersion ASSUMED."
+    },
+    {
+     "name": "exits.multiples.SECONDARY",
+     "value": "mu_log 0.1, sigma_log 0.35",
+     "units": "log multiple on last-round post-money",
+     "source": "ASSUMED: secondaries trade near or modestly above last round with a discount range; no clean published distribution used."
+    },
+    {
+     "name": "exits.multiples.DOWN_ROUND",
+     "value": "mu_log -0.51, sigma_log 0.35",
+     "units": "log multiple on last-round post-money",
+     "source": "ASSUMED magnitude (mean ~0.6x). Down-round frequency is anchored (PitchBook/Cooley ~15-20% of rounds) but the severity distribution is a guess."
+    },
+    {
+     "name": "exits.copula_loadings",
+     "value": "type_loading 0.45, time_loading 0.35, multiple_loading 0.25",
+     "units": null,
+     "source": "ASSUMED. No published estimate of exit-window co-movement at this granularity; kept coherent with the Stage 3 common-factor variance weight (0.40). This is the single most important parameter in the stage \u2014 it controls how much diversification the book really has."
+    },
+    {
+     "name": "exits.calibration_audit",
+     "value": "cited 0, anchored 14, assumed 3, total 17",
+     "units": null,
+     "source": "computed"
+    }
+   ]
+  },
+  {
+   "module": "providers.synthetic_market",
+   "entries": [
+    {
+     "name": "market.ev_revenue_coefficients",
+     "value": "growth_coef 6, margin_coef 4, noise_sigma 0.45, sector_base {'SOFTWARE_SAAS': 9.0, 'FINTECH': 7.0, 'HEALTHTECH': 6.5, 'CONSUMER': 3.0, 'INDUSTRIAL_TECH': 4.0, 'CLEANTECH_ENERGY': 3.5, 'BIOTECH_PHARMA': 8.0, 'MEDIA_GAMING': 4.5, 'LOGISTICS_MOBILITY': 3.0, 'OTHER': 4.0}",
+     "units": "EV/Revenue per unit",
+     "source": "synthetic generator"
+    },
+    {
+     "name": "market.factor_count",
+     "value": "3",
+     "units": "count",
+     "source": "synthetic generator"
+    },
+    {
+     "name": "market.factor_vols",
+     "value": "[0.03, 0.018, 0.015]",
+     "units": "weekly return vol",
+     "source": "synthetic generator"
+    },
+    {
+     "name": "market.factor_structure",
+     "value": "market_beta_mean 1, market_beta_std 0.3, style_loading_std 0.55, idiosyncratic_vol 0.022, n_observations 260, frequency weekly",
+     "units": null,
+     "source": "synthetic generator"
+    },
+    {
+     "name": "market.risk_free_rate",
+     "value": "0.025",
+     "units": "annual",
+     "source": "config"
+    }
+   ]
+  },
+  {
+   "module": "providers.synthetic_portfolio",
+   "entries": [
+    {
+     "name": "portfolio.self_mark_drift",
+     "value": "distribution lognormal, mu 0.08, sigma 0.22",
+     "units": "multiple of last-round-implied value",
+     "source": "synthetic generator"
+    },
+    {
+     "name": "portfolio.stage_valuation_ranges",
+     "value": "first_round_pre_money {'SEED': {'min': 4.0, 'max': 12.0}, 'SERIES_A': {'min': 12.0, 'max': 30.0}, 'SERIES_B': {'min': 35.0, 'max': 80.0}, 'SERIES_C': {'min': 90.0, 'max': 200.0}, 'GROWTH': {'min': 220.0, 'max': 600.0}, 'PRE_IPO': {'min': 700.0, 'max': 1800.0}}, round_amount {'SEED': {'min': 1.0, 'max': 4.0}, 'SERIES_A': {'min': 5.0, 'max': 15.0}, 'SERIES_B': {'min': 15.0, 'max': 40.0}, 'SERIES_C': {'min': 40.0, 'max': 90.0}, 'GROWTH': {'min': 90.0, 'max': 250.0}, 'PRE_IPO': {'min': 200.0, 'max': 500.0}}, step_up_multiple {'min': 1.4, 'max': 2.6}",
+     "units": "millions of base currency",
+     "source": "config"
+    },
+    {
+     "name": "portfolio.metrics_none_fraction",
+     "value": "0.2",
+     "units": "fraction",
+     "source": "config"
+    }
+   ]
+  }
+ ],
+ "config": [
+  [
+   "seeds.root",
+   "20240115"
+  ],
+  [
+   "providers.market",
+   "synthetic"
+  ],
+  [
+   "providers.portfolio",
+   "synthetic"
+  ],
+  [
+   "market.synthetic.universe_size",
+   "150"
+  ],
+  [
+   "market.synthetic.market_cap.median",
+   "800"
+  ],
+  [
+   "market.synthetic.market_cap.sigma",
+   "1.1"
+  ],
+  [
+   "market.synthetic.net_debt_to_mcap.mean",
+   "0.05"
+  ],
+  [
+   "market.synthetic.net_debt_to_mcap.std",
+   "0.15"
+  ],
+  [
+   "market.synthetic.sector_ev_revenue_base.SOFTWARE_SAAS",
+   "9"
+  ],
+  [
+   "market.synthetic.sector_ev_revenue_base.FINTECH",
+   "7"
+  ],
+  [
+   "market.synthetic.sector_ev_revenue_base.HEALTHTECH",
+   "6.5"
+  ],
+  [
+   "market.synthetic.sector_ev_revenue_base.CONSUMER",
+   "3"
+  ],
+  [
+   "market.synthetic.sector_ev_revenue_base.INDUSTRIAL_TECH",
+   "4"
+  ],
+  [
+   "market.synthetic.sector_ev_revenue_base.CLEANTECH_ENERGY",
+   "3.5"
+  ],
+  [
+   "market.synthetic.sector_ev_revenue_base.BIOTECH_PHARMA",
+   "8"
+  ],
+  [
+   "market.synthetic.sector_ev_revenue_base.MEDIA_GAMING",
+   "4.5"
+  ],
+  [
+   "market.synthetic.sector_ev_revenue_base.LOGISTICS_MOBILITY",
+   "3"
+  ],
+  [
+   "market.synthetic.sector_ev_revenue_base.OTHER",
+   "4"
+  ],
+  [
+   "market.synthetic.sector_ev_ebitda_base.SOFTWARE_SAAS",
+   "30"
+  ],
+  [
+   "market.synthetic.sector_ev_ebitda_base.FINTECH",
+   "22"
+  ],
+  [
+   "market.synthetic.sector_ev_ebitda_base.HEALTHTECH",
+   "20"
+  ],
+  [
+   "market.synthetic.sector_ev_ebitda_base.CONSUMER",
+   "12"
+  ],
+  [
+   "market.synthetic.sector_ev_ebitda_base.INDUSTRIAL_TECH",
+   "14"
+  ],
+  [
+   "market.synthetic.sector_ev_ebitda_base.CLEANTECH_ENERGY",
+   "16"
+  ],
+  [
+   "market.synthetic.sector_ev_ebitda_base.BIOTECH_PHARMA",
+   "26"
+  ],
+  [
+   "market.synthetic.sector_ev_ebitda_base.MEDIA_GAMING",
+   "15"
+  ],
+  [
+   "market.synthetic.sector_ev_ebitda_base.LOGISTICS_MOBILITY",
+   "12"
+  ],
+  [
+   "market.synthetic.sector_ev_ebitda_base.OTHER",
+   "14"
+  ],
+  [
+   "market.synthetic.sector_growth.SOFTWARE_SAAS.mean",
+   "0.32"
+  ],
+  [
+   "market.synthetic.sector_growth.SOFTWARE_SAAS.std",
+   "0.12"
+  ],
+  [
+   "market.synthetic.sector_growth.FINTECH.mean",
+   "0.28"
+  ],
+  [
+   "market.synthetic.sector_growth.FINTECH.std",
+   "0.12"
+  ],
+  [
+   "market.synthetic.sector_growth.HEALTHTECH.mean",
+   "0.24"
+  ],
+  [
+   "market.synthetic.sector_growth.HEALTHTECH.std",
+   "0.1"
+  ],
+  [
+   "market.synthetic.sector_growth.CONSUMER.mean",
+   "0.12"
+  ],
+  [
+   "market.synthetic.sector_growth.CONSUMER.std",
+   "0.08"
+  ],
+  [
+   "market.synthetic.sector_growth.INDUSTRIAL_TECH.mean",
+   "0.15"
+  ],
+  [
+   "market.synthetic.sector_growth.INDUSTRIAL_TECH.std",
+   "0.08"
+  ],
+  [
+   "market.synthetic.sector_growth.CLEANTECH_ENERGY.mean",
+   "0.2"
+  ],
+  [
+   "market.synthetic.sector_growth.CLEANTECH_ENERGY.std",
+   "0.14"
+  ],
+  [
+   "market.synthetic.sector_growth.BIOTECH_PHARMA.mean",
+   "0.22"
+  ],
+  [
+   "market.synthetic.sector_growth.BIOTECH_PHARMA.std",
+   "0.16"
+  ],
+  [
+   "market.synthetic.sector_growth.MEDIA_GAMING.mean",
+   "0.16"
+  ],
+  [
+   "market.synthetic.sector_growth.MEDIA_GAMING.std",
+   "0.11"
+  ],
+  [
+   "market.synthetic.sector_growth.LOGISTICS_MOBILITY.mean",
+   "0.14"
+  ],
+  [
+   "market.synthetic.sector_growth.LOGISTICS_MOBILITY.std",
+   "0.09"
+  ],
+  [
+   "market.synthetic.sector_growth.OTHER.mean",
+   "0.15"
+  ],
+  [
+   "market.synthetic.sector_growth.OTHER.std",
+   "0.1"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.SOFTWARE_SAAS.mean",
+   "0.76"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.SOFTWARE_SAAS.std",
+   "0.1"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.FINTECH.mean",
+   "0.62"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.FINTECH.std",
+   "0.12"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.HEALTHTECH.mean",
+   "0.6"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.HEALTHTECH.std",
+   "0.12"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.CONSUMER.mean",
+   "0.45"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.CONSUMER.std",
+   "0.13"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.INDUSTRIAL_TECH.mean",
+   "0.42"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.INDUSTRIAL_TECH.std",
+   "0.12"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.CLEANTECH_ENERGY.mean",
+   "0.38"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.CLEANTECH_ENERGY.std",
+   "0.13"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.BIOTECH_PHARMA.mean",
+   "0.7"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.BIOTECH_PHARMA.std",
+   "0.12"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.MEDIA_GAMING.mean",
+   "0.58"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.MEDIA_GAMING.std",
+   "0.12"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.LOGISTICS_MOBILITY.mean",
+   "0.35"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.LOGISTICS_MOBILITY.std",
+   "0.12"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.OTHER.mean",
+   "0.48"
+  ],
+  [
+   "market.synthetic.sector_gross_margin.OTHER.std",
+   "0.12"
+  ],
+  [
+   "market.synthetic.sector_ebitda_positive_fraction.SOFTWARE_SAAS",
+   "0.55"
+  ],
+  [
+   "market.synthetic.sector_ebitda_positive_fraction.FINTECH",
+   "0.5"
+  ],
+  [
+   "market.synthetic.sector_ebitda_positive_fraction.HEALTHTECH",
+   "0.55"
+  ],
+  [
+   "market.synthetic.sector_ebitda_positive_fraction.CONSUMER",
+   "0.75"
+  ],
+  [
+   "market.synthetic.sector_ebitda_positive_fraction.INDUSTRIAL_TECH",
+   "0.8"
+  ],
+  [
+   "market.synthetic.sector_ebitda_positive_fraction.CLEANTECH_ENERGY",
+   "0.45"
+  ],
+  [
+   "market.synthetic.sector_ebitda_positive_fraction.BIOTECH_PHARMA",
+   "0.35"
+  ],
+  [
+   "market.synthetic.sector_ebitda_positive_fraction.MEDIA_GAMING",
+   "0.65"
+  ],
+  [
+   "market.synthetic.sector_ebitda_positive_fraction.LOGISTICS_MOBILITY",
+   "0.6"
+  ],
+  [
+   "market.synthetic.sector_ebitda_positive_fraction.OTHER",
+   "0.6"
+  ],
+  [
+   "market.synthetic.ev_revenue_linkage.growth_coef",
+   "6"
+  ],
+  [
+   "market.synthetic.ev_revenue_linkage.margin_coef",
+   "4"
+  ],
+  [
+   "market.synthetic.ev_revenue_linkage.noise_sigma",
+   "0.45"
+  ],
+  [
+   "market.synthetic.ev_revenue_linkage.min_multiple",
+   "0.5"
+  ],
+  [
+   "market.synthetic.ev_ebitda_dispersion_sigma",
+   "0.22"
+  ],
+  [
+   "market.synthetic.negative_ebitda_margin.mean",
+   "-0.28"
+  ],
+  [
+   "market.synthetic.negative_ebitda_margin.std",
+   "0.1"
+  ],
+  [
+   "market.synthetic.factor_model.n_factors",
+   "3"
+  ],
+  [
+   "market.synthetic.factor_model.factor_vols",
+   "0.03, 0.018, 0.015"
+  ],
+  [
+   "market.synthetic.factor_model.market_beta_mean",
+   "1"
+  ],
+  [
+   "market.synthetic.factor_model.market_beta_std",
+   "0.3"
+  ],
+  [
+   "market.synthetic.factor_model.style_loading_std",
+   "0.55"
+  ],
+  [
+   "market.synthetic.factor_model.idiosyncratic_vol",
+   "0.022"
+  ],
+  [
+   "market.synthetic.factor_model.n_observations",
+   "260"
+  ],
+  [
+   "market.synthetic.factor_model.frequency",
+   "weekly"
+  ],
+  [
+   "market.synthetic.factor_model.series_end_date",
+   "2025-01-03"
+  ],
+  [
+   "market.synthetic.min_top_eigenvalue_share",
+   "0.25"
+  ],
+  [
+   "market.synthetic.risk_free_rate",
+   "0.025"
+  ],
+  [
+   "market.synthetic.index_id",
+   "SYN-BROAD"
+  ],
+  [
+   "market.yfinance.risk_free_rate",
+   "0.025"
+  ],
+  [
+   "market.yfinance.index_ticker",
+   "^GSPC"
+  ],
+  [
+   "market.yfinance.sector_tickers.SOFTWARE_SAAS",
+   "CRM, NOW, SNOW"
+  ],
+  [
+   "market.yfinance.sector_tickers.FINTECH",
+   "V, MA, PYPL"
+  ],
+  [
+   "market.yfinance.sector_tickers.HEALTHTECH",
+   "VEEV, DOCS"
+  ],
+  [
+   "market.yfinance.sector_tickers.CONSUMER",
+   "NKE, SBUX"
+  ],
+  [
+   "market.yfinance.sector_tickers.INDUSTRIAL_TECH",
+   "HON, EMR"
+  ],
+  [
+   "market.yfinance.sector_tickers.CLEANTECH_ENERGY",
+   "ENPH, FSLR"
+  ],
+  [
+   "market.yfinance.sector_tickers.BIOTECH_PHARMA",
+   "VRTX, REGN"
+  ],
+  [
+   "market.yfinance.sector_tickers.MEDIA_GAMING",
+   "NFLX, EA"
+  ],
+  [
+   "market.yfinance.sector_tickers.LOGISTICS_MOBILITY",
+   "UBER, UPS"
+  ],
+  [
+   "market.yfinance.sector_tickers.OTHER",
+   "BRK-B"
+  ],
+  [
+   "portfolio.synthetic.n_holdings",
+   "12"
+  ],
+  [
+   "portfolio.synthetic.as_of_date",
+   "2025-01-03"
+  ],
+  [
+   "portfolio.synthetic.base_currency",
+   "SEK"
+  ],
+  [
+   "portfolio.synthetic.cash.min",
+   "5"
+  ],
+  [
+   "portfolio.synthetic.cash.max",
+   "25"
+  ],
+  [
+   "portfolio.synthetic.sector_weights.SOFTWARE_SAAS",
+   "3"
+  ],
+  [
+   "portfolio.synthetic.sector_weights.FINTECH",
+   "2"
+  ],
+  [
+   "portfolio.synthetic.sector_weights.HEALTHTECH",
+   "1.5"
+  ],
+  [
+   "portfolio.synthetic.sector_weights.CONSUMER",
+   "1"
+  ],
+  [
+   "portfolio.synthetic.sector_weights.INDUSTRIAL_TECH",
+   "1"
+  ],
+  [
+   "portfolio.synthetic.sector_weights.CLEANTECH_ENERGY",
+   "1"
+  ],
+  [
+   "portfolio.synthetic.sector_weights.BIOTECH_PHARMA",
+   "1"
+  ],
+  [
+   "portfolio.synthetic.sector_weights.MEDIA_GAMING",
+   "1"
+  ],
+  [
+   "portfolio.synthetic.sector_weights.LOGISTICS_MOBILITY",
+   "1"
+  ],
+  [
+   "portfolio.synthetic.sector_weights.OTHER",
+   "0.5"
+  ],
+  [
+   "portfolio.synthetic.stage_weights.SEED",
+   "1"
+  ],
+  [
+   "portfolio.synthetic.stage_weights.SERIES_A",
+   "2"
+  ],
+  [
+   "portfolio.synthetic.stage_weights.SERIES_B",
+   "2.5"
+  ],
+  [
+   "portfolio.synthetic.stage_weights.SERIES_C",
+   "2"
+  ],
+  [
+   "portfolio.synthetic.stage_weights.GROWTH",
+   "1.5"
+  ],
+  [
+   "portfolio.synthetic.stage_weights.PRE_IPO",
+   "1"
+  ],
+  [
+   "portfolio.synthetic.geography_weights.NORDICS",
+   "3"
+  ],
+  [
+   "portfolio.synthetic.geography_weights.DACH",
+   "2"
+  ],
+  [
+   "portfolio.synthetic.geography_weights.WESTERN_EUROPE",
+   "2"
+  ],
+  [
+   "portfolio.synthetic.geography_weights.UK_IRELAND",
+   "1.5"
+  ],
+  [
+   "portfolio.synthetic.geography_weights.NORTH_AMERICA",
+   "1.5"
+  ],
+  [
+   "portfolio.synthetic.geography_weights.REST_OF_WORLD",
+   "0.5"
+  ],
+  [
+   "portfolio.synthetic.founder_shares.base",
+   "10"
+  ],
+  [
+   "portfolio.synthetic.ownership_fraction.min",
+   "0.05"
+  ],
+  [
+   "portfolio.synthetic.ownership_fraction.max",
+   "0.2"
+  ],
+  [
+   "portfolio.synthetic.first_round_pre_money.SEED.min",
+   "4"
+  ],
+  [
+   "portfolio.synthetic.first_round_pre_money.SEED.max",
+   "12"
+  ],
+  [
+   "portfolio.synthetic.first_round_pre_money.SERIES_A.min",
+   "12"
+  ],
+  [
+   "portfolio.synthetic.first_round_pre_money.SERIES_A.max",
+   "30"
+  ],
+  [
+   "portfolio.synthetic.first_round_pre_money.SERIES_B.min",
+   "35"
+  ],
+  [
+   "portfolio.synthetic.first_round_pre_money.SERIES_B.max",
+   "80"
+  ],
+  [
+   "portfolio.synthetic.first_round_pre_money.SERIES_C.min",
+   "90"
+  ],
+  [
+   "portfolio.synthetic.first_round_pre_money.SERIES_C.max",
+   "200"
+  ],
+  [
+   "portfolio.synthetic.first_round_pre_money.GROWTH.min",
+   "220"
+  ],
+  [
+   "portfolio.synthetic.first_round_pre_money.GROWTH.max",
+   "600"
+  ],
+  [
+   "portfolio.synthetic.first_round_pre_money.PRE_IPO.min",
+   "700"
+  ],
+  [
+   "portfolio.synthetic.first_round_pre_money.PRE_IPO.max",
+   "1800"
+  ],
+  [
+   "portfolio.synthetic.round_amount.SEED.min",
+   "1"
+  ],
+  [
+   "portfolio.synthetic.round_amount.SEED.max",
+   "4"
+  ],
+  [
+   "portfolio.synthetic.round_amount.SERIES_A.min",
+   "5"
+  ],
+  [
+   "portfolio.synthetic.round_amount.SERIES_A.max",
+   "15"
+  ],
+  [
+   "portfolio.synthetic.round_amount.SERIES_B.min",
+   "15"
+  ],
+  [
+   "portfolio.synthetic.round_amount.SERIES_B.max",
+   "40"
+  ],
+  [
+   "portfolio.synthetic.round_amount.SERIES_C.min",
+   "40"
+  ],
+  [
+   "portfolio.synthetic.round_amount.SERIES_C.max",
+   "90"
+  ],
+  [
+   "portfolio.synthetic.round_amount.GROWTH.min",
+   "90"
+  ],
+  [
+   "portfolio.synthetic.round_amount.GROWTH.max",
+   "250"
+  ],
+  [
+   "portfolio.synthetic.round_amount.PRE_IPO.min",
+   "200"
+  ],
+  [
+   "portfolio.synthetic.round_amount.PRE_IPO.max",
+   "500"
+  ],
+  [
+   "portfolio.synthetic.step_up_multiple.min",
+   "1.4"
+  ],
+  [
+   "portfolio.synthetic.step_up_multiple.max",
+   "2.6"
+  ],
+  [
+   "portfolio.synthetic.preference.default_multiple",
+   "1"
+  ],
+  [
+   "portfolio.synthetic.preference.participating_fraction",
+   "0.2"
+  ],
+  [
+   "portfolio.synthetic.preference.above_1x_fraction",
+   "0.15"
+  ],
+  [
+   "portfolio.synthetic.preference.high_preference_multiple.min",
+   "1.5"
+  ],
+  [
+   "portfolio.synthetic.preference.high_preference_multiple.max",
+   "2"
+  ],
+  [
+   "portfolio.synthetic.preference.participation_cap_multiple",
+   "3"
+  ],
+  [
+   "portfolio.synthetic.metrics.none_fraction",
+   "0.2"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_revenue.SEED.min",
+   "0"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_revenue.SEED.max",
+   "2"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_revenue.SERIES_A.min",
+   "1"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_revenue.SERIES_A.max",
+   "8"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_revenue.SERIES_B.min",
+   "6"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_revenue.SERIES_B.max",
+   "25"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_revenue.SERIES_C.min",
+   "20"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_revenue.SERIES_C.max",
+   "70"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_revenue.GROWTH.min",
+   "60"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_revenue.GROWTH.max",
+   "200"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_revenue.PRE_IPO.min",
+   "180"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_revenue.PRE_IPO.max",
+   "500"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_growth.SEED.min",
+   "0.6"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_growth.SEED.max",
+   "3"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_growth.SERIES_A.min",
+   "0.5"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_growth.SERIES_A.max",
+   "2"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_growth.SERIES_B.min",
+   "0.4"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_growth.SERIES_B.max",
+   "1.3"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_growth.SERIES_C.min",
+   "0.3"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_growth.SERIES_C.max",
+   "0.9"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_growth.GROWTH.min",
+   "0.2"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_growth.GROWTH.max",
+   "0.6"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_growth.PRE_IPO.min",
+   "0.15"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_growth.PRE_IPO.max",
+   "0.45"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_gross_margin.SEED.min",
+   "0.3"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_gross_margin.SEED.max",
+   "0.7"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_gross_margin.SERIES_A.min",
+   "0.4"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_gross_margin.SERIES_A.max",
+   "0.78"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_gross_margin.SERIES_B.min",
+   "0.45"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_gross_margin.SERIES_B.max",
+   "0.82"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_gross_margin.SERIES_C.min",
+   "0.5"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_gross_margin.SERIES_C.max",
+   "0.84"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_gross_margin.GROWTH.min",
+   "0.55"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_gross_margin.GROWTH.max",
+   "0.85"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_gross_margin.PRE_IPO.min",
+   "0.58"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_gross_margin.PRE_IPO.max",
+   "0.86"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_ebitda_margin.SEED.min",
+   "-2"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_ebitda_margin.SEED.max",
+   "-0.5"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_ebitda_margin.SERIES_A.min",
+   "-1.2"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_ebitda_margin.SERIES_A.max",
+   "-0.3"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_ebitda_margin.SERIES_B.min",
+   "-0.8"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_ebitda_margin.SERIES_B.max",
+   "-0.1"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_ebitda_margin.SERIES_C.min",
+   "-0.4"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_ebitda_margin.SERIES_C.max",
+   "0.05"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_ebitda_margin.GROWTH.min",
+   "-0.15"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_ebitda_margin.GROWTH.max",
+   "0.15"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_ebitda_margin.PRE_IPO.min",
+   "0"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_ebitda_margin.PRE_IPO.max",
+   "0.25"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_monthly_burn.SEED.min",
+   "0.05"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_monthly_burn.SEED.max",
+   "0.3"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_monthly_burn.SERIES_A.min",
+   "0.2"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_monthly_burn.SERIES_A.max",
+   "0.8"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_monthly_burn.SERIES_B.min",
+   "0.6"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_monthly_burn.SERIES_B.max",
+   "2"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_monthly_burn.SERIES_C.min",
+   "1.5"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_monthly_burn.SERIES_C.max",
+   "5"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_monthly_burn.GROWTH.min",
+   "3"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_monthly_burn.GROWTH.max",
+   "10"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_monthly_burn.PRE_IPO.min",
+   "5"
+  ],
+  [
+   "portfolio.synthetic.metrics.stage_monthly_burn.PRE_IPO.max",
+   "18"
+  ],
+  [
+   "portfolio.synthetic.metrics.cash_runway_months.min",
+   "12"
+  ],
+  [
+   "portfolio.synthetic.metrics.cash_runway_months.max",
+   "30"
+  ],
+  [
+   "portfolio.synthetic.self_mark_drift.mean",
+   "0.08"
+  ],
+  [
+   "portfolio.synthetic.self_mark_drift.std",
+   "0.22"
+  ],
+  [
+   "portfolio.synthetic.inter_round_months",
+   "18"
+  ],
+  [
+   "portfolio.synthetic.last_round_offset_months",
+   "6"
+  ],
+  [
+   "valuation.waterfall.convergence_epsilon",
+   "0"
+  ],
+  [
+   "valuation.waterfall.max_iterations",
+   "100"
+  ],
+  [
+   "valuation.payoff_grid.n_points",
+   "400"
+  ],
+  [
+   "valuation.payoff_grid.max_equity_multiple",
+   "5"
+  ],
+  [
+   "valuation.payoff_grid.bisection_iterations",
+   "80"
+  ],
+  [
+   "valuation.payoff_grid.bisection_tol",
+   "0"
+  ],
+  [
+   "valuation.comparables.min_peers",
+   "8"
+  ],
+  [
+   "valuation.comparables.size_band_multiple",
+   "3"
+  ],
+  [
+   "valuation.comparables.growth_band",
+   "0.15"
+  ],
+  [
+   "valuation.comparables.max_relaxation_rounds",
+   "3"
+  ],
+  [
+   "valuation.comparables.growth_relaxation_factor",
+   "2"
+  ],
+  [
+   "valuation.comparables.size_relaxation_factor",
+   "1.5"
+  ],
+  [
+   "valuation.comparables.use_ebitda_regression",
+   "true"
+  ],
+  [
+   "valuation.enterprise.ebitda_positive_threshold",
+   "0"
+  ],
+  [
+   "valuation.enterprise.ebitda_blend_weight_revenue",
+   "0.5"
+  ],
+  [
+   "valuation.dlom.method",
+   "chaffe"
+  ],
+  [
+   "valuation.dlom.risk_free_rate",
+   "0.025"
+  ],
+  [
+   "valuation.dlom.stage_volatility.SEED",
+   "0.9"
+  ],
+  [
+   "valuation.dlom.stage_volatility.SERIES_A",
+   "0.8"
+  ],
+  [
+   "valuation.dlom.stage_volatility.SERIES_B",
+   "0.7"
+  ],
+  [
+   "valuation.dlom.stage_volatility.SERIES_C",
+   "0.62"
+  ],
+  [
+   "valuation.dlom.stage_volatility.GROWTH",
+   "0.52"
+  ],
+  [
+   "valuation.dlom.stage_volatility.PRE_IPO",
+   "0.45"
+  ],
+  [
+   "valuation.dlom.stage_holding_period_years.SEED",
+   "6"
+  ],
+  [
+   "valuation.dlom.stage_holding_period_years.SERIES_A",
+   "5"
+  ],
+  [
+   "valuation.dlom.stage_holding_period_years.SERIES_B",
+   "4"
+  ],
+  [
+   "valuation.dlom.stage_holding_period_years.SERIES_C",
+   "3"
+  ],
+  [
+   "valuation.dlom.stage_holding_period_years.GROWTH",
+   "2"
+  ],
+  [
+   "valuation.dlom.stage_holding_period_years.PRE_IPO",
+   "1"
+  ],
+  [
+   "valuation.dlom.empirical_by_stage.SEED",
+   "0.35"
+  ],
+  [
+   "valuation.dlom.empirical_by_stage.SERIES_A",
+   "0.3"
+  ],
+  [
+   "valuation.dlom.empirical_by_stage.SERIES_B",
+   "0.25"
+  ],
+  [
+   "valuation.dlom.empirical_by_stage.SERIES_C",
+   "0.22"
+  ],
+  [
+   "valuation.dlom.empirical_by_stage.GROWTH",
+   "0.16"
+  ],
+  [
+   "valuation.dlom.empirical_by_stage.PRE_IPO",
+   "0.1"
+  ],
+  [
+   "valuation.validation.universe_size",
+   "500"
+  ],
+  [
+   "valuation.validation.recovery_tolerance",
+   "0.2"
+  ],
+  [
+   "valuation.reporting.gap_flag_threshold",
+   "0.1"
+  ],
+  [
+   "uncertainty.n_paths",
+   "10000"
+  ],
+  [
+   "uncertainty.correlation.common_weight",
+   "0.4"
+  ],
+  [
+   "uncertainty.correlation.sector_weight",
+   "0.3"
+  ],
+  [
+   "uncertainty.correlation.idiosyncratic_weight",
+   "0.3"
+  ],
+  [
+   "uncertainty.multiple_noise.max_relative_se",
+   "0.6"
+  ],
+  [
+   "uncertainty.multiple_noise.fallback_relative_se",
+   "0.35"
+  ],
+  [
+   "uncertainty.multiple_noise.none_metric_relative_se",
+   "0.45"
+  ],
+  [
+   "uncertainty.metric_noise.stage_relative.SEED",
+   "0.3"
+  ],
+  [
+   "uncertainty.metric_noise.stage_relative.SERIES_A",
+   "0.22"
+  ],
+  [
+   "uncertainty.metric_noise.stage_relative.SERIES_B",
+   "0.16"
+  ],
+  [
+   "uncertainty.metric_noise.stage_relative.SERIES_C",
+   "0.12"
+  ],
+  [
+   "uncertainty.metric_noise.stage_relative.GROWTH",
+   "0.09"
+  ],
+  [
+   "uncertainty.metric_noise.stage_relative.PRE_IPO",
+   "0.07"
+  ],
+  [
+   "uncertainty.metric_noise.none_metric_relative",
+   "0.35"
+  ],
+  [
+   "uncertainty.credible_interval_alpha",
+   "0.9"
+  ],
+  [
+   "uncertainty.quantile_grid",
+   "0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95"
+  ],
+  [
+   "uncertainty.convergence.interval_stability_tol",
+   "0.03"
+  ],
+  [
+   "uncertainty.convergence.bootstrap_samples",
+   "300"
+  ],
+  [
+   "exits.simulation.n_paths",
+   "10000"
+  ],
+  [
+   "exits.simulation.horizon_years",
+   "10"
+  ],
+  [
+   "exits.simulation.target_irr",
+   "0.15"
+  ],
+  [
+   "exits.simulation.target_tvpi",
+   "2"
+  ],
+  [
+   "exits.simulation.jcurve_grid_points",
+   "48"
+  ],
+  [
+   "exits.simulation.jcurve_quantile_levels",
+   "0.05, 0.25, 0.5, 0.75, 0.95"
+  ],
+  [
+   "exits.simulation.irr.bracket_low",
+   "-0.95"
+  ],
+  [
+   "exits.simulation.irr.bracket_high",
+   "5"
+  ],
+  [
+   "exits.simulation.irr.bisection_iterations",
+   "80"
+  ],
+  [
+   "exits.simulation.convergence.median_tvpi_rel_tol",
+   "0.02"
+  ],
+  [
+   "exits.simulation.convergence.target_hit_abs_tol",
+   "0.02"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SEED.ipo",
+   "0.01"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SEED.trade_sale",
+   "0.15"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SEED.secondary",
+   "0.04"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SEED.stay_private",
+   "0.25"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SEED.down_round",
+   "0.15"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SEED.write_off",
+   "0.4"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SEED.source",
+   "Anchored: Correlation Ventures realized US VC outcomes 2004-2013 (~65% of financings return <1x); CB Insights "
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_A.ipo",
+   "0.02"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_A.trade_sale",
+   "0.22"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_A.secondary",
+   "0.05"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_A.stay_private",
+   "0.25"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_A.down_round",
+   "0.16"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_A.write_off",
+   "0.3"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_A.source",
+   "Anchored: Correlation Ventures outcome distribution; PitchBook-NVCA Venture Monitor exit composition (acquisit"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_B.ipo",
+   "0.04"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_B.trade_sale",
+   "0.28"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_B.secondary",
+   "0.07"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_B.stay_private",
+   "0.24"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_B.down_round",
+   "0.15"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_B.write_off",
+   "0.22"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_B.source",
+   "Anchored: PitchBook-NVCA exit composition; failure rates decline with stage (Correlation Ventures). Per-stage "
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_C.ipo",
+   "0.07"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_C.trade_sale",
+   "0.32"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_C.secondary",
+   "0.08"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_C.stay_private",
+   "0.22"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_C.down_round",
+   "0.14"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_C.write_off",
+   "0.17"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.SERIES_C.source",
+   "Anchored: PitchBook-NVCA exit composition by stage. Per-stage interpolation ASSUMED."
+  ],
+  [
+   "exits.assumptions.stage_probabilities.GROWTH.ipo",
+   "0.12"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.GROWTH.trade_sale",
+   "0.34"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.GROWTH.secondary",
+   "0.1"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.GROWTH.stay_private",
+   "0.2"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.GROWTH.down_round",
+   "0.12"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.GROWTH.write_off",
+   "0.12"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.GROWTH.source",
+   "Anchored: late-stage exit rates and IPO share rise with maturity (PitchBook-NVCA). Per-stage interpolation ASS"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.PRE_IPO.ipo",
+   "0.22"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.PRE_IPO.trade_sale",
+   "0.3"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.PRE_IPO.secondary",
+   "0.12"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.PRE_IPO.stay_private",
+   "0.18"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.PRE_IPO.down_round",
+   "0.1"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.PRE_IPO.write_off",
+   "0.08"
+  ],
+  [
+   "exits.assumptions.stage_probabilities.PRE_IPO.source",
+   "Anchored: pre-IPO cohorts show the highest IPO incidence; residual failure remains non-trivial (PitchBook-NVCA"
+  ],
+  [
+   "exits.assumptions.weibull.SEED.shape",
+   "1.5"
+  ],
+  [
+   "exits.assumptions.weibull.SEED.scale",
+   "8"
+  ],
+  [
+   "exits.assumptions.weibull.SEED.source",
+   "Anchored: PitchBook median time from first VC financing to exit ~5.3-6.9y; rising hazard consistent with VC du"
+  ],
+  [
+   "exits.assumptions.weibull.SERIES_A.shape",
+   "1.5"
+  ],
+  [
+   "exits.assumptions.weibull.SERIES_A.scale",
+   "7"
+  ],
+  [
+   "exits.assumptions.weibull.SERIES_A.source",
+   "Anchored: PitchBook median holding periods; shape ASSUMED (see SEED row)."
+  ],
+  [
+   "exits.assumptions.weibull.SERIES_B.shape",
+   "1.5"
+  ],
+  [
+   "exits.assumptions.weibull.SERIES_B.scale",
+   "6"
+  ],
+  [
+   "exits.assumptions.weibull.SERIES_B.source",
+   "Anchored: PitchBook median holding periods; shape ASSUMED (see SEED row)."
+  ],
+  [
+   "exits.assumptions.weibull.SERIES_C.shape",
+   "1.5"
+  ],
+  [
+   "exits.assumptions.weibull.SERIES_C.scale",
+   "5"
+  ],
+  [
+   "exits.assumptions.weibull.SERIES_C.source",
+   "Anchored: PitchBook median holding periods; shape ASSUMED (see SEED row)."
+  ],
+  [
+   "exits.assumptions.weibull.GROWTH.shape",
+   "1.6"
+  ],
+  [
+   "exits.assumptions.weibull.GROWTH.scale",
+   "4"
+  ],
+  [
+   "exits.assumptions.weibull.GROWTH.source",
+   "Anchored: late-stage positions exit faster (PitchBook); values ASSUMED."
+  ],
+  [
+   "exits.assumptions.weibull.PRE_IPO.shape",
+   "1.8"
+  ],
+  [
+   "exits.assumptions.weibull.PRE_IPO.scale",
+   "2.5"
+  ],
+  [
+   "exits.assumptions.weibull.PRE_IPO.source",
+   "Anchored: pre-IPO time-to-liquidity typically 1-3y; values ASSUMED."
+  ],
+  [
+   "exits.assumptions.multiples.IPO.mu_log",
+   "0.92"
+  ],
+  [
+   "exits.assumptions.multiples.IPO.sigma_log",
+   "0.6"
+  ],
+  [
+   "exits.assumptions.multiples.IPO.source",
+   "Anchored: IPO step-ups over last private round are typically well above 1x (PitchBook up-round step-up medians"
+  ],
+  [
+   "exits.assumptions.multiples.TRADE_SALE.mu_log",
+   "0.59"
+  ],
+  [
+   "exits.assumptions.multiples.TRADE_SALE.sigma_log",
+   "0.55"
+  ],
+  [
+   "exits.assumptions.multiples.TRADE_SALE.source",
+   "Anchored: acquisition step-ups over last round; median up-round step-up data (PitchBook). Level and dispersion"
+  ],
+  [
+   "exits.assumptions.multiples.SECONDARY.mu_log",
+   "0.1"
+  ],
+  [
+   "exits.assumptions.multiples.SECONDARY.sigma_log",
+   "0.35"
+  ],
+  [
+   "exits.assumptions.multiples.SECONDARY.source",
+   "ASSUMED: secondaries trade near or modestly above last round with a discount range; no clean published distrib"
+  ],
+  [
+   "exits.assumptions.multiples.DOWN_ROUND.mu_log",
+   "-0.51"
+  ],
+  [
+   "exits.assumptions.multiples.DOWN_ROUND.sigma_log",
+   "0.35"
+  ],
+  [
+   "exits.assumptions.multiples.DOWN_ROUND.source",
+   "ASSUMED magnitude (mean ~0.6x). Down-round frequency is anchored (PitchBook/Cooley ~15-20% of rounds) but the "
+  ],
+  [
+   "exits.assumptions.copula.type_loading",
+   "0.45"
+  ],
+  [
+   "exits.assumptions.copula.time_loading",
+   "0.35"
+  ],
+  [
+   "exits.assumptions.copula.multiple_loading",
+   "0.25"
+  ],
+  [
+   "exits.assumptions.copula.source",
+   "ASSUMED. No published estimate of exit-window co-movement at this granularity; kept coherent with the Stage 3 "
+  ],
+  [
+   "exits.sweep.sets[0].name",
+   "base"
+  ],
+  [
+   "exits.sweep.sets[0].description",
+   "best empirical calibration (the anchored numbers above)"
+  ],
+  [
+   "exits.sweep.sets[0].write_off_delta",
+   "0"
+  ],
+  [
+   "exits.sweep.sets[0].multiple_log_shift",
+   "0"
+  ],
+  [
+   "exits.sweep.sets[0].hazard_scale_mult",
+   "1"
+  ],
+  [
+   "exits.sweep.sets[1].name",
+   "pessimistic"
+  ],
+  [
+   "exits.sweep.sets[1].description",
+   "harsher failure rates, weaker exit windows, later exits"
+  ],
+  [
+   "exits.sweep.sets[1].write_off_delta",
+   "0.1"
+  ],
+  [
+   "exits.sweep.sets[1].multiple_log_shift",
+   "-0.25"
+  ],
+  [
+   "exits.sweep.sets[1].hazard_scale_mult",
+   "1.3"
+  ],
+  [
+   "exits.sweep.sets[2].name",
+   "optimistic"
+  ],
+  [
+   "exits.sweep.sets[2].description",
+   "kinder failure rates, stronger windows, earlier exits"
+  ],
+  [
+   "exits.sweep.sets[2].write_off_delta",
+   "-0.05"
+  ],
+  [
+   "exits.sweep.sets[2].multiple_log_shift",
+   "0.2"
+  ],
+  [
+   "exits.sweep.sets[2].hazard_scale_mult",
+   "0.8"
+  ],
+  [
+   "exits.sweep.sensitivity.write_off_delta",
+   "0.05"
+  ],
+  [
+   "exits.sweep.sensitivity.multiple_log_shift",
+   "0.15"
+  ],
+  [
+   "exits.sweep.sensitivity.hazard_scale_mult",
+   "1.2"
+  ],
+  [
+   "exits.sweep.sensitivity.type_loading_delta",
+   "0.15"
+  ],
+  [
+   "risk.proxy.frequency",
+   "weekly"
+  ],
+  [
+   "risk.proxy.start_date",
+   "2020-01-01"
+  ],
+  [
+   "risk.proxy.end_date",
+   "2025-01-03"
+  ],
+  [
+   "risk.proxy.desmoothing.ar1_flag_threshold",
+   "0.3"
+  ],
+  [
+   "risk.mp.use_fitted_sigma2",
+   "false"
+  ],
+  [
+   "risk.mp.control_tolerance",
+   "0.1"
+  ],
+  [
+   "risk.annualization_factor",
+   "52"
+  ],
+  [
+   "risk.top_eigvec_positive_fraction",
+   "0.9"
+  ],
+  [
+   "risk.scale_book_n_holdings",
+   "80"
+  ],
+  [
+   "risk.weights_mc_paths",
+   "2000"
+  ],
+  [
+   "risk.liquidity_year_buckets",
+   "2, 5"
+  ],
+  [
+   "app.live_paths.uncertainty",
+   "4000"
+  ],
+  [
+   "app.live_paths.exits",
+   "4000"
+  ],
+  [
+   "app.full_exit_paths",
+   "10000"
+  ],
+  [
+   "app.dlom_slider.min",
+   "0"
+  ],
+  [
+   "app.dlom_slider.max",
+   "0.6"
+  ],
+  [
+   "app.dlom_slider.step",
+   "0.01"
+  ],
+  [
+   "app.scenarios.compress_multiples.label",
+   "Compress multiples 30%"
+  ],
+  [
+   "app.scenarios.compress_multiples.equity_scale",
+   "0.7"
+  ],
+  [
+   "app.scenarios.compress_multiples.multiple_log_shift",
+   "-0.3567"
+  ],
+  [
+   "app.scenarios.window_shut.label",
+   "Exit window shut (~2y longer)"
+  ],
+  [
+   "app.scenarios.window_shut.force_market_factor",
+   "-1"
+  ],
+  [
+   "app.scenarios.window_shut.hazard_scale_mult",
+   "1.4"
+  ],
+  [
+   "app.scenarios.higher_write_offs.label",
+   "Write-off rate +10pp"
+  ],
+  [
+   "app.scenarios.higher_write_offs.write_off_delta",
+   "0.1"
+  ],
+  [
+   "app.workbench.min_comps_warn",
+   "5"
+  ],
+  [
+   "app.workbench.curve_reference_floor",
+   "10"
+  ],
+  [
+   "app.workbench.default_founder_shares",
+   "10"
+  ],
+  [
+   "app.workbench.api_url",
+   "None"
+  ],
+  [
+   "api.host",
+   "127.0.0.1"
+  ],
+  [
+   "api.port",
+   "8600"
+  ],
+  [
+   "api.sync_timeout_seconds",
+   "120"
+  ],
+  [
+   "api.live_comps_enabled",
+   "false"
+  ],
+  [
+   "api.auth_token_env",
+   "PVE_API_TOKEN"
+  ],
+  [
+   "api.access_code_required",
+   "false"
+  ],
+  [
+   "api.access_code_env",
+   "PVE_ACCESS_CODE"
+  ],
+  [
+   "api.cors_origins",
+   ""
+  ],
+  [
+   "api.log_requests",
+   "true"
+  ],
+  [
+   "api.limits.max_cap_table_classes",
+   "12"
+  ],
+  [
+   "api.limits.max_comps",
+   "25"
+  ],
+  [
+   "api.limits.max_paths",
+   "20000"
+  ],
+  [
+   "api.limits.max_book_holdings",
+   "15"
+  ],
+  [
+   "api.limits.rate_limit_enabled",
+   "false"
+  ],
+  [
+   "api.limits.rate_limit_per_minute",
+   "60"
+  ],
+  [
+   "api.cache.enabled",
+   "true"
+  ],
+  [
+   "api.cache.dir",
+   "artifacts/api_cache"
+  ],
+  [
+   "api.oracle.grid_points",
+   "25"
+  ],
+  [
+   "api.oracle.max_equity_multiple",
+   "4"
+  ],
+  [
+   "api.oracle.grid_floor",
+   "10"
+  ],
+  [
+   "api.oracle.determinism_probes",
+   "3"
+  ]
+ ]
+}
