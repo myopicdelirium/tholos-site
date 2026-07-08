@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import BatchSwitcher from "@/components/BatchSwitcher";
 import SimPlayerMount from "@/components/sim/SimPlayerMount";
 
 export const metadata: Metadata = {
@@ -17,7 +18,8 @@ export default function BatchAPage() {
   return (
     <div className="min-h-screen bg-[var(--site-bg)]">
       <main className="mx-auto max-w-5xl px-6 pt-12 pb-24">
-        <h1 className="md-display text-[54px] leading-[1.02] tracking-[-0.02em] text-[var(--site-ink)]">
+        <BatchSwitcher current="A" />
+        <h1 className="md-display mt-6 text-[54px] leading-[1.02] tracking-[-0.02em] text-[var(--site-ink)]">
           Batch&nbsp;A
         </h1>
 
