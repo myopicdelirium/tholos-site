@@ -2,6 +2,11 @@
 runs/
 experiments/results/
 
+# Stray figure output — `python -m viz.figures.X public/figures` run from batch-a/
+# resolves the relative path here instead of the repo-root public/. Canonical
+# figures are written by `python -m viz.build` to repo-root public/figures.
+public/
+
 # Python
 __pycache__/
 *.py[cod]
