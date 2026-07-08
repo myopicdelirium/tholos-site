@@ -10,7 +10,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .figures import a1_learning_gradient, wo2_selection_moderator, wo3_mortality_structure
+from .figures import (
+    a1_learning_gradient, wo2_selection_moderator, wo2_selection_reversal,
+    wo3_mortality_structure, wo3_death_raster, world_gallery,
+)
 
 # repo-root public/figures (the Next.js site's static assets)
 OUT_DIR = Path(__file__).resolve().parents[2] / "public" / "figures"
@@ -18,10 +21,15 @@ OUT_DIR = Path(__file__).resolve().parents[2] / "public" / "figures"
 # (module, data gate) — a figure only builds once its diagnostics exist, so
 # `python -m viz.build` stays green mid-grind and picks figures up as data lands.
 _DIAG = Path(__file__).resolve().parents[1] / "docs" / "diagnostics"
+_WO2 = _DIAG / "wo2_full20" / "wo2_checkpoint.jsonl"
+_WO3 = _DIAG / "wo3_full20" / "wo3_checkpoint.jsonl"
 FIGURES = [
     (a1_learning_gradient, _DIAG / "wo1_a1_summary.json"),
-    (wo2_selection_moderator, _DIAG / "wo2_full20" / "wo2_checkpoint.jsonl"),
-    (wo3_mortality_structure, _DIAG / "wo3_full20" / "wo3_checkpoint.jsonl"),
+    (wo2_selection_moderator, _WO2),
+    (wo2_selection_reversal, _WO2),
+    (world_gallery, _WO2),
+    (wo3_mortality_structure, _WO3),
+    (wo3_death_raster, _DIAG / "wo3_full20" / "wo3_raster_s13.json"),
 ]
 
 

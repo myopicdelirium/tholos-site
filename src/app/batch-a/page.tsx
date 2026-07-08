@@ -83,6 +83,18 @@ const FIGURES = [
     caption: "WO-1 · A1 · freeze_learning × gradient 2×2 · 20 seeds/cell · 1500 ticks",
   },
   {
+    src: "/figures/world_gallery.svg",
+    alt: "Twenty A3 endowment fields ordered by measured carrying capacity",
+    caption:
+      "A3 · 20 seeds · resource-endowment field at t=0 · ordered by cycle-averaged R̂ₛ · cap 2000",
+  },
+  {
+    src: "/figures/wo2_selection_reversal.svg",
+    alt: "WO-2 selection reverses when learning is frozen",
+    caption:
+      "WO-2 · A3 uniform · survivor−founder exploration drift · learning on / frozen / traits frozen · 20 seeds · cap 2000",
+  },
+  {
     src: "/figures/wo2_selection_moderator.svg",
     alt: "WO-2 selection and birthplace moderator",
     caption:
@@ -93,6 +105,12 @@ const FIGURES = [
     alt: "WO-3 mortality structure A3 vs A4",
     caption:
       "WO-3 · A3↔A4 paired · 20 seeds · cap 2000 · 3000 ticks · Fano of per-tick deaths · drawdown vs A3 oscillation",
+  },
+  {
+    src: "/figures/wo3_death_raster.svg",
+    alt: "WO-3 per-tick deaths and population, one seed, A3 vs A4",
+    caption:
+      "WO-3 · seed 13 · per-tick deaths (stacked by cause) + population · A3 vs A4 · cap 2000 · 3000 ticks",
   },
 ];
 
