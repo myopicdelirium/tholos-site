@@ -176,6 +176,20 @@ grief:
   decay_ambient: 0.0       # decay while unattended (0 = perfect latch)
   site_cue_gain: 1.0       # strength of the movement cue toward the loss site
 
+# Foraging memory (coordination case, §C1). Local perception (radius r) cannot
+# compare patches across the map, so self-interested foragers fail to distribute
+# by productivity (see experiments.ifd_probe). Here each agent remembers the
+# richest place IT has personally visited and, when local foraging goes poor,
+# heads back to it. The Ideal Free Distribution — the invisible hand's signature
+# — then emerges from many agents each chasing private memory, no global signal.
+# Disabled → Batch A unchanged (pinned).
+foraging:
+  memory:
+    enabled: false
+    decay: 0.02            # per-tick fade of the remembered value (stale patches forget)
+    return_margin: 0.05    # divert to memory only if it beats local food by this
+    cue_gain: 1.0          # weight of the memory-return cue in the movement vote
+
 # Within-lifetime learning (§3.5). One flag disables it for ablations.
 learning:
   enabled: true

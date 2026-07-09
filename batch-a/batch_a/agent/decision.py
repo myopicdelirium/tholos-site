@@ -115,6 +115,20 @@ def decide(agent, world, perception, config, rng) -> Decision:
         cues = dict(cues)                    # copy — A path keeps the original
         cues["grief"] = Cue(gx, gy, strength)
 
+    # --- foraging memory (coordination §C1): when local foraging is poor, point
+    # the ENERGY drive at a remembered rich patch across the map — the comparison
+    # local perception cannot make. Redirecting the energy cue (not adding a new
+    # drive) keeps energy's existing weight carrying it into the vote.
+    fm = config.foraging.memory if "foraging" in config else None
+    if (fm is not None and fm.enabled and agent.memory.best_site is not None
+            and agent.memory.best_value > perception.food_here + float(fm.return_margin)):
+        from .perception import Cue, _step_toward
+        fx, fy = _step_toward(agent.x, agent.y, agent.memory.best_site[0],
+                              agent.memory.best_site[1], world.size)
+        strength = min(1.0, float(agent.memory.best_value) * float(fm.cue_gain))
+        cues = dict(cues)
+        cues["energy"] = Cue(fx, fy, strength)
+
     # --- desired move direction: weighted vote over per-need cues ----------
     vote_x = vote_y = 0.0
     for need_name, cue in cues.items():

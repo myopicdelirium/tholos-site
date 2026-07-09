@@ -44,7 +44,7 @@ SIZE = 48
 PATCHES = [(12, 12, 7.0), (36, 12, 5.0), (12, 36, 3.5), (36, 36, 2.2)]
 
 
-def _stage(blind: bool, cap: int, ticks: int):
+def _stage(blind: bool, cap: int, ticks: int, memory: bool = False):
     d = load_config("a3.yaml").to_dict()
     d["run"]["max_ticks"] = ticks
     d["run"]["stop_on_extinction"] = False
@@ -53,6 +53,7 @@ def _stage(blind: bool, cap: int, ticks: int):
     d["init"]["n_agents"] = 40
     d["world"]["size"] = SIZE
     d["world"]["perception_radius"] = 0 if blind else 3
+    d["foraging"]["memory"]["enabled"] = bool(memory)   # coordination mechanism
     # isolate foraging: veg is the patchy resource; water everywhere; no heat/threat
     d["fields"]["temperature"]["enabled"] = False
     d["fields"]["risk"]["enabled"] = False
@@ -96,9 +97,10 @@ def _assign_patches(centers, size):
     return best
 
 
-def run(seed: int, blind: bool, cap: int = 250, ticks: int = 1500):
-    cfg = _stage(blind, cap, ticks)
-    sim = Simulation(cfg, seed, run_id=f"ifd_{'blind' if blind else 'sighted'}_{seed}")
+def run(seed: int, blind: bool, cap: int = 250, ticks: int = 1500, memory: bool = False):
+    cfg = _stage(blind, cap, ticks, memory)
+    tag = "blind" if blind else ("mem" if memory else "sighted")
+    sim = Simulation(cfg, seed, run_id=f"ifd_{tag}_{seed}")
     world = sim.world
     size = world.size
     veg = world.vegetation
@@ -142,15 +144,19 @@ def run(seed: int, blind: bool, cap: int = 250, ticks: int = 1500):
     occupied = intake_den > 0
     percap = intake_num[occupied] / intake_den[occupied]
     payoff_cv = float(percap.std() / percap.mean()) if percap.mean() > 1e-9 else None
+    # the sharp IFD signal: agents-per-unit-productivity should be EQUAL everywhere
+    app = occ[keep] / productivity[keep]
+    app_cv = float(app.std() / app.mean()) if app.mean() > 1e-9 else None
     alive = sum(a.alive for a in sim.agents)
 
     return {
-        "blind": blind, "seed": seed, "n_patches": n_patches,
+        "mode": tag, "seed": seed, "n_patches": n_patches,
         "final_pop": alive, "samples": samples,
         "productivity": [round(x, 2) for x in productivity],
         "occupancy_share": [round(x, 3) for x in occ_share],
         "matching_slope": None if slope is None else round(slope, 2),
         "matching_r": None if r is None else round(r, 2),
+        "agents_per_prod_cv": None if app_cv is None else round(app_cv, 3),
         "payoff_cv": None if payoff_cv is None else round(payoff_cv, 3),
     }
 
@@ -159,9 +165,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--blind", action="store_true")
+    ap.add_argument("--memory", action="store_true")
     ap.add_argument("--ticks", type=int, default=1500)
     args = ap.parse_args()
-    out = run(args.seed, args.blind, ticks=args.ticks)
+    out = run(args.seed, args.blind, ticks=args.ticks, memory=args.memory)
     print(json.dumps(out))
 
 
