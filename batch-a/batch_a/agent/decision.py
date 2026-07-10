@@ -147,6 +147,24 @@ def decide(agent, world, perception, config, rng) -> Decision:
             cues = dict(cues)
             cues["energy"] = Cue(sx, sy, strength)
 
+    # --- contest_response (emergence §C2): an EVOLVED, not authored, disposition.
+    # The agent dampens its pull toward visible food in proportion to how far that
+    # ground has been paying below what it looked worth (its own perceived-vs-
+    # realized gap) times its heritable contest_response. No crowds, competitors,
+    # or density appear here — only the agent's own senses. At w=0 (blind founders,
+    # and all of Batch A) this is a no-op. Whether w rises is left to selection.
+    cr = config.traits.get("contest_response") if "contest_response" in config.traits else None
+    if cr is not None and bool(cr.get("enabled", False)):
+        w = float(agent.traits.contest_response)
+        if w > 0.0:
+            contest = max(0.0, agent.memory.efficiency_ref - agent.memory.efficiency_ema)
+            damp = min(1.0, w * contest)
+            ec = cues.get("energy")
+            if ec is not None and damp > 0.0:
+                from .perception import Cue
+                cues = dict(cues)
+                cues["energy"] = Cue(ec.dx, ec.dy, ec.strength * (1.0 - damp))
+
     # --- desired move direction: weighted vote over per-need cues ----------
     vote_x = vote_y = 0.0
     for need_name, cue in cues.items():

@@ -1,0 +1,144 @@
+# Case C2 — The Evolved Invisible Hand (specification & preregistration)
+
+*The coordination case, rebuilt as what it should have been: the crowd-response is
+not written into the decision rule — it is a disposition that must EVOLVE from a
+base sense, or be reported as never evolving. Written before the runs. The
+first-class outcome this model is built to make possible is that coordination DOES
+NOT emerge.*
+
+---
+
+## 0. The trap this document exists to avoid
+
+Case C1 installed the answer. `food ÷ (1 + k·density)` is the Ideal Free
+Distribution's equilibrium condition transcribed into the agent's movement rule:
+the agent does not discover that crowds dilute reward, it is told, and it obeys.
+A coordinated distribution then "emerges" the way a photograph of a sunset emerges
+from a photograph of a sunset. It proves nothing about whether self-interested
+agents *can* find that equilibrium — only that we can write it down.
+
+> **Governing rule of this case: no term referring to crowds, competitors, or
+> density may appear in the decision rule. The agent is given senses and a
+> heritable disposition initialized BLIND (no crowd-response). Whether the
+> disposition rises, and whether coordination rises with it, is decided by the
+> ecology and selection — never by us. A world in which it does NOT emerge must
+> be reachable and must be reported.**
+
+This is the C1 analogue of `test_a_pinned`: the pin here is that the behaviour is
+selected, not authored.
+
+## 1. Senses, not rules (the principle)
+
+Behaviour must be *developed through senses*, not written in. The agent already
+has the two base signals it needs, and neither is a competitor-detector:
+
+  * **perceived food** — `perception.food_here` / the energy cue: what the ground
+    at a location *looks* worth (read at the start of the tick, before anyone acts).
+  * **realized intake** — `agent.last_intake` / `memory.intake_ema`: what the
+    ground *actually* gave after the tick resolved.
+
+The derived sense is their ratio — **foraging efficiency**, `realized ÷ perceived`
+— integrated over recent experience. It is a domain-general interoceptive signal:
+*"am I getting what this place promised?"* It falls when a spot is contested,
+depleted, deceptive, or out of season. Crowding is merely the cause that dominates
+here (water is ample, no seasonality, no predators), so a low-efficiency signal is,
+in this ecology, the shadow of competition — but the agent never represents
+"competitor" or "density." It has prediction error, nothing more. This is the
+prediction-error the `QLearner` already runs on, surfaced as a sense.
+
+## 2. The heritable disposition (on the reserved trait seam)
+
+One new heritable trait, `contest_response` ∈ [0, C_max], extends `Traits`
+exactly as `exploration` does — sampled at founding, asexual clone-with-mutation
+on inheritance (`traits.inherit`), gaussian mutation. **Founders start blind:**
+`init_mean = 0` with small `init_sd`, so the disposition exists only as variance
+for selection to act on. There is no other change to the decision.
+
+Its single effect: when active, an agent dampens its pull toward *visible* food in
+proportion to `contest_response × (1 − efficiency)` — i.e. the more a place has
+been paying below what it looked worth, the more an agent so disposed disengages
+and lets its other drives (exploration, other needs) carry it elsewhere. At
+`contest_response = 0` this is byte-identical to the greedy agent (and to Batch A);
+nothing crowd-specific is written — the term is (own perceived food) vs (own
+realized intake), both base senses.
+
+**Selection, not authorship, closes the loop.** Vegetation depletes, so contested
+ground genuinely underpays; a lineage whose mutated disposition reads that and
+relocates eats more, survives more, reproduces more. The disposition climbs — or,
+where the gap never opens, drifts on mutation noise and nothing emerges.
+
+Everything ships behind a config flag, default off. **Batch A stays byte-
+identical**: when the trait is disabled, no extra RNG draw is taken in
+founding/inheritance and the decision path is untouched (extend `test_a_pinned`).
+
+## 3. The measurement that IS the commentary
+
+Not "coordination exists." The claim is that a coordinated distribution *assembles
+itself out of prediction-error sensitivity under selection*, and can fail to:
+
+  * **disposition trajectory** — population-mean `contest_response` vs evolutionary
+    time (generations). Does it rise from 0, and to what value?
+  * **coordination trajectory** — matching correlation r (occupancy ~ productivity)
+    and payoff CV, over the SAME time. The finding is the *joint* rise: r climbs
+    as, and only as, the disposition climbs — the invisible hand assembling.
+  * **the null run beside it** — the same plot for the abundant-resource world,
+    where neither should move.
+  * **selection-off control** — mutation frozen at the blind value: coordination
+    must NOT appear, isolating selection (not within-life dynamics) as the cause.
+
+## 4. Preregistered claims (the runs decide; nulls reported honestly)
+
+Sweep axes: resource regime (ubiquitous ↔ patchy-and-depletable), and
+selection on/off (mutation vs frozen-blind).
+
+- **C2.0 (the null, must be reachable).** In the abundant/ubiquitous-resource
+  world the efficiency gap never opens; `contest_response` drifts, matching r
+  stays near its greedy baseline, no coordination emerges. *If coordination
+  emerges here, the signal is an artefact — stop and report void.*
+- **C2.1 (emergence under scarcity).** In the patchy, depletable world the
+  population-mean disposition rises from its blind start and matching r rises with
+  it — coordination assembled by selection, no crowd rule anywhere.
+- **C2.2 (selection is the cause).** With mutation frozen at blind, coordination
+  does not emerge even under scarcity — the rise in C2.1 is selection, not
+  within-life learning or geometry.
+- **C2.3 (an ESS, not a summit).** Because the advantage of reading crowds shrinks
+  as more of the flock reads them (frequency dependence), the disposition settles
+  at an intermediate stable value and coordination is partial (undermatching),
+  reported as such. A perfect optimum is not expected and its absence is not a
+  failure.
+- **C2.4 (derived, not gifted).** Remove the efficiency sense (the agent cannot
+  compare perceived to realized) and emergence fails under scarcity — proving the
+  behaviour is derived from that base sense, and that the model contains no
+  competitor-counter to fall back on.
+
+**Falsifiers.** C2.0 emerging voids the model. C2.1 failing (disposition never
+rises, or r flat while it rises) means selection cannot find the equilibrium in
+this substrate — a real, publishable negative result about the limits of the
+invisible hand, not a bug to paper over. C2.2 failing (coordination with selection
+off) means something other than selection is doing the work. C2.4 failing means
+the behaviour was not derived from the base sense after all.
+
+## 5. What this is not
+
+Not altruism, not morality, not a social force, not a planner. No agent ever
+sacrifices for another or is restrained by a norm; `contest_response` makes an
+agent forage its OWN interest more accurately, and any fairness in the resulting
+distribution is an unpaid by-product — the same cold result as C1, but now the
+precondition for it is evolved rather than authored. The altruistic agent (one
+that reads another's need and gives up its own payoff) is a separate, later build;
+this case is the honest floor it must be measured against.
+
+## 6. Build order (falsifiability first, as Batch A was pinned)
+
+1. Extend `test_a_pinned` to the disabled trait — prove A unmoved (no extra RNG draw).
+2. Add the efficiency sense (`memory`) and the `contest_response` trait +
+   its single decision effect, behind the flag.
+3. Build the **C2.0 null harness first**: the abundant world, selection on;
+   show the disposition drifts and no coordination emerges, before any positive
+   run can be called a finding.
+4. Then the scarcity run (C2.1) and the selection-off control (C2.2); measure the
+   joint disposition/coordination trajectories.
+5. Then the sense-ablation (C2.4).
+6. Only then a visual — and it must show the null (flat) run beside the emergent
+   run, disposition and coordination co-rising, or it is a diagram of a foregone
+   conclusion.

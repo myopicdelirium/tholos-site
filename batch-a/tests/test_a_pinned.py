@@ -43,3 +43,32 @@ def test_a_stream_is_pinned(key):
     assert _stream_hash(case, int(seed)) == PINS[key], (
         f"{key}: Batch A stream drifted from its pinned hash — a Batch B change "
         f"leaked into the A path. Find the leak; do not re-pin.")
+
+
+def test_contest_response_disabled_takes_no_rng_draw():
+    """C2 guard: the emergence trait, when disabled, must draw NO extra random
+    number in founding/inheritance — otherwise every downstream seed shifts and
+    the pin above is meaningless. Founding a pop with the trait config absent vs
+    present-but-disabled must leave the RNG in the identical state."""
+    import numpy as np
+    from batch_a.agent.traits import founder_traits
+    from batch_a.config import Config
+
+    base = load_config("a3.yaml").to_dict()
+
+    def founder_then_next(cfg_dict):
+        rng = np.random.default_rng(12345)
+        cfg = Config(cfg_dict, "rngtest")
+        for _ in range(20):
+            founder_traits(cfg.traits, rng)
+        return float(rng.random())        # RNG position after 20 founders
+
+    absent = founder_then_next(base)
+    d2 = load_config("a3.yaml").to_dict()
+    d2["traits"]["contest_response"] = {
+        "enabled": False, "init_mean": 0.0, "init_sd": 0.2, "mutation_sd": 0.08,
+        "max": 3.0, "efficiency_alpha": 0.05, "ref_decay": 0.01}
+    disabled = founder_then_next(d2)
+    assert absent == disabled, (
+        "contest_response disabled perturbed the RNG stream — it must take no draw "
+        "when off, or Batch A byte-identity is broken.")

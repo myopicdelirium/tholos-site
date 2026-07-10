@@ -219,6 +219,18 @@ traits:
     mutation_sd: 0.05      # gaussian mutation sd passed to offspring
     epsilon_scale: 0.30    # ε contribution = epsilon + exploration*epsilon_scale
     step_noise_scale: 0.50 # prob. of a random (non-greedy) move step
+  # C2 (emergence): heritable disposition to disengage from ground paying below
+  # what it looked worth. Default OFF → no extra RNG draw, Batch A byte-identical
+  # (tests/test_a_pinned). Founders start BLIND (init_mean 0); the crowd-response
+  # is not written anywhere — it must be selected up, or reported as not emerging.
+  contest_response:
+    enabled: false
+    init_mean: 0.0         # founders blind: no disposition to read the gap
+    init_sd: 0.20          # variance for selection to act on
+    mutation_sd: 0.08      # gaussian mutation sd to offspring
+    max: 3.0               # clamp on the disposition
+    efficiency_alpha: 0.05 # EMA rate of the perceived-vs-realized foraging ratio
+    ref_decay: 0.01        # decay of the "best this ground gives me" reference
 
 # Reproduction (§9.4: asexual clone-with-mutation). Inert when disabled (A1).
 reproduction:

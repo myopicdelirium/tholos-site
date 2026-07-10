@@ -19,11 +19,31 @@ class Memory:
         self.best_site = None      # (x, y) where sustained intake was richest
         self.best_value = 0.0      # its remembered intake rate, decaying over time
         self.intake_ema = 0.0      # running estimate of how well the agent is eating NOW
+        # C2 (emergence) — the derived "am I getting what this looked worth?" sense.
+        # efficiency = realized intake / perceived food; ref = the best this kind of
+        # ground has lately given the agent (decaying). contest = max(0, ref - ema):
+        # zero on good ground, positive where the agent is out-competed or has eaten
+        # a spot down. Inert unless the contest_response trait is enabled.
+        self.efficiency_ema = 1.0
+        self.efficiency_ref = 1.0
 
     def observe(self, agent, perception, world):
         """Called once per tick after the agent acts (§4)."""
         self.last_position = (agent.x, agent.y)
         self.ticks_observed += 1
+
+        # --- derived foraging-efficiency sense (C2) ---------------------------
+        cr = (world.config.traits.get("contest_response")
+              if "contest_response" in world.config.traits else None)
+        if cr is not None and bool(cr.get("enabled", False)):
+            fh = float(perception.food_here)
+            if fh > 1e-3:                         # only where the ratio is meaningful
+                eff = min(1.0, float(agent.last_intake) / fh)
+                a = float(cr.get("efficiency_alpha", 0.05))
+                self.efficiency_ema = (1.0 - a) * self.efficiency_ema + a * eff
+                self.efficiency_ref *= (1.0 - float(cr.get("ref_decay", 0.01)))
+                if self.efficiency_ema > self.efficiency_ref:
+                    self.efficiency_ref = self.efficiency_ema
 
         fm = world.config.foraging.memory if "foraging" in world.config else None
         if fm is None or not fm.enabled:
