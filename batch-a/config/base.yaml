@@ -190,6 +190,15 @@ foraging:
     decay: 0.01            # per-tick fade of the remembered best (stale patches forget)
     return_margin: 0.03    # divert only if remembered intake beats current by this
     cue_gain: 3.0          # weight of the memory-return cue in the movement vote
+  # Congestion sensing (§C1): agents feel local crowding and are repelled by it,
+  # so they chase resource PER COMPETITOR, not raw resource. This is the missing
+  # ingredient for the Ideal Free Distribution — without it, everyone rushes the
+  # richest tile (winner-take-all); with it, they distribute until crowding-
+  # adjusted opportunity equalizes (the invisible hand). Disabled → A unchanged.
+  congestion:
+    enabled: false
+    gain: 1.0              # crowd-repulsion strength relative to food attraction
+    radius: 3              # tiles over which local competitors are counted
 
 # Within-lifetime learning (§3.5). One flag disables it for ablations.
 learning:

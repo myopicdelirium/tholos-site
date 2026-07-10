@@ -84,6 +84,7 @@ class World:
 
         self._rebuild_risk()
         self._endowment_cache = None
+        self.agent_density = None       # local-competitor field (§C1 congestion)
 
     # ------------------------------------------------------------------
     # Environment update — step 1 of the tick pipeline (§4).
@@ -91,6 +92,21 @@ class World:
     def update(self):
         dynamics.step_environment(self, self.rng)
         self.tick += 1
+
+    def rebuild_agent_density(self, agents, radius):
+        """Local-competitor field: each tile's count of agents within `radius`
+        (toroidal box blur). Foragers read its gradient to flee crowding (§C1)."""
+        size = self.size
+        cnt = np.zeros((size, size))
+        for a in agents:
+            if a.alive:
+                cnt[a.y % size, a.x % size] += 1.0
+        sm = np.zeros_like(cnt)
+        for dy in range(-radius, radius + 1):
+            row = np.roll(cnt, dy, axis=0)
+            for dx in range(-radius, radius + 1):
+                sm += np.roll(row, dx, axis=1)
+        self.agent_density = ScalarField(sm, self.toroidal)
 
     def _rebuild_risk(self):
         if self.predators is not None and self._risk_cfg.enabled:
