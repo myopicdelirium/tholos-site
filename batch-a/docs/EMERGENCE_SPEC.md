@@ -142,3 +142,29 @@ this case is the honest floor it must be measured against.
 6. Only then a visual — and it must show the null (flat) run beside the emergent
    run, disposition and coordination co-rising, or it is a diagram of a foregone
    conclusion.
+
+## 7. Results log (honest, appended as runs happen)
+
+**C2-derived, attempt 1 — NULL at the mechanism level (the derived sense is
+inert).** The first build derived the contest signal purely from the agent's own
+state: `contest = ref − ema` of foraging efficiency (realized intake ÷ perceived
+food). Measured leverage by *forcing* the disposition high in a fixed immortal
+flock (no evolution): `w = 0, 1.5, 3.0`. Matching r moved in no consistent
+direction (e.g. seed-avg 0.49 → 0.48 → 0.49) and the **mean contest signal was
+≈ 0.009** — essentially zero. Diagnosis: competition in this substrate is
+*spatially diffuse* — foragers spread across a patch's tiles rather than stacking
+on one, and depletion is gradual — so an agent's private intake ≈ what its own
+tile holds regardless of the crowd, and the perceived-vs-realized gap never opens.
+The elegant "no crowd-perception, derive it from base senses already present"
+route **does not carry signal here.** Reported, not tuned away.
+
+Corollary from the same runs: the earlier full-selection probe returned flat
+`w` and flat coordination in *all* arms (scarcity, abundant, frozen) — but every
+arm hit the population cap (`pop_end 130`), so there was no differential survival
+for selection to grip. That probe tested nothing; a fair test needs a genuinely
+food-limited world where poor foragers actually die.
+
+**Pivot (C2′).** Keep the falsifiability scaffold (heritable, blind start,
+abundant null, frozen control, real mortality) but change what the agent senses.
+See the follow-up decision; the derived-sense constraint is retired as empirically
+inert, not on principle.
