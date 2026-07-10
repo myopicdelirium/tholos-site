@@ -121,7 +121,9 @@ def decide(agent, world, perception, config, rng) -> Decision:
     # drive) keeps energy's existing weight carrying it into the vote.
     fm = config.foraging.memory if "foraging" in config else None
     if (fm is not None and fm.enabled and agent.memory.best_site is not None
-            and agent.memory.best_value > perception.food_here + float(fm.return_margin)):
+            and agent.memory.best_value
+            > agent.memory.intake_ema + float(fm.return_margin)):
+        # currently eating worse than a place I remember → head back to it
         from .perception import Cue, _step_toward
         fx, fy = _step_toward(agent.x, agent.y, agent.memory.best_site[0],
                               agent.memory.best_site[1], world.size)

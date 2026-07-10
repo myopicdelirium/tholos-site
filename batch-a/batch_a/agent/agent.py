@@ -45,6 +45,7 @@ class Agent:
         self.grief = None            # {"drive", "site", "since"} while latched
         self.bereaved_at = None      # tick of first bereavement (for measurement)
         self.attention_band: list[str] = []  # drives holding slots last tick
+        self.last_intake = 0.0       # realized need-gain last tick (foraging memory currency)
 
         # filled each tick for the learner update after resolution
         self._pending = None

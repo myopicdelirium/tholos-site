@@ -186,9 +186,10 @@ grief:
 foraging:
   memory:
     enabled: false
-    decay: 0.02            # per-tick fade of the remembered value (stale patches forget)
-    return_margin: 0.05    # divert to memory only if it beats local food by this
-    cue_gain: 1.0          # weight of the memory-return cue in the movement vote
+    intake_alpha: 0.05     # EMA rate for the agent's realized intake (the IFD currency)
+    decay: 0.01            # per-tick fade of the remembered best (stale patches forget)
+    return_margin: 0.03    # divert only if remembered intake beats current by this
+    cue_gain: 3.0          # weight of the memory-return cue in the movement vote
 
 # Within-lifetime learning (§3.5). One flag disables it for ablations.
 learning:
