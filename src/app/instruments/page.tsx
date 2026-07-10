@@ -63,6 +63,27 @@ export default function InstrumentsPage() {
 
         <div className="mt-4">
           <Link
+            href="/instruments/desk"
+            className="block rounded-2xl border border-[var(--site-line)] p-6 transition hover:bg-[var(--site-hover)] hover:translate-y-[-1px]"
+          >
+            <div className="flex flex-wrap items-baseline justify-between gap-3">
+              <div>
+                <div className="smallcaps text-[10px] text-[var(--site-muted)]">The desk</div>
+                <div className="md-display mt-1 text-[22px] leading-tight text-[var(--site-ink)]">
+                  Have a book marked →
+                </div>
+              </div>
+              <p className="max-w-[46ch] text-[12.5px] leading-relaxed text-[var(--site-muted)]">
+                Quarterly independent marks on your private book — credible bands, exact waterfalls,
+                disclosed assumptions — on a private instance of this engine. Flat fee; sample report
+                and pricing inside.
+              </p>
+            </div>
+          </Link>
+        </div>
+
+        <div className="mt-4">
+          <Link
             href="/instruments/vigil"
             className="block rounded-2xl border border-[var(--site-line)] p-6 transition hover:bg-[var(--site-hover)] hover:translate-y-[-1px]"
           >
@@ -82,7 +103,7 @@ export default function InstrumentsPage() {
           </Link>
         </div>
 
-        <div className="mt-12 rounded-2xl border border-[rgba(20,16,10,0.12)] bg-[var(--site-field-bg)] p-4 sm:p-6">
+        <div className="mt-12">
           <EngineClient data={data} />
         </div>
 
