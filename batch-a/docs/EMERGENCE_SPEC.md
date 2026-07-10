@@ -168,3 +168,46 @@ food-limited world where poor foragers actually die.
 abundant null, frozen control, real mortality) but change what the agent senses.
 See the follow-up decision; the derived-sense constraint is retired as empirically
 inert, not on principle.
+
+**C2′, the evolvable policy — the invisible hand is representable but NOT
+evolvable (the headline result).** The agent scores where to forage as
+`g_food·food + g_crowd·density` over two primitive senses, both genes heritable,
+`g_crowd` born ~0 (blind). Two facts, both robust:
+
+  1. **The coordinated genome exists and works.** Hand-setting `g_crowd = −1`
+     (avoid conspecifics) lifts matching r from ~0.5 (greedy, `g_crowd = 0`) to
+     **~0.98 on every seed** — the IFD, as good as the authored C1 rule. The
+     linear genome can represent the invisible hand.
+  2. **Selection never finds it.** Across every regime — scarcity, abundance,
+     the frozen control, and an "avoidance-favorable" regime (large perception so
+     social cues are redundant, strong depletion) — and every seed, evolved
+     `g_crowd` drifts/selects toward **positive** (herding, up to +0.6), never
+     negative. Coordination stays ~0.2–0.5 and sometimes goes negative; it never
+     approaches the 0.98 the same genome reaches when set by hand.
+
+**Why (the mechanism).** Food and crowds are collocated — crowds form ON the food
+— so "avoid crowds" (`g_crowd < 0`) is, locally, "avoid food," which starves the
+avoider. The individually optimal move is toward food, which is toward others
+(others mark where food is: local enhancement / social foraging), so the fitness
+gradient points *up the herding hill*. The invisible-hand genome is a real fitness
+peak, but it is **unreachable by incremental selfish selection from the naive
+start** — the path to it runs through lower individual fitness. Coordination that
+benefits everyone is not evolvable here; it must be authored (C1).
+
+**Honest caveat.** Every evolution run pinned the population at its cap (patch
+standing-stock buffers slow regen, so lowering regen did not make food limit the
+population below the cap), which weakens selection strength. The *direction* is
+nonetheless unanimous across regimes and mechanistically forced; a genuinely
+food-limited run (needs a capacity/patch-size cut, not just slower regen) would
+sharpen but not plausibly reverse it, since the gradient sign on `g_crowd` does
+not flip with density. Stated as a limit on strength, not a doubt about sign.
+
+**What this answers.** "Can something genuinely emergent be built, or is it
+doomed?" — The emergent substrate is real (policy evolves from raw senses, nothing
+authored, Batch A pinned, leverage proven). What emerges is *not* the tidy
+invisible hand: innocent rules (seek food; others mark food) produce a collective
+macro-pattern (herding, overcrowding, distribution worse than random) that no
+agent chose and that is collectively worse for all — Schelling/Calhoun, not Smith.
+The reassuring coordination is a designer's fiction here; selfish evolution builds
+its opposite. That is the uncomfortable, undeniable result — not a failure to
+model, but a finding about what self-interest actually optimizes.
