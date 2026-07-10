@@ -108,6 +108,39 @@ class World:
                 sm += np.roll(row, dx, axis=1)
         self.agent_density = ScalarField(sm, self.toroidal)
 
+    def best_food_per_capita_step(self, x, y, radius, k):
+        """Ideal-Free foraging step (§C1). Scan the food window and step toward
+        the tile whose food PER LOCAL COMPETITOR — food/(1 + k·density) — is
+        highest, not the tile with the most food. The multiplicative crowd
+        discount is negative density dependence: as a patch fills, its per-capita
+        value falls until the marginal forager does better elsewhere, and the
+        fixed point of everyone doing this privately is the Ideal Free
+        Distribution (payoff equalized, headcount ∝ productivity). Returns
+        (dx, dy, strength) or None if there is no food in range. Compare the
+        naive additive repulsion this replaced, which equalized spatial density
+        rather than payoff and inverted under load."""
+        veg = self.vegetation
+        if veg is None:
+            return None
+        size = self.size
+        dens = self.agent_density.grid if self.agent_density is not None else None
+        best_val, best_xy = 0.0, None
+        for dy in range(-radius, radius + 1):
+            for dx in range(-radius, radius + 1):
+                yy, xx = (y + dy) % size, (x + dx) % size
+                food = veg.available(xx, yy)
+                if food <= 0.0:
+                    continue
+                d = float(dens[yy, xx]) if dens is not None else 0.0
+                v = food / (1.0 + k * d)
+                if v > best_val:
+                    best_val, best_xy = v, (dx, dy)
+        if best_xy is None or best_xy == (0, 0):
+            return None
+        cap = max(veg.capacity, 1e-9)
+        return (int(np.sign(best_xy[0])), int(np.sign(best_xy[1])),
+                min(1.0, best_val / cap))
+
     def _rebuild_risk(self):
         if self.predators is not None and self._risk_cfg.enabled:
             self.risk = self.predators.risk_field(

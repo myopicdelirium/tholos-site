@@ -1,0 +1,341 @@
+<!-- The Ideal Free Distribution — a controlled comparison.
+     Self-contained: run data is inlined at build by viz/build_ifd_visual.py.
+     Palette + type mirror the site design system (batch-a/design/tokens.json). -->
+<style>
+  :root{
+    --paper:#F0EAE0; --plate:#F6F2EA; --ink:#0C0E10; --ink-soft:#3f403f;
+    --rule:#d8d0c2; --mist:#E0DBD7; --brass:#857665; --taupe:#897866;
+    --greedy:#C23A2B; --free:#00394F; --greedy-soft:#e7b7ad; --free-soft:#a9c2cc;
+    --patch:#ded3c0; --patch-edge:#c9bca4; --good:#2e6b4f;
+    --serif:"Ibarra Real Nova","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#14130f; --plate:#1c1a15; --ink:#efe8db; --ink-soft:#b3ab9b;
+      --rule:#37342b; --mist:#2a2822; --patch:#332f26; --patch-edge:#48412f;
+      --greedy:#e0604f; --free:#5fa7c2; --greedy-soft:#5a2b25; --free-soft:#274b58;
+      --good:#5bb389;
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#F0EAE0; --plate:#F6F2EA; --ink:#0C0E10; --ink-soft:#3f403f; --rule:#d8d0c2;
+    --mist:#E0DBD7; --patch:#ded3c0; --patch-edge:#c9bca4;
+    --greedy:#C23A2B; --free:#00394F; --greedy-soft:#e7b7ad; --free-soft:#a9c2cc; --good:#2e6b4f;
+  }
+  :root[data-theme="dark"]{
+    --paper:#14130f; --plate:#1c1a15; --ink:#efe8db; --ink-soft:#b3ab9b; --rule:#37342b;
+    --mist:#2a2822; --patch:#332f26; --patch-edge:#48412f;
+    --greedy:#e0604f; --free:#5fa7c2; --greedy-soft:#5a2b25; --free-soft:#274b58; --good:#5bb389;
+  }
+  *{box-sizing:border-box}
+  .ifd{background:var(--paper);color:var(--ink);font-family:var(--sans);
+    line-height:1.5;padding:clamp(18px,3vw,40px);max-width:1120px;margin:0 auto;
+    -webkit-font-smoothing:antialiased}
+  .ifd .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--brass);font-weight:600;margin:0 0 10px}
+  .ifd h1{font-family:var(--serif);font-weight:600;font-size:clamp(26px,4.4vw,44px);
+    line-height:1.08;letter-spacing:-.01em;margin:0 0 12px;text-wrap:balance}
+  .ifd .thesis{font-family:var(--serif);font-size:clamp(16px,2.1vw,20px);
+    color:var(--ink-soft);max-width:66ch;margin:0 0 4px;font-style:italic}
+  .ifd .rulebar{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:baseline;
+    margin:20px 0 4px;padding:14px 16px;background:var(--plate);
+    border:1px solid var(--rule);border-radius:8px;font-size:13.5px}
+  .ifd .rulebar b{font-weight:600}
+  .ifd .rulebar .k{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12px;background:var(--mist);padding:1px 6px;border-radius:4px}
+  .ifd .swatch{display:inline-block;width:10px;height:10px;border-radius:2px;
+    margin-right:6px;vertical-align:baseline}
+
+  .ifd .diptych{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,2vw,22px);
+    margin:22px 0 0}
+  @media (max-width:680px){.ifd .diptych{grid-template-columns:1fr}}
+  .ifd .plate{background:var(--plate);border:1px solid var(--rule);border-radius:10px;
+    padding:14px 14px 12px;display:flex;flex-direction:column;gap:10px}
+  .ifd .plate .head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .ifd .plate .name{font-family:var(--serif);font-size:17px;font-weight:600;line-height:1.15}
+  .ifd .plate .name small{display:block;font-family:var(--sans);font-weight:500;
+    font-size:11.5px;letter-spacing:.02em;color:var(--ink-soft);margin-top:3px}
+  .ifd .plate.greedy .name{color:var(--greedy)}
+  .ifd .plate.free .name{color:var(--free)}
+  .ifd .rnum{text-align:right;line-height:1}
+  .ifd .rnum .v{font-family:var(--serif);font-size:30px;font-weight:600;
+    font-variant-numeric:tabular-nums}
+  .ifd .rnum .l{font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--brass);margin-top:3px}
+  .ifd canvas.world{width:100%;height:auto;display:block;border-radius:6px;
+    background:var(--paper);image-rendering:auto}
+  .ifd .bars{display:flex;flex-direction:column;gap:5px;margin-top:2px}
+  .ifd .bars .bh{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--brass);margin-bottom:1px}
+  .ifd .bar{position:relative;height:15px;background:var(--mist);border-radius:3px;overflow:hidden}
+  .ifd .bar .fill{position:absolute;top:0;bottom:0;left:0;border-radius:3px}
+  .ifd .plate.greedy .fill{background:var(--greedy)}
+  .ifd .plate.free .fill{background:var(--free)}
+  .ifd .bar .target{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink)}
+  .ifd .bar .tlab{position:absolute;top:0;right:4px;font-size:9.5px;line-height:15px;
+    color:var(--ink-soft);font-variant-numeric:tabular-nums}
+
+  .ifd .controls{display:flex;align-items:center;gap:14px;margin:22px 0 10px;flex-wrap:wrap}
+  .ifd button{font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;
+    border:1px solid var(--ink);background:var(--ink);color:var(--paper);
+    padding:8px 16px;border-radius:6px}
+  .ifd button.ghost{background:transparent;color:var(--ink)}
+  .ifd button:focus-visible{outline:2px solid var(--free);outline-offset:2px}
+  .ifd .scrub{flex:1;min-width:180px;accent-color:var(--free)}
+  .ifd .tickread{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;
+    color:var(--ink-soft);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+  .ifd .chartwrap{background:var(--plate);border:1px solid var(--rule);border-radius:10px;
+    padding:16px 18px 12px;margin-top:4px}
+  .ifd .chartwrap .ct{font-family:var(--serif);font-size:16px;font-weight:600;margin:0 0 2px}
+  .ifd .chartwrap .cs{font-size:12.5px;color:var(--ink-soft);margin:0 0 10px}
+  .ifd canvas.chart{width:100%;height:auto;display:block}
+
+  .ifd .ledgerwrap{margin-top:22px}
+  .ifd .ledgerwrap h2{font-family:var(--serif);font-size:15px;font-weight:600;
+    letter-spacing:.01em;margin:0 0 10px;text-transform:none}
+  .ifd .ledger{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--rule)}
+  .ifd .ev{display:grid;grid-template-columns:64px 14px 1fr;gap:12px;align-items:start;
+    padding:9px 4px;border-bottom:1px solid var(--rule);opacity:.35;transition:opacity .25s}
+  .ifd .ev.on{opacity:1}
+  .ifd .ev .t{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+    color:var(--ink-soft);font-variant-numeric:tabular-nums;padding-top:1px}
+  .ifd .ev .dot{width:9px;height:9px;border-radius:50%;margin-top:5px;background:var(--brass)}
+  .ifd .ev.k-greedy .dot{background:var(--greedy)}
+  .ifd .ev.k-free .dot{background:var(--free)}
+  .ifd .ev.k-result .dot{background:var(--good)}
+  .ifd .ev .x{font-size:13.5px}
+  .ifd .ev.on .x{font-weight:500}
+
+  .ifd .foot{margin-top:24px;padding-top:14px;border-top:1px solid var(--rule);
+    font-size:12px;color:var(--ink-soft);max-width:78ch}
+  .ifd .foot b{color:var(--ink);font-weight:600}
+  @media (prefers-reduced-motion: reduce){.ifd *{transition:none!important}}
+</style>
+
+<div class="ifd" id="ifd">
+  <p class="eyebrow">Controlled comparison · the invisible hand, falsified or not</p>
+  <h1>Two identical worlds, one rule apart</h1>
+  <p class="thesis">Self-interested foragers with no coordinator. Change a single
+    line of what each one wants, and a fair distribution either organizes itself —
+    or never does.</p>
+
+  <div class="rulebar">
+    <span><b>Same</b> seed · same four patches · same 44 foragers · ideal information.</span>
+    <span><span class="swatch" style="background:var(--greedy)"></span><b>Greedy</b>
+      walks to the <b>most food</b>.</span>
+    <span><span class="swatch" style="background:var(--free)"></span><b>Ideal-free</b>
+      walks to the most food <b>per competitor</b> <span class="k">food ÷ (1 + k·density)</span>.</span>
+  </div>
+
+  <div class="diptych">
+    <div class="plate greedy">
+      <div class="head">
+        <div class="name">Greedy<small>each grabs the richest tile it can see</small></div>
+        <div class="rnum"><div class="v" id="rg">–</div><div class="l">matching r</div></div>
+      </div>
+      <canvas class="world" id="cg" width="480" height="480" aria-label="greedy world"></canvas>
+      <div class="bars" id="barsg"><div class="bh">foragers per patch vs fair share ▮</div></div>
+    </div>
+    <div class="plate free">
+      <div class="head">
+        <div class="name">Ideal-free<small>each grabs the richest tile per competitor</small></div>
+        <div class="rnum"><div class="v" id="rf">–</div><div class="l">matching r</div></div>
+      </div>
+      <canvas class="world" id="cf" width="480" height="480" aria-label="ideal-free world"></canvas>
+      <div class="bars" id="barsf"><div class="bh">foragers per patch vs fair share ▮</div></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="play">Pause</button>
+    <button id="restart" class="ghost">Restart</button>
+    <input class="scrub" id="scrub" type="range" min="0" max="100" value="0" aria-label="tick">
+    <span class="tickread" id="tick">tick 0</span>
+  </div>
+
+  <div class="chartwrap">
+    <p class="ct">Does occupancy track productivity? — the matching correlation, live</p>
+    <p class="cs">At the Ideal Free Distribution, headcount on each patch is proportional
+      to how much it produces, so the correlation reaches 1. The race below is the
+      whole claim: it could have ended in a tie.</p>
+    <canvas class="chart" id="chart" width="1040" height="300"></canvas>
+  </div>
+
+  <div class="ledgerwrap">
+    <h2>Event ledger</h2>
+    <div class="ledger" id="ledger"></div>
+  </div>
+
+  <p class="foot">
+    <b>Method.</b> A fixed flock — no births, no deaths (energy and water floored each
+    tick, so the same 44 foragers persist and stay hungry). Vegetation regenerates and
+    depletes, so a crowded patch pays less per forager: the negative feedback the
+    distribution rides on. The <i>only</i> difference between the plates is the crowd
+    discount in the movement rule. <b>Robustness.</b> Ideal-free beats greedy on every
+    seed 0–5 (greedy matching r̄ ≈ 0.47, ideal-free r̄ ≈ 0.90); it reaches near-perfect
+    matching, r ≈ 1.0, on four of the six. Seed 0 is shown, representative of that
+    majority; on the two harder seeds the advantage is smaller (r ≈ 0.65–0.77) but
+    present, and greedy coordinates on none. Foragers <i>undermatch</i> — they slightly
+    under-fill the richest patch, slope ≈ 0.4 —
+    exactly as real animals do in Fretwell–Lucas / Milinski feeder experiments. Nothing
+    in the rule names patches, counts foragers, or targets a distribution; the order is
+    an unplanned by-product of each forager pursuing its own best meal.
+  </p>
+</div>
+
+<script>
+const DATA = /*__DATA__*/ null;
+(function(){
+  const D = DATA; if(!D) return;
+  const SZ = D.size, N = D.patches.length;
+  const prod = D.prod_share;
+  const cg = document.getElementById('cg'), cf = document.getElementById('cf');
+  const gctx = cg.getContext('2d'), fctx = cf.getContext('2d');
+  const chart = document.getElementById('chart'), cx = chart.getContext('2d');
+  const rgEl=document.getElementById('rg'), rfEl=document.getElementById('rf');
+  const tickEl=document.getElementById('tick'), scrub=document.getElementById('scrub');
+  const playBtn=document.getElementById('play'), restartBtn=document.getElementById('restart');
+  const css = k => getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+
+  const frames = D.free.frames.length;           // both conditions share stride/frames
+  scrub.max = frames-1;
+  const stride = D.stride;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- world rendering -------------------------------------------------
+  function drawWorld(ctx, cv, frame, patchColorVar, agentVar){
+    const W = cv.width;
+    const s = W / SZ;
+    ctx.clearRect(0,0,W,W);
+    ctx.fillStyle = css('--paper'); ctx.fillRect(0,0,W,W);
+    // patches: neutral discs sized by productivity radius; shade by standing food
+    for(let p=0;p<N;p++){
+      const pt = D.patches[p];
+      const cxp=(pt.cx+0.5)*s, cyp=(pt.cy+0.5)*s, rad=(pt.r+1.1)*s;
+      const food = frame.f ? frame.f[p] : 1;
+      ctx.beginPath(); ctx.arc(cxp,cyp,rad,0,7);
+      ctx.fillStyle = css('--patch'); ctx.globalAlpha = 0.55+0.45*food;
+      ctx.fill(); ctx.globalAlpha=1;
+      ctx.lineWidth=1.2; ctx.strokeStyle=css('--patch-edge'); ctx.stroke();
+    }
+    // agents
+    const a = frame.a, col = css(agentVar);
+    ctx.fillStyle = col;
+    const r = Math.max(1.7, s*0.42);
+    for(let i=0;i<a.length;i++){
+      ctx.beginPath(); ctx.arc((a[i][0]+0.5)*s,(a[i][1]+0.5)*s,r,0,7); ctx.fill();
+    }
+  }
+
+  // ---- fair-share bars -------------------------------------------------
+  function buildBars(container, cond){
+    const wrap = document.getElementById(container);
+    const rows=[];
+    for(let p=0;p<N;p++){
+      const bar=document.createElement('div'); bar.className='bar';
+      const fill=document.createElement('div'); fill.className='fill';
+      const tgt=document.createElement('div'); tgt.className='target';
+      const tl=document.createElement('div'); tl.className='tlab';
+      tgt.style.left=(prod[p]*100)+'%';
+      bar.appendChild(fill); bar.appendChild(tgt); bar.appendChild(tl);
+      wrap.appendChild(bar); rows.push({fill,tl});
+    }
+    return rows;
+  }
+  const barsG = buildBars('barsg','greedy'), barsF = buildBars('barsf','free');
+  function updateBars(rows, occ){
+    const tot = occ.reduce((a,b)=>a+b,0)||1;
+    for(let p=0;p<N;p++){
+      const share=occ[p]/tot;
+      rows[p].fill.style.width=(share*100)+'%';
+      rows[p].tl.textContent=occ[p];
+    }
+  }
+
+  // ---- matching-r chart ------------------------------------------------
+  const gr = D.greedy.match_r, frr = D.free.match_r;   // per-tick series
+  const T = gr.length;
+  function drawChart(uptoTick){
+    const W=chart.width, H=chart.height, padL=42, padR=88, padT=14, padB=26;
+    cx.clearRect(0,0,W,H);
+    const x0=padL, x1=W-padR, y0=padT, y1=H-padB;
+    const X = t => x0 + (t/(T-1))*(x1-x0);
+    const Y = v => y1 - ((v-0)/(1.0-0))*(y1-y0);   // r in [0,1]
+    // gridlines + labels
+    cx.strokeStyle=css('--rule'); cx.fillStyle=css('--brass');
+    cx.font='11px '+css('--sans'); cx.textAlign='right'; cx.textBaseline='middle';
+    [0,0.25,0.5,0.75,1.0].forEach(v=>{
+      const y=Y(v); cx.globalAlpha=(v===1.0)?0.9:0.5; cx.lineWidth=(v===1.0)?1.3:1;
+      cx.beginPath(); cx.moveTo(x0,y); cx.lineTo(x1,y); cx.stroke(); cx.globalAlpha=1;
+      cx.fillText(v.toFixed(2), x0-8, y);
+    });
+    // r=1 label
+    cx.textAlign='left'; cx.fillStyle=css('--good');
+    cx.fillText('r = 1  ·  perfect matching (IFD)', x0+6, Y(1.0)-9);
+    // series
+    function line(series, colorVar, upto){
+      cx.strokeStyle=css(colorVar); cx.lineWidth=2.2; cx.beginPath();
+      for(let t=0;t<=upto;t++){ const px=X(t), py=Y(series[t]); t?cx.lineTo(px,py):cx.moveTo(px,py); }
+      cx.stroke();
+      // endpoint dot
+      cx.fillStyle=css(colorVar); cx.beginPath(); cx.arc(X(upto),Y(series[upto]),3.4,0,7); cx.fill();
+    }
+    const upto=Math.min(uptoTick, T-1);
+    line(gr,'--greedy',upto); line(frr,'--free',upto);
+    // x axis label
+    cx.fillStyle=css('--brass'); cx.textAlign='center'; cx.textBaseline='top';
+    cx.fillText('ticks →', (x0+x1)/2, y1+8);
+    // series labels in the reserved right margin, kept off the plot
+    cx.textAlign='left'; cx.textBaseline='middle'; cx.font='600 12px '+css('--sans');
+    let fy=Y(frr[upto]), gy=Y(gr[upto]);
+    if(Math.abs(fy-gy)<14){ if(fy<gy){fy-=7;gy+=7;}else{fy+=7;gy-=7;} }
+    cx.fillStyle=css('--free'); cx.fillText('ideal-free', x1+8, fy);
+    cx.fillStyle=css('--greedy'); cx.fillText('greedy', x1+8, gy);
+    cx.font='11px '+css('--sans');
+  }
+
+  // ---- ledger ----------------------------------------------------------
+  const ledger=document.getElementById('ledger');
+  const evEls = D.events.map(e=>{
+    const div=document.createElement('div');
+    div.className='ev k-'+e.kind;
+    div.innerHTML=`<span class="t">t ${e.t}</span><span class="dot"></span><span class="x">${e.text}</span>`;
+    ledger.appendChild(div); return {el:div, t:e.t};
+  });
+
+  // ---- playback --------------------------------------------------------
+  let fi=0, playing=!reduce, raf=null, last=0;
+  function render(fidx){
+    const gf=D.greedy.frames[fidx], ff=D.free.frames[fidx];
+    drawWorld(gctx,cg,gf,'--patch','--greedy');
+    drawWorld(fctx,cf,ff,'--patch','--free');
+    const tk=gf.t;
+    updateBars(barsG, D.greedy.occ[tk]); updateBars(barsF, D.free.occ[tk]);
+    rgEl.textContent=gr[tk].toFixed(2); rfEl.textContent=frr[tk].toFixed(2);
+    drawChart(tk);
+    tickEl.textContent='tick '+tk+' / '+(D.ticks-1);
+    scrub.value=fidx;
+    evEls.forEach(ev=>ev.el.classList.toggle('on', ev.t<=tk));
+  }
+  function loop(ts){
+    if(!playing) return;
+    if(ts-last > 55){ last=ts; fi++; if(fi>=frames){ fi=frames-1; playing=false; playBtn.textContent='Replay'; } render(fi); }
+    if(playing) raf=requestAnimationFrame(loop);
+  }
+  playBtn.onclick=()=>{
+    if(fi>=frames-1 && !playing){ fi=0; }
+    playing=!playing; playBtn.textContent=playing?'Pause':'Play';
+    if(playing){ last=0; raf=requestAnimationFrame(loop);} else if(raf) cancelAnimationFrame(raf);
+  };
+  restartBtn.onclick=()=>{ fi=0; render(0); if(!playing){ playing=true; playBtn.textContent='Pause'; last=0; raf=requestAnimationFrame(loop);} };
+  scrub.oninput=()=>{ playing=false; playBtn.textContent='Play'; fi=+scrub.value; render(fi); };
+  // redraw on theme toggle
+  matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>render(fi));
+  new MutationObserver(()=>render(fi)).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+  render(0);
+  if(reduce){ render(frames-1); } else { last=0; raf=requestAnimationFrame(loop); }
+})();
+</script>

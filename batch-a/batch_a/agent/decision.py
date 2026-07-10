@@ -131,22 +131,21 @@ def decide(agent, world, perception, config, rng) -> Decision:
         cues = dict(cues)
         cues["energy"] = Cue(fx, fy, strength)
 
-    # --- congestion (coordination §C1): repel the energy drive from local crowds,
-    # so the agent chases food PER COMPETITOR. Food attraction minus crowd gradient
-    # → agents settle where crowding-adjusted opportunity equalizes = the IFD.
+    # --- congestion (coordination §C1): the Ideal-Free rule. Re-aim the energy
+    # cue at the tile with the best food PER LOCAL COMPETITOR — food/(1+k·density)
+    # — instead of the tile with the most food. Each agent selfishly seeks the
+    # highest per-capita payoff; the emergent fixed point is the IFD (headcount ∝
+    # productivity, payoff equalized). This replaces the earlier additive
+    # repulsion, which equalized spatial density and inverted under load.
     cg = config.foraging.congestion if "foraging" in config else None
     if (cg is not None and cg.enabled and getattr(world, "agent_density", None) is not None):
-        dgx, dgy = world.agent_density.gradient(agent.x, agent.y)  # toward denser
-        if dgx != 0.0 or dgy != 0.0:
-            g = float(cg.gain)
-            ec = cues.get("energy")
-            edx, edy, estr = (ec.dx, ec.dy, ec.strength) if ec else (0, 0, 0.0)
-            bx = edx - g * ((dgx > 0) - (dgx < 0))     # food pull minus crowd push
-            by = edy - g * ((dgy > 0) - (dgy < 0))
+        step = world.best_food_per_capita_step(agent.x, agent.y, world.radius,
+                                                float(cg.gain))
+        if step is not None:
+            sx, sy, strength = step
             from .perception import Cue
             cues = dict(cues)
-            cues["energy"] = Cue(int((bx > 0) - (bx < 0)),
-                                 int((by > 0) - (by < 0)), estr)
+            cues["energy"] = Cue(sx, sy, strength)
 
     # --- desired move direction: weighted vote over per-need cues ----------
     vote_x = vote_y = 0.0
