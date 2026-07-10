@@ -201,7 +201,9 @@ def run_tick(world, agents, config, rng, recorder):
 
     # 6. learning
     for a in living:
-        a.learn(realized.get(a.id, 0.0))
+        gain = realized.get(a.id, 0.0)
+        a.last_intake = gain              # foraging-memory currency (inert unless enabled)
+        a.learn(gain)
         a.memory.observe(a, perceptions[a.id], world)
 
     # 7. deaths, then births
