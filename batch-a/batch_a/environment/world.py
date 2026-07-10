@@ -141,6 +141,34 @@ class World:
         return (int(np.sign(best_xy[0])), int(np.sign(best_xy[1])),
                 min(1.0, best_val / cap))
 
+    def best_policy_step(self, x, y, radius, g_food, g_crowd, dnorm):
+        """Evolvable foraging step (§C2′). Score every tile in view by a heritable
+        linear mix of two PRIMITIVE senses — food there and conspecifics there —
+        `g_food·food + g_crowd·(density/dnorm)` — and step toward the best. No
+        crowd rule is written: g_crowd is a neutral weight on a neutral sense; only
+        if selection drives it negative does the agent come to avoid crowds. At
+        g_crowd = 0 the score is g_food·food, i.e. plain greedy foraging. Returns
+        (dx, dy, strength) with strength = food at the chosen tile, or None."""
+        veg = self.vegetation
+        if veg is None:
+            return None
+        size = self.size
+        dens = self.agent_density.grid if self.agent_density is not None else None
+        best_score, best_xy, best_food = -1e18, None, 0.0
+        for dy in range(-radius, radius + 1):
+            for dx in range(-radius, radius + 1):
+                yy, xx = (y + dy) % size, (x + dx) % size
+                food = veg.available(xx, yy)
+                d = (float(dens[yy, xx]) / dnorm) if dens is not None else 0.0
+                score = g_food * food + g_crowd * d
+                if score > best_score:
+                    best_score, best_xy, best_food = score, (dx, dy), food
+        if best_xy is None or best_xy == (0, 0):
+            return None
+        cap = max(veg.capacity, 1e-9)
+        return (int(np.sign(best_xy[0])), int(np.sign(best_xy[1])),
+                min(1.0, best_food / cap))
+
     def _rebuild_risk(self):
         if self.predators is not None and self._risk_cfg.enabled:
             self.risk = self.predators.risk_field(

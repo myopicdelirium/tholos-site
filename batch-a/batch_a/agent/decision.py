@@ -147,6 +147,24 @@ def decide(agent, world, perception, config, rng) -> Decision:
             cues = dict(cues)
             cues["energy"] = Cue(sx, sy, strength)
 
+    # --- evolvable foraging policy (emergence §C2′): the agent aims its energy
+    # cue by its heritable genome over two primitive senses (food, conspecifics),
+    # not by a written rule. g_crowd is born ~0 (blind); whether it becomes an
+    # aversion is left entirely to selection. At the genome's greedy region
+    # (g_food>0, g_crowd=0) this reduces to walking toward the most food.
+    fp = config.traits.get("forage_policy") if "forage_policy" in config.traits else None
+    if (fp is not None and bool(fp.get("enabled", False))
+            and getattr(world, "agent_density", None) is not None):
+        step = world.best_policy_step(agent.x, agent.y, world.radius,
+                                      float(agent.traits.g_food),
+                                      float(agent.traits.g_crowd),
+                                      float(fp.get("density_norm", 8.0)))
+        if step is not None:
+            sx, sy, strength = step
+            from .perception import Cue
+            cues = dict(cues)
+            cues["energy"] = Cue(sx, sy, strength)
+
     # --- contest_response (emergence §C2): an EVOLVED, not authored, disposition.
     # The agent dampens its pull toward visible food in proportion to how far that
     # ground has been paying below what it looked worth (its own perceived-vs-

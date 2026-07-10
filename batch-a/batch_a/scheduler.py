@@ -177,9 +177,14 @@ def run_tick(world, agents, config, rng, recorder):
     living = [a for a in agents if a.alive]
     prev_pos = {a.id: (a.x, a.y) for a in living}
 
-    # 1b. congestion field (§C1): local-competitor density agents are repelled by
+    # 1b. conspecific-density field: the crowd SENSE, built when either the C1
+    # congestion rule or the C2′ evolvable policy needs it.
+    fp = config.traits.get("forage_policy") if "forage_policy" in config.traits else None
+    policy_on = fp is not None and bool(fp.get("enabled", False))
     if config.foraging.congestion.enabled:
         world.rebuild_agent_density(living, int(config.foraging.congestion.radius))
+    elif policy_on:
+        world.rebuild_agent_density(living, int(fp.get("density_radius", 3)))
 
     # 2. perceive (snapshot) — scalar reference, or the bit-identical batch path
     if config.perception.get("impl", "scalar") == "vectorized":

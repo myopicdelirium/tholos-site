@@ -231,6 +231,24 @@ traits:
     max: 3.0               # clamp on the disposition
     efficiency_alpha: 0.05 # EMA rate of the perceived-vs-realized foraging ratio
     ref_decay: 0.01        # decay of the "best this ground gives me" reference
+  # C2′ (emergence): the EVOLVABLE foraging policy. The agent scores where to eat
+  # as g_food·(food there) + g_crowd·(conspecifics there) — a linear mix of two
+  # primitive senses, weights heritable. Default OFF → no extra RNG draw, Batch A
+  # byte-identical. g_crowd starts ~0 (blind to crowds); nothing writes an
+  # aversion — only selection can drive it negative, or leave it at chance (null).
+  forage_policy:
+    enabled: false
+    density_radius: 3      # radius of the conspecific-density sense (tiles)
+    density_norm: 8.0      # divides the raw neighbour count → ~[0,1] scale
+    clamp: 4.0             # |gene| clamp
+    g_food:                # seek-food weight — evolvable, born positive & viable
+      init_mean: 1.0
+      init_sd: 0.4
+      mutation_sd: 0.08
+    g_crowd:               # crowd weight — evolvable, born BLIND (mean 0)
+      init_mean: 0.0
+      init_sd: 0.4
+      mutation_sd: 0.08
 
 # Reproduction (§9.4: asexual clone-with-mutation). Inert when disabled (A1).
 reproduction:
