@@ -89,11 +89,18 @@ def export(seed: int, cap: int = 150, ticks: int = 2400, stride: int = 6):
     frames, events, pop_series, coord_series = [], [], [], []
     discovered = [False] * npatch       # first forager has reached this patch
     settled = [False] * npatch          # a community has taken hold here
-    top_offspring = 2                   # only report prolificacy once it's notable
-    top_holder = None
-    n_deaths_logged = 0
+    power_hit = set()                   # offspring milestones already announced
     pop_milestone = 40
+    first_birth = False
+    all_settled = False
+    silence_marked = False
+    last_death_t = 0
+    n_deaths_logged = 0
     prev_alive = set()
+    POWER_MILES = [5, 9, 14, 20]
+    WASTE = ["a wanderer starves alone in the waste",
+             "a lone forager fails to find food, and falls",
+             "another wanderer starves, far from any patch"]
 
     for t in range(ticks):
         run_tick(world, sim.agents, cfg, sim.rng, sim.recorder)
@@ -117,13 +124,14 @@ def export(seed: int, cap: int = 150, ticks: int = 2400, stride: int = 6):
         # ── events, curated so the log reads as one story ──────────────────
         alive_ids = {a.id for a in living}
         # the scattered phase: independents wander and starve, having found nothing
-        if t < ticks * 0.30 and n_deaths_logged < 12:
+        if t < ticks * 0.30 and n_deaths_logged < 8:
             for a in sim.agents:
                 if a.id in prev_alive and a.id not in alive_ids and not a.alive:
                     events.append({"t": t, "kind": "death",
-                                   "text": f"a wanderer starves alone in the waste",
+                                   "text": WASTE[n_deaths_logged % len(WASTE)],
                                    "x": a.x, "y": a.y})
                     n_deaths_logged += 1
+                    last_death_t = t
                     break
         for p in range(npatch):
             cx, cy, _ = PATCHES[p]
@@ -132,21 +140,41 @@ def export(seed: int, cap: int = 150, ticks: int = 2400, stride: int = 6):
                 events.append({"t": t, "kind": "discover",
                                "text": f"a forager discovers the {['largest','second','third','smallest'][p]} patch",
                                "x": cx, "y": cy})
-            if not settled[p] and occ[p] >= 6:           # a community takes hold
+        # the first offspring — settlement begins
+        if not first_birth:
+            baby = next((a for a in sim.agents if a.birth_tick == t and a.parent_id is not None), None)
+            if baby is not None:
+                first_birth = True
+                events.append({"t": t, "kind": "birth",
+                               "text": "the first offspring is born beside the water",
+                               "x": baby.x, "y": baby.y})
+        for p in range(npatch):
+            cx, cy, _ = PATCHES[p]
+            if not settled[p] and occ[p] >= 7:           # a community takes hold
                 settled[p] = True
                 events.append({"t": t, "kind": "settle",
                                "text": f"a community takes hold — {int(occ[p])} now forage it together",
                                "x": cx, "y": cy})
-        # power: report only when the lead CHANGES hands or crosses a milestone
+        if not all_settled and all(settled):             # the map is fully organized
+            all_settled = True
+            events.append({"t": t, "kind": "settle",
+                           "text": "every patch now sustains a community — the map is organized"})
+        # the wastes fall silent: 300 ticks after the last starvation in the ledger
+        if (not silence_marked and n_deaths_logged >= 4
+                and last_death_t and t - last_death_t >= 300):
+            silence_marked = True
+            events.append({"t": t, "kind": "growth",
+                           "text": "the wastes fall silent — no one has starved in 300 ticks"})
+        # power: only the FIRST line to reach each offspring milestone (a dynasty)
         if living:
             champ = max(living, key=lambda a: a.offspring_count)
-            if champ.offspring_count >= 5 and (champ.id != top_holder
-                                               or champ.offspring_count >= top_offspring + 5):
-                top_offspring = champ.offspring_count
-                top_holder = champ.id
-                events.append({"t": t, "kind": "power",
-                               "text": f"agent {champ.id} rises — the most prolific line ({champ.offspring_count} offspring)",
-                               "x": champ.x, "y": champ.y})
+            for m in POWER_MILES:
+                if champ.offspring_count >= m and m not in power_hit:
+                    power_hit.add(m)
+                    events.append({"t": t, "kind": "power",
+                                   "text": f"a line founds a dynasty — agent {champ.id}, {m} offspring and counting",
+                                   "x": champ.x, "y": champ.y})
+                    break
         if len(living) >= pop_milestone:                 # the population swells
             events.append({"t": t, "kind": "growth",
                            "text": f"the population passes {pop_milestone}"})

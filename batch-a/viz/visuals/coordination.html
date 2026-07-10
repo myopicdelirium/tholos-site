@@ -1,0 +1,422 @@
+<header class="masthead">
+  <div class="eyebrow">Batches · C1 · Coordination</div>
+  <h1>The Invisible Hand, Watched</h1>
+  <p class="thesis">Twenty-six self-interested foragers, scattered on an empty world, with no
+    plan and no coordinator — and the order that assembles itself anyway.</p>
+</header>
+
+<main class="stage">
+  <section class="platewrap" aria-label="Simulation plate">
+    <div class="plate">
+      <canvas id="plate" width="560" height="560"></canvas>
+      <div class="readout">
+        <span id="clock">t 0000</span>
+        <span id="popread">pop 26</span>
+        <span id="phase" class="phase">scattered</span>
+      </div>
+    </div>
+
+    <div class="transport">
+      <button id="play" class="btn" aria-label="Play or pause">▶</button>
+      <div class="speeds" role="group" aria-label="Playback speed">
+        <button class="sp" data-s="1">1×</button>
+        <button class="sp is-on" data-s="2">2×</button>
+        <button class="sp" data-s="4">4×</button>
+      </div>
+      <input id="scrub" class="scrub" type="range" min="0" max="100" value="0"
+             step="1" aria-label="Scrub through ticks" />
+    </div>
+
+    <div class="traces">
+      <figure class="trace">
+        <figcaption><span>population</span><b id="popNow">26</b></figcaption>
+        <canvas id="popTrace" width="640" height="64"></canvas>
+      </figure>
+      <figure class="trace">
+        <figcaption><span>coordination · share within a community</span><b id="coordNow">0.50</b></figcaption>
+        <canvas id="coordTrace" width="640" height="64"></canvas>
+      </figure>
+      <div class="tracekey">
+        <span><i class="sw sw-harm"></i> harmony window — stable, no deaths, self-organized</span>
+      </div>
+    </div>
+  </section>
+
+  <aside class="ledger" aria-label="Event ledger">
+    <div class="ledger-head">
+      <span>Ledger</span><span id="evcount" class="muted"></span>
+    </div>
+    <ol id="log" class="log"></ol>
+  </aside>
+</main>
+
+<footer class="footnote">
+  <p>A single deterministic run (seed 3, 2,400 ticks) on the Batch&nbsp;A substrate with foraging
+    memory enabled. Each forager remembers only where <em>it</em> has eaten well and returns there;
+    nothing broadcasts, nothing commands. Deaths, births and settlements are read straight from the
+    tick where they occur. The reddening of a dot is its own energy failing; the gold line is
+    whichever individual leaves the most descendants. What structure appears — communities on every
+    patch, an empty waste between them, a population held steady for
+    <span id="harmlen">~190</span> ticks without a single death — no agent intended.</p>
+</footer>
+
+<script>
+const DATA = /*__DATA__*/;
+
+(() => {
+  "use strict";
+  const $ = (s) => document.querySelector(s);
+  const S = DATA.size, TICKS = DATA.ticks, STRIDE = DATA.stride;
+  const frames = DATA.frames, events = DATA.events;
+  const pop = DATA.pop, coord = DATA.coord, harm = DATA.harmony;
+
+  // ---- plate geometry ----
+  const plate = $("#plate"), pctx = plate.getContext("2d");
+  const DPR = Math.min(2, window.devicePixelRatio || 1);
+  function fitPlate() {
+    const css = plate.clientWidth;
+    plate.width = css * DPR; plate.height = css * DPR;
+  }
+  const cell = () => plate.width / S;
+
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+  // ---- event index ----
+  events.forEach((e, i) => e._i = i);
+  const KIND = {
+    death:    {c: "warn",  g: "•"},
+    discover: {c: "accent",g: "◇"},
+    settle:   {c: "accent",g: "◆"},
+    growth:   {c: "muted", g: "+"},
+    power:    {c: "gold",  g: "★"},
+    harmony:  {c: "fg",    g: "❖"},
+  };
+
+  // ---- state ----
+  let cur = 0;            // current tick
+  let playing = false;
+  let speed = 2;          // ticks-per-frame multiplier
+  const BASE = 2.2;       // ticks advanced per rAF frame at 1x (~130 ticks/s)
+  let shownUpto = -1;     // highest event index revealed in the log
+
+  // ---- draw the plate ----
+  function frameAt(t) {
+    let idx = Math.min(frames.length - 1, Math.max(0, Math.round(t / STRIDE)));
+    return frames[idx];
+  }
+  const recentDeaths = () => events.filter(e => e.kind === "death" && e.t <= cur && cur - e.t < 26);
+
+  function drawPlate() {
+    const c = cell(), W = plate.width;
+    pctx.fillStyle = css("--plate");
+    pctx.fillRect(0, 0, W, W);
+    // faint grid
+    pctx.strokeStyle = css("--plate-line"); pctx.lineWidth = 1;
+    pctx.beginPath();
+    for (let i = 0; i <= S; i += 7) { pctx.moveTo(i*c,0); pctx.lineTo(i*c,W); pctx.moveTo(0,i*c); pctx.lineTo(W,i*c); }
+    pctx.stroke();
+    // patches — luminous teal pools
+    for (const p of DATA.patches) {
+      const R = (p.r + 2.2) * c, x = (p.cx + .5) * c, y = (p.cy + .5) * c;
+      const g = pctx.createRadialGradient(x, y, 0, x, y, R);
+      g.addColorStop(0, "rgba(26,150,180,.42)");
+      g.addColorStop(.55, "rgba(12,96,120,.20)");
+      g.addColorStop(1, "rgba(10,70,90,0)");
+      pctx.fillStyle = g;
+      pctx.beginPath(); pctx.arc(x, y, R, 0, 7); pctx.fill();
+    }
+    // agents
+    const fr = frameAt(cur), r = Math.max(1.4, c * 0.36);
+    for (const a of fr.a) {
+      const e = a[2];                     // energy 0..1
+      const x = (a[0] + .5) * c, y = (a[1] + .5) * c;
+      // warm when fed, rust when starving
+      const t = Math.max(0, Math.min(1, e / 0.7));
+      const col = mix([194,58,43], [232,214,178], t);
+      pctx.beginPath(); pctx.arc(x, y, r, 0, 7);
+      pctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${0.55 + 0.4*t})`;
+      pctx.fill();
+    }
+    // death flashes
+    for (const d of recentDeaths()) {
+      const age = (cur - d.t) / 26, x = (d.x + .5) * c, y = (d.y + .5) * c;
+      pctx.strokeStyle = `rgba(194,58,43,${0.9*(1-age)})`;
+      pctx.lineWidth = 1.6;
+      pctx.beginPath(); pctx.arc(x, y, r + age*c*2.2, 0, 7); pctx.stroke();
+    }
+  }
+  function mix(a, b, t){ return [0,1,2].map(i => Math.round(a[i]+(b[i]-a[i])*t)); }
+
+  // ---- sparkline traces ----
+  function drawTrace(id, arr, hi, fmt) {
+    const cv = $(id), x = cv.getContext("2d");
+    cv.width = cv.clientWidth * DPR; cv.height = 64 * DPR;
+    const W = cv.width, H = cv.height, n = arr.length;
+    x.clearRect(0,0,W,H);
+    const mx = Math.max(...arr) || 1;
+    // harmony shading
+    if (harm) {
+      x.fillStyle = css("--harm");
+      x.fillRect(harm[0]/n*W, 0, (harm[1]-harm[0])/n*W, H);
+    }
+    // area
+    x.beginPath(); x.moveTo(0, H);
+    for (let i=0;i<n;i++) x.lineTo(i/n*W, H - (arr[i]/mx)*(H-6) - 3);
+    x.lineTo(W, H);
+    x.fillStyle = css("--trace-fill"); x.fill();
+    // line
+    x.beginPath();
+    for (let i=0;i<n;i++){ const px=i/n*W, py=H-(arr[i]/mx)*(H-6)-3; i?x.lineTo(px,py):x.moveTo(px,py); }
+    x.strokeStyle = css("--accent"); x.lineWidth = 1.5*DPR; x.stroke();
+    // cursor
+    const cx = cur/TICKS*W;
+    x.strokeStyle = css("--cursor"); x.lineWidth = 1*DPR;
+    x.beginPath(); x.moveTo(cx,0); x.lineTo(cx,H); x.stroke();
+  }
+
+  // ---- ledger ----
+  const log = $("#log");
+  function renderLogReset() {
+    log.innerHTML = ""; shownUpto = -1;
+    for (const e of events) if (e.t <= cur) addLogLine(e, false);
+    // scroll to bottom
+    log.scrollTop = log.scrollHeight;
+  }
+  function addLogLine(e, animate) {
+    const li = document.createElement("li");
+    li.className = "ev ev-" + (KIND[e.kind]?.c || "muted") + (animate ? " ev-new" : "");
+    li.innerHTML = `<span class="tk">t${String(e.t).padStart(4,"0")}</span>`
+      + `<span class="gl">${KIND[e.kind]?.g || "·"}</span>`
+      + `<span class="tx">${e.text}</span>`;
+    log.appendChild(li);
+    shownUpto = Math.max(shownUpto, e._i);
+  }
+  function syncLog() {
+    // reveal any newly-passed events
+    let added = false;
+    for (const e of events) {
+      if (e.t <= cur && e._i > shownUpto) { addLogLine(e, true); added = true; }
+    }
+    if (added) log.scrollTop = log.scrollHeight;
+    // if we scrubbed backward, rebuild
+    if (events.some(e => e._i <= shownUpto && e.t > cur)) renderLogReset();
+  }
+
+  // ---- phase label ----
+  function phase() {
+    if (harm && cur >= harm[0] && cur <= harm[1]) return "harmony";
+    if (cur < TICKS*0.12) return "scattered";
+    if (cur < TICKS*0.4) return "discovering";
+    return "collectivized";
+  }
+
+  // ---- HUD ----
+  function hud() {
+    $("#clock").textContent = "t " + String(cur).padStart(4,"0");
+    const p = pop[Math.min(cur, pop.length-1)], co = coord[Math.min(cur, coord.length-1)];
+    $("#popread").textContent = "pop " + p;
+    $("#popNow").textContent = p;
+    $("#coordNow").textContent = co.toFixed(2);
+    const ph = phase(); const pe = $("#phase");
+    pe.textContent = ph; pe.className = "phase phase-" + ph;
+    $("#evcount").textContent = events.filter(e=>e.t<=cur).length + " / " + events.length;
+    $("#scrub").value = (cur / TICKS * 100).toFixed(2);
+  }
+
+  function renderAll() {
+    drawPlate();
+    drawTrace("#popTrace", pop);
+    drawTrace("#coordTrace", coord);
+    hud(); syncLog();
+  }
+
+  // ---- loop ----
+  let raf = null, last = 0;
+  function tick(ts) {
+    if (!playing) return;
+    if (!last) last = ts;
+    const dt = Math.min(64, ts - last); last = ts;
+    cur += BASE * speed * (dt/16.7);
+    if (cur >= TICKS) { cur = TICKS; setPlaying(false); }
+    cur = Math.round(cur);
+    renderAll();
+    if (playing) raf = requestAnimationFrame(tick);
+  }
+  function setPlaying(v) {
+    playing = v; $("#play").textContent = v ? "❚❚" : "▶";
+    $("#play").setAttribute("aria-label", v ? "Pause" : "Play");
+    if (v) { if (cur >= TICKS) cur = 0; last = 0; raf = requestAnimationFrame(tick); }
+    else if (raf) cancelAnimationFrame(raf);
+  }
+
+  // ---- controls ----
+  $("#play").addEventListener("click", () => setPlaying(!playing));
+  document.querySelectorAll(".sp").forEach(b => b.addEventListener("click", () => {
+    document.querySelectorAll(".sp").forEach(x=>x.classList.remove("is-on"));
+    b.classList.add("is-on"); speed = +b.dataset.s;
+  }));
+  $("#scrub").addEventListener("input", (e) => {
+    setPlaying(false);
+    cur = Math.round(+e.target.value / 100 * TICKS);
+    renderAll();
+  });
+  window.addEventListener("resize", () => { fitPlate(); renderAll(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.code === "Space") { e.preventDefault(); setPlaying(!playing); }
+  });
+
+  // ---- go ----
+  if (harm) $("#harmlen").textContent = "~" + (harm[1]-harm[0]);
+  fitPlate();
+  renderAll();
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reduce) setTimeout(() => setPlaying(true), 500);
+})();
+</script>
+
+<style>
+  :root {
+    --bg:#efe9df; --panel:#f6f1e8; --fg:#171310; --muted:#6f6456;
+    --line:rgba(23,19,16,.14); --accent:#0a5a72; --warn:#c23a2b; --gold:#a9781f;
+    --plate:#0b1114; --plate-line:rgba(180,220,230,.06);
+    --harm:rgba(10,90,115,.13); --trace-fill:rgba(10,90,115,.10); --cursor:rgba(23,19,16,.5);
+    --mono: ui-monospace,"SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --sans: system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#14181b; --panel:#1a2024; --fg:#ece4d6; --muted:#9aa2a6;
+      --line:rgba(255,255,255,.11); --accent:#3aa9c8; --warn:#e0674f; --gold:#d6a94a;
+      --harm:rgba(58,169,200,.14); --trace-fill:rgba(58,169,200,.12); --cursor:rgba(236,228,214,.5);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg:#efe9df; --panel:#f6f1e8; --fg:#171310; --muted:#6f6456;
+    --line:rgba(23,19,16,.14); --accent:#0a5a72; --warn:#c23a2b; --gold:#a9781f;
+    --harm:rgba(10,90,115,.13); --trace-fill:rgba(10,90,115,.10); --cursor:rgba(23,19,16,.5);
+  }
+  :root[data-theme="dark"] {
+    --bg:#14181b; --panel:#1a2024; --fg:#ece4d6; --muted:#9aa2a6;
+    --line:rgba(255,255,255,.11); --accent:#3aa9c8; --warn:#e0674f; --gold:#d6a94a;
+    --harm:rgba(58,169,200,.14); --trace-fill:rgba(58,169,200,.12); --cursor:rgba(236,228,214,.5);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font-family: var(--sans); line-height: 1.5;
+    padding: clamp(20px, 4vw, 56px);
+    -webkit-font-smoothing: antialiased;
+  }
+  .masthead { max-width: 1120px; margin: 0 auto 28px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .28em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  h1 {
+    font-family: var(--mono); font-weight: 600;
+    font-size: clamp(28px, 4.4vw, 48px); letter-spacing: -.01em;
+    margin: 10px 0 12px; text-wrap: balance; line-height: 1.02;
+  }
+  .thesis {
+    font-family: var(--serif); font-style: italic;
+    font-size: clamp(15px, 1.9vw, 20px); color: var(--muted);
+    max-width: 62ch; margin: 0;
+  }
+
+  .stage {
+    max-width: 1120px; margin: 0 auto;
+    display: grid; grid-template-columns: minmax(0,1.35fr) minmax(280px,.85fr);
+    gap: 22px; align-items: start;
+  }
+  @media (max-width: 860px) { .stage { grid-template-columns: 1fr; } }
+
+  .platewrap { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .plate {
+    position: relative; background: var(--plate);
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,.16), inset 0 0 60px rgba(0,0,0,.35);
+  }
+  #plate { display: block; width: 100%; aspect-ratio: 1/1; height: auto; }
+  .readout {
+    position: absolute; top: 10px; left: 12px; display: flex; gap: 14px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .04em;
+    color: rgba(232,224,208,.72); text-shadow: 0 1px 3px rgba(0,0,0,.5);
+    font-variant-numeric: tabular-nums;
+  }
+  .phase { color: rgba(120,205,225,.9); }
+  .phase-harmony { color: #e8c46a; }
+  .phase-scattered { color: rgba(224,103,79,.9); }
+
+  .transport { display: flex; align-items: center; gap: 12px; }
+  .btn {
+    font-family: var(--mono); font-size: 13px; width: 40px; height: 34px;
+    border: 1px solid var(--line); background: var(--panel); color: var(--fg);
+    border-radius: 8px; cursor: pointer;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .speeds { display: flex; gap: 4px; }
+  .sp {
+    font-family: var(--mono); font-size: 12px; padding: 6px 9px;
+    border: 1px solid var(--line); background: transparent; color: var(--muted);
+    border-radius: 7px; cursor: pointer;
+  }
+  .sp.is-on { color: var(--fg); border-color: var(--accent); background: var(--panel); }
+  .scrub { flex: 1; accent-color: var(--accent); cursor: pointer; }
+
+  .traces { display: flex; flex-direction: column; gap: 10px; }
+  .trace figcaption {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 3px;
+  }
+  .trace figcaption b { color: var(--fg); font-variant-numeric: tabular-nums; letter-spacing: 0; }
+  .trace { margin: 0; }
+  .trace canvas { width: 100%; height: 64px; display: block;
+    border-bottom: 1px solid var(--line); }
+  .tracekey { font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+  .sw { display: inline-block; width: 22px; height: 9px; vertical-align: middle;
+    margin-right: 5px; border-radius: 2px; }
+  .sw-harm { background: var(--harm); border: 1px solid var(--accent); }
+
+  .ledger {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    display: flex; flex-direction: column; height: min(72vh, 640px); min-height: 360px;
+  }
+  .ledger-head {
+    display: flex; justify-content: space-between; padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono); font-size: 11px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--fg);
+  }
+  .muted { color: var(--muted); letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+  .log { list-style: none; margin: 0; padding: 6px; overflow-y: auto; flex: 1; scroll-behavior: smooth; }
+  .ev {
+    display: grid; grid-template-columns: 42px 14px 1fr; gap: 8px; align-items: start;
+    padding: 6px 8px; border-radius: 6px; font-size: 12.5px;
+  }
+  .ev + .ev { margin-top: 1px; }
+  .ev .tk { font-family: var(--mono); font-size: 11px; color: var(--muted);
+    font-variant-numeric: tabular-nums; padding-top: 1px; }
+  .ev .gl { text-align: center; padding-top: 1px; }
+  .ev .tx { color: var(--fg); }
+  .ev-warn .gl, .ev-warn .tx { color: var(--warn); }
+  .ev-accent .gl { color: var(--accent); }
+  .ev-gold .gl, .ev-gold .tx { color: var(--gold); }
+  .ev-fg { background: var(--harm); }
+  .ev-fg .gl { color: var(--accent); }
+  .ev-fg .tx { font-weight: 600; }
+  @keyframes flash { from { background: var(--harm); } to { background: transparent; } }
+  .ev-new { animation: flash 1.2s ease-out; }
+  @media (prefers-reduced-motion: reduce) { .ev-new { animation: none; } .log { scroll-behavior: auto; } }
+
+  .footnote { max-width: 1120px; margin: 26px auto 0; }
+  .footnote p {
+    font-family: var(--serif); font-size: 14.5px; line-height: 1.7;
+    color: var(--muted); max-width: 92ch; margin: 0;
+    border-top: 1px solid var(--line); padding-top: 18px;
+  }
+  .footnote em { font-style: italic; color: var(--fg); }
+  .footnote span { font-variant-numeric: tabular-nums; }
+</style>
