@@ -153,21 +153,25 @@ class World:
         if veg is None:
             return None
         size = self.size
-        dens = self.agent_density.grid if self.agent_density is not None else None
-        best_score, best_xy, best_food = -1e18, None, 0.0
-        for dy in range(-radius, radius + 1):
-            for dx in range(-radius, radius + 1):
-                yy, xx = (y + dy) % size, (x + dx) % size
-                food = veg.available(xx, yy)
-                d = (float(dens[yy, xx]) / dnorm) if dens is not None else 0.0
-                score = g_food * food + g_crowd * d
-                if score > best_score:
-                    best_score, best_xy, best_food = score, (dx, dy), food
-        if best_xy is None or best_xy == (0, 0):
+        rng = np.arange(-radius, radius + 1)
+        ys = (y + rng) % size
+        xs = (x + rng) % size
+        foodw = veg.quantity[np.ix_(ys, xs)]
+        if veg.season_gated and not veg.in_season:
+            foodw = np.zeros_like(foodw)
+        if self.agent_density is not None:
+            densw = self.agent_density.grid[np.ix_(ys, xs)] / dnorm
+            score = g_food * foodw + g_crowd * densw
+        else:
+            score = g_food * foodw
+        flat = int(np.argmax(score))           # first occurrence of the max
+        iy, ix = divmod(flat, score.shape[1])
+        dy, dx = int(rng[iy]), int(rng[ix])
+        if dx == 0 and dy == 0:
             return None
         cap = max(veg.capacity, 1e-9)
-        return (int(np.sign(best_xy[0])), int(np.sign(best_xy[1])),
-                min(1.0, best_food / cap))
+        return (int(np.sign(dx)), int(np.sign(dy)),
+                min(1.0, float(foodw[iy, ix]) / cap))
 
     def _rebuild_risk(self):
         if self.predators is not None and self._risk_cfg.enabled:
