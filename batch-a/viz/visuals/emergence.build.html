@@ -1,0 +1,196 @@
+<!-- The Evolved Invisible Hand — representable but not evolvable.
+     Self-contained: run data inlined at build by viz/build_emergence_visual.py.
+     Palette + type mirror the site design system (batch-a/design/tokens.json). -->
+<style>
+  :root{
+    --paper:#F0EAE0; --plate:#F6F2EA; --ink:#0C0E10; --ink-soft:#3f403f;
+    --rule:#d8d0c2; --mist:#E0DBD7; --brass:#857665;
+    --coord:#00394F; --coord-fill:#00394f22; --eco:#C23A2B; --good:#2e6b4f;
+    --serif:"Ibarra Real Nova","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --paper:#14130f; --plate:#1c1a15; --ink:#efe8db; --ink-soft:#b3ab9b;
+      --rule:#37342b; --mist:#2a2822; --coord:#5fa7c2; --coord-fill:#5fa7c229;
+      --eco:#e0604f; --good:#5bb389; }
+  }
+  :root[data-theme="light"]{ --paper:#F0EAE0; --plate:#F6F2EA; --ink:#0C0E10; --ink-soft:#3f403f;
+    --rule:#d8d0c2; --mist:#E0DBD7; --coord:#00394F; --coord-fill:#00394f22; --eco:#C23A2B; --good:#2e6b4f; }
+  :root[data-theme="dark"]{ --paper:#14130f; --plate:#1c1a15; --ink:#efe8db; --ink-soft:#b3ab9b;
+    --rule:#37342b; --mist:#2a2822; --coord:#5fa7c2; --coord-fill:#5fa7c229; --eco:#e0604f; --good:#5bb389; }
+  *{box-sizing:border-box}
+  .em{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5;
+    padding:clamp(18px,3vw,40px);max-width:1000px;margin:0 auto;-webkit-font-smoothing:antialiased}
+  .em .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);
+    font-weight:600;margin:0 0 10px}
+  .em h1{font-family:var(--serif);font-weight:600;font-size:clamp(26px,4.4vw,44px);line-height:1.08;
+    letter-spacing:-.01em;margin:0 0 12px;text-wrap:balance}
+  .em .thesis{font-family:var(--serif);font-size:clamp(16px,2.1vw,20px);color:var(--ink-soft);
+    max-width:64ch;margin:0 0 4px;font-style:italic}
+  .em .chartwrap{background:var(--plate);border:1px solid var(--rule);border-radius:10px;
+    padding:18px 18px 14px;margin-top:22px}
+  .em canvas{width:100%;height:auto;display:block}
+  .em .legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:12px;font-size:13px;align-items:center}
+  .em .legend .it{display:flex;align-items:center;gap:7px}
+  .em .sw{width:22px;height:0;border-top-width:3px;border-top-style:solid;display:inline-block}
+  .em .dotsw{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .em .controls{display:flex;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap}
+  .em button{font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--ink);
+    background:var(--ink);color:var(--paper);padding:8px 16px;border-radius:6px}
+  .em button:focus-visible{outline:2px solid var(--coord);outline-offset:2px}
+  .em .gen{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--ink-soft);
+    font-variant-numeric:tabular-nums}
+  .em .foot{margin-top:22px;padding-top:14px;border-top:1px solid var(--rule);font-size:12.5px;
+    color:var(--ink-soft);max-width:76ch}
+  .em .foot b{color:var(--ink);font-weight:600}
+  @media (prefers-reduced-motion: reduce){.em *{transition:none!important}}
+</style>
+
+<div class="em" id="em">
+  <p class="eyebrow">Case C2′ · emergence · the invisible hand, put to selection</p>
+  <h1>The coordinated peak exists. Evolution walks the other way.</h1>
+  <p class="thesis">Agents evolve a foraging policy from two raw senses — food, and
+    nearby others — with nothing about crowds written in. The genome that produces
+    a fair distribution is right there. Selfish selection never climbs to it.</p>
+
+  <div class="chartwrap">
+    <canvas id="c" width="1000" height="540" aria-label="coordination landscape"></canvas>
+    <div class="legend">
+      <span class="it"><span class="sw" style="border-color:var(--coord)"></span>
+        coordination a whole flock reaches at each crowd-gene value</span>
+      <span class="it"><span class="dotsw" style="background:var(--eco)"></span>
+        where evolution actually takes the population</span>
+    </div>
+    <div class="controls">
+      <button id="play">Play evolution</button>
+      <span class="gen" id="gen">generation 0</span>
+    </div>
+  </div>
+
+  <p class="foot">
+    <b>How to read it.</b> The curve is the matching correlation (occupancy vs
+    productivity — 1 = the Ideal Free Distribution) that a flock reaches if <i>every</i>
+    agent carries a given crowd-gene <span style="font-family:var(--serif)">g<sub>crowd</sub></span>.
+    The peak is on the <b>left</b>: agents that weight nearby others <i>negatively</i>
+    (avoid crowds) spread to match the food and coordinate almost perfectly. Now let
+    selection run (founders born blind, at 0): the red path is the evolving
+    population's own gene and coordination. It marches <b>right</b> — toward
+    crowd-<i>following</i> — because food and crowds sit in the same place, so
+    “avoid crowds” means “avoid food,” which starves the avoider. The individually
+    best move is toward food, which is toward others. <b>The coordinated genome is a
+    real peak that incremental selfish selection cannot reach from the blind start;
+    it must be authored.</b> Innocent rules, a collective outcome no one chose and
+    all are worse for — Schelling and Calhoun, not Smith. <b>Caveat:</b> these runs
+    sat at the population cap, which weakens selection’s strength; the direction is
+    unanimous across regimes and mechanistically forced, but a genuinely food-limited
+    world (smaller patches) would sharpen the claim.
+  </p>
+</div>
+
+<script>
+const DATA = {"landscape":[{"gc":-2.5,"r":0.889},{"gc":-2.0,"r":0.889},{"gc":-1.5,"r":0.848},{"gc":-1.0,"r":0.876},{"gc":-0.6,"r":0.871},{"gc":-0.3,"r":0.871},{"gc":0.0,"r":0.474},{"gc":0.3,"r":0.15},{"gc":0.6,"r":0.039},{"gc":1.0,"r":-0.044},{"gc":1.5,"r":0.072},{"gc":2.0,"r":0.07}],"trajectory":[{"t":0,"gc":0.016,"r":0.394,"pop":70},{"t":60,"gc":0.028,"r":0.855,"pop":250},{"t":120,"gc":0.027,"r":0.897,"pop":250},{"t":180,"gc":0.045,"r":0.72,"pop":250},{"t":240,"gc":0.06,"r":0.408,"pop":250},{"t":300,"gc":0.084,"r":0.33,"pop":250},{"t":360,"gc":0.105,"r":0.171,"pop":250},{"t":420,"gc":0.112,"r":0.212,"pop":250},{"t":480,"gc":0.138,"r":0.417,"pop":250},{"t":540,"gc":0.157,"r":0.262,"pop":250},{"t":600,"gc":0.169,"r":0.366,"pop":250},{"t":660,"gc":0.207,"r":0.19,"pop":250},{"t":720,"gc":0.202,"r":0.5,"pop":250},{"t":780,"gc":0.245,"r":0.323,"pop":250},{"t":840,"gc":0.27,"r":0.287,"pop":250},{"t":900,"gc":0.274,"r":0.354,"pop":250},{"t":960,"gc":0.277,"r":0.528,"pop":250},{"t":1020,"gc":0.294,"r":0.346,"pop":250},{"t":1080,"gc":0.296,"r":0.373,"pop":250},{"t":1140,"gc":0.311,"r":0.368,"pop":250},{"t":1200,"gc":0.33,"r":0.32,"pop":250},{"t":1260,"gc":0.336,"r":0.468,"pop":250},{"t":1320,"gc":0.338,"r":0.399,"pop":250},{"t":1380,"gc":0.34,"r":0.189,"pop":250},{"t":1440,"gc":0.335,"r":0.33,"pop":250},{"t":1500,"gc":0.346,"r":0.376,"pop":250},{"t":1560,"gc":0.366,"r":0.435,"pop":250},{"t":1620,"gc":0.379,"r":0.382,"pop":250},{"t":1680,"gc":0.371,"r":0.275,"pop":250},{"t":1740,"gc":0.368,"r":0.402,"pop":250},{"t":1800,"gc":0.363,"r":0.036,"pop":250},{"t":1860,"gc":0.377,"r":0.465,"pop":250},{"t":1920,"gc":0.366,"r":0.457,"pop":250},{"t":1980,"gc":0.383,"r":0.243,"pop":250},{"t":2040,"gc":0.395,"r":0.115,"pop":250},{"t":2100,"gc":0.395,"r":0.522,"pop":250},{"t":2160,"gc":0.4,"r":0.504,"pop":250},{"t":2220,"gc":0.399,"r":0.443,"pop":250},{"t":2280,"gc":0.402,"r":0.109,"pop":250},{"t":2340,"gc":0.407,"r":0.057,"pop":250},{"t":2400,"gc":0.419,"r":0.49,"pop":250},{"t":2460,"gc":0.423,"r":0.553,"pop":250},{"t":2520,"gc":0.425,"r":-0.082,"pop":250},{"t":2580,"gc":0.418,"r":-0.115,"pop":250},{"t":2640,"gc":0.421,"r":0.616,"pop":250},{"t":2700,"gc":0.43,"r":0.389,"pop":250},{"t":2760,"gc":0.43,"r":-0.296,"pop":250},{"t":2820,"gc":0.428,"r":0.085,"pop":250},{"t":2880,"gc":0.426,"r":0.595,"pop":250},{"t":2940,"gc":0.42,"r":0.345,"pop":250},{"t":3000,"gc":0.427,"r":0.289,"pop":250},{"t":3060,"gc":0.434,"r":0.094,"pop":250},{"t":3120,"gc":0.44,"r":0.515,"pop":250},{"t":3180,"gc":0.425,"r":0.41,"pop":250},{"t":3240,"gc":0.425,"r":0.015,"pop":250},{"t":3300,"gc":0.423,"r":0.328,"pop":250},{"t":3360,"gc":0.419,"r":0.405,"pop":250},{"t":3420,"gc":0.415,"r":0.486,"pop":250},{"t":3480,"gc":0.412,"r":0.423,"pop":250},{"t":3540,"gc":0.413,"r":-0.288,"pop":250},{"t":3600,"gc":0.411,"r":0.36,"pop":250},{"t":3660,"gc":0.403,"r":0.552,"pop":250},{"t":3720,"gc":0.41,"r":0.042,"pop":250},{"t":3780,"gc":0.413,"r":-0.1,"pop":250},{"t":3840,"gc":0.411,"r":0.496,"pop":250},{"t":3900,"gc":0.412,"r":0.554,"pop":250},{"t":3960,"gc":0.411,"r":-0.259,"pop":250},{"t":4020,"gc":0.405,"r":0.278,"pop":250},{"t":4080,"gc":0.41,"r":0.574,"pop":250},{"t":4140,"gc":0.4,"r":-0.111,"pop":250},{"t":4200,"gc":0.396,"r":-0.05,"pop":250},{"t":4260,"gc":0.407,"r":0.666,"pop":250},{"t":4320,"gc":0.406,"r":0.393,"pop":250},{"t":4380,"gc":0.408,"r":-0.252,"pop":250},{"t":4440,"gc":0.413,"r":0.34,"pop":250},{"t":4500,"gc":0.419,"r":0.647,"pop":250},{"t":4560,"gc":0.421,"r":-0.062,"pop":250},{"t":4620,"gc":0.424,"r":-0.066,"pop":250},{"t":4680,"gc":0.424,"r":0.635,"pop":250},{"t":4740,"gc":0.422,"r":0.284,"pop":250},{"t":4800,"gc":0.414,"r":-0.231,"pop":250},{"t":4860,"gc":0.41,"r":0.531,"pop":250},{"t":4920,"gc":0.411,"r":0.498,"pop":250},{"t":4980,"gc":0.418,"r":-0.297,"pop":250}],"peak":{"gc":-2.5,"r":0.889},"greedy_r":0.474};
+(function(){
+  const D = DATA; if(!D) return;
+  const cv = document.getElementById('c'), cx = cv.getContext('2d');
+  const genEl = document.getElementById('gen'), playBtn = document.getElementById('play');
+  const css = k => getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+  const land = D.landscape, traj = D.trajectory;
+  const GX0 = -2.6, GX1 = 2.1, RY0 = -0.35, RY1 = 1.05;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // smooth the live matching r (per-sample r is noisy; the STORY is the drift in
+  // g_crowd and the trend in coordination, not the tick-to-tick jitter)
+  const trS = traj.map((p, i) => {
+    let s = 0, w = 0;
+    for (let k = -4; k <= 4; k++){ const j = i + k; if (j >= 0 && j < traj.length){ s += traj[j].r; w++; } }
+    return s / w;
+  });
+
+  function draw(upto){
+    const W = cv.width, H = cv.height, padL = 58, padR = 20, padT = 22, padB = 54;
+    const x0 = padL, x1 = W - padR, y0 = padT, y1 = H - padB;
+    const X = g => x0 + (g - GX0) / (GX1 - GX0) * (x1 - x0);
+    const Y = r => y1 - (r - RY0) / (RY1 - RY0) * (y1 - y0);
+    cx.clearRect(0, 0, W, H);
+    cx.fillStyle = css('--plate'); cx.fillRect(0, 0, W, H);
+
+    // gridlines / y ticks (r)
+    cx.strokeStyle = css('--rule'); cx.fillStyle = css('--brass');
+    cx.font = '12px ' + css('--sans'); cx.textAlign = 'right'; cx.textBaseline = 'middle';
+    [0, 0.25, 0.5, 0.75, 1.0].forEach(r => {
+      const y = Y(r); cx.globalAlpha = r === 1 ? .85 : .5; cx.lineWidth = 1;
+      cx.beginPath(); cx.moveTo(x0, y); cx.lineTo(x1, y); cx.stroke(); cx.globalAlpha = 1;
+      cx.fillText(r.toFixed(2), x0 - 8, y);
+    });
+    // zero line for g_crowd (the blind start)
+    const xz = X(0); cx.strokeStyle = css('--brass'); cx.globalAlpha = .5;
+    cx.setLineDash([4, 4]); cx.lineWidth = 1;
+    cx.beginPath(); cx.moveTo(xz, y0); cx.lineTo(xz, y1); cx.stroke();
+    cx.setLineDash([]); cx.globalAlpha = 1;
+
+    // x axis ticks (g_crowd)
+    cx.textAlign = 'center'; cx.textBaseline = 'top'; cx.fillStyle = css('--brass');
+    [-2, -1, 0, 1, 2].forEach(g => cx.fillText(g > 0 ? '+' + g : '' + g, X(g), y1 + 8));
+    cx.fillStyle = css('--ink-soft'); cx.font = '12px ' + css('--sans');
+    cx.textAlign = 'left'; cx.fillText('← avoid crowds  (spread, coordinate)', x0, y1 + 30);
+    cx.textAlign = 'right'; cx.fillText('follow crowds  (herd, collapse) →', x1, y1 + 30);
+    cx.textAlign = 'center';
+    cx.fillText('the heritable crowd-gene  g_crowd', (x0 + x1) / 2, y1 + 30);
+
+    // landscape: fill + line
+    cx.beginPath();
+    land.forEach((p, i) => { const px = X(p.gc), py = Y(p.r); i ? cx.lineTo(px, py) : cx.moveTo(px, py); });
+    cx.lineTo(X(land[land.length-1].gc), Y(RY0)); cx.lineTo(X(land[0].gc), Y(RY0)); cx.closePath();
+    cx.fillStyle = css('--coord-fill'); cx.fill();
+    cx.beginPath();
+    land.forEach((p, i) => { const px = X(p.gc), py = Y(p.r); i ? cx.lineTo(px, py) : cx.moveTo(px, py); });
+    cx.strokeStyle = css('--coord'); cx.lineWidth = 2.6; cx.stroke();
+
+    // peak marker + label (left-anchored in the open upper-left so it can't clip)
+    const pk = D.peak; const pkx = X(pk.gc), pky = Y(pk.r);
+    cx.fillStyle = css('--coord'); cx.beginPath(); cx.arc(pkx, pky, 4.5, 0, 7); cx.fill();
+    cx.font = '600 13.5px ' + css('--sans'); cx.textAlign = 'left'; cx.textBaseline = 'alphabetic';
+    cx.fillStyle = css('--coord');
+    cx.fillText('the invisible hand — if authored', x0 + 10, Y(0.99));
+    cx.font = '12px ' + css('--sans'); cx.fillStyle = css('--ink-soft');
+    cx.fillText('a whole flock at this gene → r ' + pk.r.toFixed(2), x0 + 10, Y(0.99) + 17);
+
+    // start marker
+    cx.fillStyle = css('--brass'); cx.font = '12px ' + css('--sans'); cx.textAlign = 'center';
+    cx.textBaseline = 'top';
+    cx.fillText('founders born blind', xz, y0 + 2);
+
+    // trajectory path up to `upto` (smoothed r), with an arrowhead of travel
+    cx.strokeStyle = css('--eco'); cx.lineWidth = 2.6; cx.beginPath();
+    for (let i = 0; i <= upto; i++){ const px = X(traj[i].gc), py = Y(trS[i]); i ? cx.lineTo(px, py) : cx.moveTo(px, py); }
+    cx.stroke();
+    // faint remaining path
+    cx.globalAlpha = .16; cx.beginPath();
+    for (let i = upto; i < traj.length; i++){ const px = X(traj[i].gc), py = Y(trS[i]); i === upto ? cx.moveTo(px, py) : cx.lineTo(px, py); }
+    cx.stroke(); cx.globalAlpha = 1;
+    // walker
+    const w = traj[upto]; const wx = X(w.gc), wy = Y(trS[upto]);
+    cx.fillStyle = css('--eco'); cx.beginPath(); cx.arc(wx, wy, 6, 0, 7); cx.fill();
+    cx.strokeStyle = css('--paper'); cx.lineWidth = 2; cx.stroke();
+    const rs = trS[upto];
+    genEl.textContent = 'tick ' + w.t + '   ·   g_crowd ' + (w.gc>=0?'+':'') + w.gc.toFixed(2)
+      + '   ·   coordination r ' + (rs>=0?'+':'') + rs.toFixed(2);
+  }
+
+  let i = 0, playing = false, raf = null, last = 0;
+  function loop(ts){
+    if(!playing) return;
+    if(ts - last > 70){ last = ts; i++; if(i >= traj.length){ i = traj.length-1; playing = false; playBtn.textContent = 'Replay evolution'; } draw(i); }
+    if(playing) raf = requestAnimationFrame(loop);
+  }
+  playBtn.onclick = () => {
+    if(i >= traj.length-1 && !playing) i = 0;
+    playing = !playing; playBtn.textContent = playing ? 'Pause' : 'Play evolution';
+    if(playing){ last = 0; raf = requestAnimationFrame(loop); } else if(raf) cancelAnimationFrame(raf);
+  };
+  new MutationObserver(() => draw(i)).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+  matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => draw(i));
+
+  draw(0);
+  if(!reduce){ i = 0; playing = true; playBtn.textContent = 'Pause'; last = 0; raf = requestAnimationFrame(loop); }
+})();
+</script>

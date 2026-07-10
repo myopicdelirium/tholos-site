@@ -1,0 +1,196 @@
+<!-- The Evolved Invisible Hand — representable but not evolvable.
+     Self-contained: run data inlined at build by viz/build_emergence_visual.py.
+     Palette + type mirror the site design system (batch-a/design/tokens.json). -->
+<style>
+  :root{
+    --paper:#F0EAE0; --plate:#F6F2EA; --ink:#0C0E10; --ink-soft:#3f403f;
+    --rule:#d8d0c2; --mist:#E0DBD7; --brass:#857665;
+    --coord:#00394F; --coord-fill:#00394f22; --eco:#C23A2B; --good:#2e6b4f;
+    --serif:"Ibarra Real Nova","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --paper:#14130f; --plate:#1c1a15; --ink:#efe8db; --ink-soft:#b3ab9b;
+      --rule:#37342b; --mist:#2a2822; --coord:#5fa7c2; --coord-fill:#5fa7c229;
+      --eco:#e0604f; --good:#5bb389; }
+  }
+  :root[data-theme="light"]{ --paper:#F0EAE0; --plate:#F6F2EA; --ink:#0C0E10; --ink-soft:#3f403f;
+    --rule:#d8d0c2; --mist:#E0DBD7; --coord:#00394F; --coord-fill:#00394f22; --eco:#C23A2B; --good:#2e6b4f; }
+  :root[data-theme="dark"]{ --paper:#14130f; --plate:#1c1a15; --ink:#efe8db; --ink-soft:#b3ab9b;
+    --rule:#37342b; --mist:#2a2822; --coord:#5fa7c2; --coord-fill:#5fa7c229; --eco:#e0604f; --good:#5bb389; }
+  *{box-sizing:border-box}
+  .em{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5;
+    padding:clamp(18px,3vw,40px);max-width:1000px;margin:0 auto;-webkit-font-smoothing:antialiased}
+  .em .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);
+    font-weight:600;margin:0 0 10px}
+  .em h1{font-family:var(--serif);font-weight:600;font-size:clamp(26px,4.4vw,44px);line-height:1.08;
+    letter-spacing:-.01em;margin:0 0 12px;text-wrap:balance}
+  .em .thesis{font-family:var(--serif);font-size:clamp(16px,2.1vw,20px);color:var(--ink-soft);
+    max-width:64ch;margin:0 0 4px;font-style:italic}
+  .em .chartwrap{background:var(--plate);border:1px solid var(--rule);border-radius:10px;
+    padding:18px 18px 14px;margin-top:22px}
+  .em canvas{width:100%;height:auto;display:block}
+  .em .legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:12px;font-size:13px;align-items:center}
+  .em .legend .it{display:flex;align-items:center;gap:7px}
+  .em .sw{width:22px;height:0;border-top-width:3px;border-top-style:solid;display:inline-block}
+  .em .dotsw{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .em .controls{display:flex;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap}
+  .em button{font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--ink);
+    background:var(--ink);color:var(--paper);padding:8px 16px;border-radius:6px}
+  .em button:focus-visible{outline:2px solid var(--coord);outline-offset:2px}
+  .em .gen{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--ink-soft);
+    font-variant-numeric:tabular-nums}
+  .em .foot{margin-top:22px;padding-top:14px;border-top:1px solid var(--rule);font-size:12.5px;
+    color:var(--ink-soft);max-width:76ch}
+  .em .foot b{color:var(--ink);font-weight:600}
+  @media (prefers-reduced-motion: reduce){.em *{transition:none!important}}
+</style>
+
+<div class="em" id="em">
+  <p class="eyebrow">Case C2′ · emergence · the invisible hand, put to selection</p>
+  <h1>The coordinated peak exists. Evolution walks the other way.</h1>
+  <p class="thesis">Agents evolve a foraging policy from two raw senses — food, and
+    nearby others — with nothing about crowds written in. The genome that produces
+    a fair distribution is right there. Selfish selection never climbs to it.</p>
+
+  <div class="chartwrap">
+    <canvas id="c" width="1000" height="540" aria-label="coordination landscape"></canvas>
+    <div class="legend">
+      <span class="it"><span class="sw" style="border-color:var(--coord)"></span>
+        coordination a whole flock reaches at each crowd-gene value</span>
+      <span class="it"><span class="dotsw" style="background:var(--eco)"></span>
+        where evolution actually takes the population</span>
+    </div>
+    <div class="controls">
+      <button id="play">Play evolution</button>
+      <span class="gen" id="gen">generation 0</span>
+    </div>
+  </div>
+
+  <p class="foot">
+    <b>How to read it.</b> The curve is the matching correlation (occupancy vs
+    productivity — 1 = the Ideal Free Distribution) that a flock reaches if <i>every</i>
+    agent carries a given crowd-gene <span style="font-family:var(--serif)">g<sub>crowd</sub></span>.
+    The peak is on the <b>left</b>: agents that weight nearby others <i>negatively</i>
+    (avoid crowds) spread to match the food and coordinate almost perfectly. Now let
+    selection run (founders born blind, at 0): the red path is the evolving
+    population's own gene and coordination. It marches <b>right</b> — toward
+    crowd-<i>following</i> — because food and crowds sit in the same place, so
+    “avoid crowds” means “avoid food,” which starves the avoider. The individually
+    best move is toward food, which is toward others. <b>The coordinated genome is a
+    real peak that incremental selfish selection cannot reach from the blind start;
+    it must be authored.</b> Innocent rules, a collective outcome no one chose and
+    all are worse for — Schelling and Calhoun, not Smith. <b>Caveat:</b> these runs
+    sat at the population cap, which weakens selection’s strength; the direction is
+    unanimous across regimes and mechanistically forced, but a genuinely food-limited
+    world (smaller patches) would sharpen the claim.
+  </p>
+</div>
+
+<script>
+const DATA = /*__DATA__*/ null;
+(function(){
+  const D = DATA; if(!D) return;
+  const cv = document.getElementById('c'), cx = cv.getContext('2d');
+  const genEl = document.getElementById('gen'), playBtn = document.getElementById('play');
+  const css = k => getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+  const land = D.landscape, traj = D.trajectory;
+  const GX0 = -2.6, GX1 = 2.1, RY0 = -0.35, RY1 = 1.05;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // smooth the live matching r (per-sample r is noisy; the STORY is the drift in
+  // g_crowd and the trend in coordination, not the tick-to-tick jitter)
+  const trS = traj.map((p, i) => {
+    let s = 0, w = 0;
+    for (let k = -4; k <= 4; k++){ const j = i + k; if (j >= 0 && j < traj.length){ s += traj[j].r; w++; } }
+    return s / w;
+  });
+
+  function draw(upto){
+    const W = cv.width, H = cv.height, padL = 58, padR = 20, padT = 22, padB = 54;
+    const x0 = padL, x1 = W - padR, y0 = padT, y1 = H - padB;
+    const X = g => x0 + (g - GX0) / (GX1 - GX0) * (x1 - x0);
+    const Y = r => y1 - (r - RY0) / (RY1 - RY0) * (y1 - y0);
+    cx.clearRect(0, 0, W, H);
+    cx.fillStyle = css('--plate'); cx.fillRect(0, 0, W, H);
+
+    // gridlines / y ticks (r)
+    cx.strokeStyle = css('--rule'); cx.fillStyle = css('--brass');
+    cx.font = '12px ' + css('--sans'); cx.textAlign = 'right'; cx.textBaseline = 'middle';
+    [0, 0.25, 0.5, 0.75, 1.0].forEach(r => {
+      const y = Y(r); cx.globalAlpha = r === 1 ? .85 : .5; cx.lineWidth = 1;
+      cx.beginPath(); cx.moveTo(x0, y); cx.lineTo(x1, y); cx.stroke(); cx.globalAlpha = 1;
+      cx.fillText(r.toFixed(2), x0 - 8, y);
+    });
+    // zero line for g_crowd (the blind start)
+    const xz = X(0); cx.strokeStyle = css('--brass'); cx.globalAlpha = .5;
+    cx.setLineDash([4, 4]); cx.lineWidth = 1;
+    cx.beginPath(); cx.moveTo(xz, y0); cx.lineTo(xz, y1); cx.stroke();
+    cx.setLineDash([]); cx.globalAlpha = 1;
+
+    // x axis ticks (g_crowd)
+    cx.textAlign = 'center'; cx.textBaseline = 'top'; cx.fillStyle = css('--brass');
+    [-2, -1, 0, 1, 2].forEach(g => cx.fillText(g > 0 ? '+' + g : '' + g, X(g), y1 + 8));
+    cx.fillStyle = css('--ink-soft'); cx.font = '12px ' + css('--sans');
+    cx.textAlign = 'left'; cx.fillText('← avoid crowds  (spread, coordinate)', x0, y1 + 30);
+    cx.textAlign = 'right'; cx.fillText('follow crowds  (herd, collapse) →', x1, y1 + 30);
+    cx.textAlign = 'center';
+    cx.fillText('the heritable crowd-gene  g_crowd', (x0 + x1) / 2, y1 + 30);
+
+    // landscape: fill + line
+    cx.beginPath();
+    land.forEach((p, i) => { const px = X(p.gc), py = Y(p.r); i ? cx.lineTo(px, py) : cx.moveTo(px, py); });
+    cx.lineTo(X(land[land.length-1].gc), Y(RY0)); cx.lineTo(X(land[0].gc), Y(RY0)); cx.closePath();
+    cx.fillStyle = css('--coord-fill'); cx.fill();
+    cx.beginPath();
+    land.forEach((p, i) => { const px = X(p.gc), py = Y(p.r); i ? cx.lineTo(px, py) : cx.moveTo(px, py); });
+    cx.strokeStyle = css('--coord'); cx.lineWidth = 2.6; cx.stroke();
+
+    // peak marker + label (left-anchored in the open upper-left so it can't clip)
+    const pk = D.peak; const pkx = X(pk.gc), pky = Y(pk.r);
+    cx.fillStyle = css('--coord'); cx.beginPath(); cx.arc(pkx, pky, 4.5, 0, 7); cx.fill();
+    cx.font = '600 13.5px ' + css('--sans'); cx.textAlign = 'left'; cx.textBaseline = 'alphabetic';
+    cx.fillStyle = css('--coord');
+    cx.fillText('the invisible hand — if authored', x0 + 10, Y(0.99));
+    cx.font = '12px ' + css('--sans'); cx.fillStyle = css('--ink-soft');
+    cx.fillText('a whole flock at this gene → r ' + pk.r.toFixed(2), x0 + 10, Y(0.99) + 17);
+
+    // start marker
+    cx.fillStyle = css('--brass'); cx.font = '12px ' + css('--sans'); cx.textAlign = 'center';
+    cx.textBaseline = 'top';
+    cx.fillText('founders born blind', xz, y0 + 2);
+
+    // trajectory path up to `upto` (smoothed r), with an arrowhead of travel
+    cx.strokeStyle = css('--eco'); cx.lineWidth = 2.6; cx.beginPath();
+    for (let i = 0; i <= upto; i++){ const px = X(traj[i].gc), py = Y(trS[i]); i ? cx.lineTo(px, py) : cx.moveTo(px, py); }
+    cx.stroke();
+    // faint remaining path
+    cx.globalAlpha = .16; cx.beginPath();
+    for (let i = upto; i < traj.length; i++){ const px = X(traj[i].gc), py = Y(trS[i]); i === upto ? cx.moveTo(px, py) : cx.lineTo(px, py); }
+    cx.stroke(); cx.globalAlpha = 1;
+    // walker
+    const w = traj[upto]; const wx = X(w.gc), wy = Y(trS[upto]);
+    cx.fillStyle = css('--eco'); cx.beginPath(); cx.arc(wx, wy, 6, 0, 7); cx.fill();
+    cx.strokeStyle = css('--paper'); cx.lineWidth = 2; cx.stroke();
+    const rs = trS[upto];
+    genEl.textContent = 'tick ' + w.t + '   ·   g_crowd ' + (w.gc>=0?'+':'') + w.gc.toFixed(2)
+      + '   ·   coordination r ' + (rs>=0?'+':'') + rs.toFixed(2);
+  }
+
+  let i = 0, playing = false, raf = null, last = 0;
+  function loop(ts){
+    if(!playing) return;
+    if(ts - last > 70){ last = ts; i++; if(i >= traj.length){ i = traj.length-1; playing = false; playBtn.textContent = 'Replay evolution'; } draw(i); }
+    if(playing) raf = requestAnimationFrame(loop);
+  }
+  playBtn.onclick = () => {
+    if(i >= traj.length-1 && !playing) i = 0;
+    playing = !playing; playBtn.textContent = playing ? 'Pause' : 'Play evolution';
+    if(playing){ last = 0; raf = requestAnimationFrame(loop); } else if(raf) cancelAnimationFrame(raf);
+  };
+  new MutationObserver(() => draw(i)).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+  matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => draw(i));
+
+  draw(0);
+  if(!reduce){ i = 0; playing = true; playBtn.textContent = 'Pause'; last = 0; raf = requestAnimationFrame(loop); }
+})();
+</script>
