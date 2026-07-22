@@ -84,3 +84,39 @@ never-fitted regularity, which is the sentence a forecaster cannot say.
 One run per condition, several seeds, mean split over the steady-state window; the
 reversal at the midpoint; determinism and provenance as everywhere else (seeded
 streams, committed harness, this spec pinned before the numbers exist).
+
+## 7. Results log (honest, appended as runs happen)
+
+**R1 (per-capita rule, foraging memory OFF) — FAILED.** 8 seeds. Ideal 0.833.
+
+| agent | rich-patch share (pre) | share on new-rich (post-reversal) |
+|---|---|---|
+| per-capita | 0.55 | 0.48 |
+| greedy | 0.61 | 0.56 |
+
+Against the preregistered predictions: **R1.a** marginal (0.55 barely favors rich,
+near chance); **R1.c re-tracking FAILS** (0.48 — the flock did not flip to the new
+rich feeder); **R1.d FAILS** (greedy 0.61 ≥ per-capita 0.55 — the mechanism did not
+beat the null). Reported as a failure, not tuned.
+
+**Diagnosis (a real model property, not a bug).** Our agents perceive *standing
+food*, which is capped at capacity on every source tile, so a 5:1 productivity ratio
+encoded as *tile-count* is invisible to instantaneous perception — a rich-patch tile
+and a poor-patch tile both read 1.0, and both rules simply walk to the nearest food.
+The 5:1 lives only in the *flow* (a rich patch regenerates more total food, so feeds
+more foragers before per-capita intake drops), and the flow is legible only through
+*realized intake over time* — the `foraging.memory` channel (intake-rate EMA), which
+R1's preregistration deliberately held off. Milinski's fish perceive the delivery
+*rate* directly; R1's agents were given no rate signal. The failure is therefore
+informative: it says what an agent must be able to sense to reach an IFD.
+
+**R1b — preregistered here, before running.** Same episode, same inputs, same
+predictions (R1.a–R1.d). One change, motivated by the diagnosis: enable
+`foraging.memory` so the agent tracks its own realized intake rate — the perceptible
+analogue of Milinski's feeder rate — and can prefer the patch that has been feeding
+it better. The per-capita rule stays on (competition), memory adds rate-perception.
+Greedy (raw standing food, no memory) remains the null. If R1b reproduces the
+matching + undermatching + re-tracking that R1 could not, the finding is precise:
+*the IFD is reproduced by an agent that perceives intake rate, and not by one that
+perceives only standing food* — a statement about required cognition, earned against
+real data. If R1b also fails, the model cannot yet reproduce Milinski, and we say so.
