@@ -109,8 +109,8 @@ export default function HomePosts() {
   const showArrows = canLeft || canRight;
 
   return (
-    <section className="bg-[var(--site-bg)] px-6 py-16 sm:px-10 sm:py-24">
-      <div className="mx-auto max-w-6xl">
+    <section className="bg-[var(--site-bg)] px-8 py-12 sm:px-14 sm:py-16">
+      <div className="max-w-6xl">
         <div className="flex items-end justify-between gap-4">
           <div>
             <div aria-hidden className="h-[2px] w-14 bg-[var(--site-accent)]" />
