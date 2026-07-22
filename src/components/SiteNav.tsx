@@ -14,6 +14,7 @@ export default function SiteNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [projectsOpen, setProjectsOpen] = useState(false);
+  const [opportunitiesOpen, setOpportunitiesOpen] = useState(false);
   const [restrictedOpen, setRestrictedOpen] = useState(false);
   const [theme, setThemeState] = useState<"morning" | "noon" | "evening">("morning");
 
@@ -23,6 +24,11 @@ export default function SiteNav() {
       { href: "/batch-a", label: "Batches" },
       { href: "/instruments", label: "Instruments" },
     ],
+    []
+  );
+
+  const opportunityItems: NavItem[] = useMemo(
+    () => [{ href: "/opportunities/summer-residency", label: "Summer Residency" }],
     []
   );
 
@@ -60,11 +66,16 @@ export default function SiteNav() {
   const isActive = (href: string) => pathname === href || pathname?.startsWith(href + "/");
 
   const projectActive = projectItems.some((it) => isActive(it.href));
+  const opportunityActive = opportunityItems.some((it) => isActive(it.href));
   const restrictedActive = restrictedItems.some((it) => isActive(it.href));
 
   useEffect(() => {
     if (open && projectActive) setProjectsOpen(true);
   }, [open, projectActive]);
+
+  useEffect(() => {
+    if (open && opportunityActive) setOpportunitiesOpen(true);
+  }, [open, opportunityActive]);
 
   useEffect(() => {
     if (open && restrictedActive) setRestrictedOpen(true);
@@ -191,6 +202,7 @@ export default function SiteNav() {
                   </li>
 
                   <Group label="Projects" active={projectActive} open={projectsOpen} onToggle={() => setProjectsOpen((v) => !v)} items={projectItems} />
+                  <Group label="Opportunities" active={opportunityActive} open={opportunitiesOpen} onToggle={() => setOpportunitiesOpen((v) => !v)} items={opportunityItems} />
                   <Group label="Restricted" active={restrictedActive} open={restrictedOpen} onToggle={() => setRestrictedOpen((v) => !v)} items={restrictedItems} />
 
                   <li>
