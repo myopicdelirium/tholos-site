@@ -1,4 +1,5 @@
 import PlateCanvas from "./_components/home/gallery/PlateCanvas"
+import HomePosts from "./_components/home/posts/HomePosts"
 
 export default function Home() {
   return (
@@ -16,6 +17,8 @@ export default function Home() {
         <div className="mt-[18px] h-[2px] w-full bg-[var(--site-accent)]" />
       </section>
 
+      {/* Articles — cards that open an on-page pop-down */}
+      <HomePosts />
 
       {/* Panel II — the mission (text left, framed piece right) */}
       <section className="grid min-h-screen grid-cols-1 md:grid-cols-[1fr_1fr]">
