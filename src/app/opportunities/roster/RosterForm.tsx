@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { formatSubmission } from "@/lib/application-text";
+import ManualSend from "../_components/ManualSend";
 
 function cx(...xs: Array<string | false | null | undefined>) {
   return xs.filter(Boolean).join(" ");
@@ -90,6 +92,7 @@ function Select({
 export default function RosterForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [manualText, setManualText] = useState<string | null>(null);
   const [track, setTrack] = useState<"remote" | "core" | null>(null);
   const [project, setProject] = useState("");
 
@@ -114,7 +117,8 @@ export default function RosterForm() {
       setStatus("sent");
     } catch {
       setStatus("error");
-      setErrorMsg("Something went wrong on our end. Please try again, or email us directly via Connect.");
+      setManualText(formatSubmission(payload as Record<string, unknown>));
+      setErrorMsg("We could not submit this automatically. You can send it to us directly below — nothing you wrote is lost.");
     }
   }
 
@@ -298,6 +302,9 @@ export default function RosterForm() {
 
       {status === "error" && errorMsg ? (
         <p className="mt-4 text-[12.5px] leading-relaxed text-[#8a3033]">{errorMsg}</p>
+      ) : null}
+      {status === "error" && manualText ? (
+        <ManualSend subject={"Roster application"} text={manualText} />
       ) : null}
     </form>
   );

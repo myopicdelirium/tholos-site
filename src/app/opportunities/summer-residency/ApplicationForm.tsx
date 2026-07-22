@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { formatSubmission } from "@/lib/application-text";
+import ManualSend from "../_components/ManualSend";
 
 function cx(...xs: Array<string | false | null | undefined>) {
   return xs.filter(Boolean).join(" ");
@@ -25,6 +27,7 @@ type Status = "idle" | "submitting" | "sent" | "error";
 export default function ApplicationForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [manualText, setManualText] = useState<string | null>(null);
   const [interest, setInterest] = useState("");
 
   const interestWords = interest.trim() === "" ? 0 : interest.trim().split(/\s+/).length;
@@ -49,7 +52,8 @@ export default function ApplicationForm() {
       setStatus("sent");
     } catch {
       setStatus("error");
-      setErrorMsg("Something went wrong on our end. Please try again, or email us directly via Connect.");
+      setManualText(formatSubmission(payload as Record<string, unknown>));
+      setErrorMsg("We could not submit this automatically. You can send it to us directly below — nothing you wrote is lost.");
     }
   }
 
@@ -233,6 +237,9 @@ export default function ApplicationForm() {
 
       {status === "error" && errorMsg ? (
         <p className="mt-4 text-[12.5px] leading-relaxed text-[#8a3033]">{errorMsg}</p>
+      ) : null}
+      {status === "error" && manualText ? (
+        <ManualSend subject={"Summer Residency application"} text={manualText} />
       ) : null}
     </form>
   );

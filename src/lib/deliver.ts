@@ -13,25 +13,12 @@
  *                      account. Verify a domain to send from @myopicdelirium.com.
  */
 
+import { APPLICATIONS_ADDRESS, formatSubmission } from "./application-text";
+
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 
-const DEFAULT_TO = "myopicdelirium@gmail.com";
+const DEFAULT_TO = APPLICATIONS_ADDRESS;
 const DEFAULT_FROM = "Myopic Delirium <onboarding@resend.dev>";
-
-function humanize(key: string) {
-  const spaced = key.replace(/([A-Z])/g, " $1").replace(/[_-]+/g, " ");
-  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
-}
-
-/** Readable plain-text rendering of a submission, one field per block. */
-export function formatSubmission(record: Record<string, unknown>) {
-  return Object.entries(record)
-    .map(([key, value]) => {
-      const text = String(value ?? "").trim();
-      return `${humanize(key)}\n${text === "" ? "—" : text}`;
-    })
-    .join("\n\n");
-}
 
 export async function deliverSubmission(opts: {
   subject: string;
