@@ -28,7 +28,10 @@ export default function SiteNav() {
   );
 
   const opportunityItems: NavItem[] = useMemo(
-    () => [{ href: "/opportunities/summer-residency", label: "Summer Residency" }],
+    () => [
+      { href: "/opportunities/summer-residency", label: "Summer Residency" },
+      { href: "/opportunities/roster", label: "Roster Application" },
+    ],
     []
   );
 
