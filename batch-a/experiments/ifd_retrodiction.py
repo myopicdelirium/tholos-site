@@ -65,7 +65,7 @@ def _set_feeders(veg, rich_left: bool):
     veg.centers = [CA, CB]
 
 
-def _cfg(per_capita: bool, ticks: int):
+def _cfg(per_capita: bool, ticks: int, memory: bool = False):
     d = load_config("a3.yaml").to_dict()
     d["run"]["max_ticks"] = ticks
     d["run"]["stop_on_extinction"] = False
@@ -76,8 +76,8 @@ def _cfg(per_capita: bool, ticks: int):
     d["world"]["perception_radius"] = 12          # spans the tank: both feeders assessable
     d["actions"]["move_cost_per_tile"] = 0.003
     d["traits"]["exploration"]["init_mean"] = 0.10
-    d["foraging"]["memory"]["enabled"] = False
-    d["foraging"]["congestion"]["enabled"] = bool(per_capita)   # the ONE difference
+    d["foraging"]["memory"]["enabled"] = bool(memory)          # R1b: intake-rate perception
+    d["foraging"]["congestion"]["enabled"] = bool(per_capita)   # the ONE difference (R1)
     d["foraging"]["congestion"]["gain"] = 1.0                    # from theory, not fitted
     d["foraging"]["congestion"]["radius"] = 3
     d["fields"]["temperature"]["enabled"] = False
@@ -105,8 +105,8 @@ def share_on_A(agents):
     return na / max(tot, 1)
 
 
-def run(per_capita, seed, ticks, reversal):
-    cfg = _cfg(per_capita, ticks)
+def run(per_capita, seed, ticks, reversal, memory=False):
+    cfg = _cfg(per_capita, ticks, memory)
     sim = Simulation(cfg, seed, run_id=f"r1_{per_capita}_{seed}")
     world = sim.world; veg = world.vegetation
     _set_feeders(veg, rich_left=True)
@@ -127,8 +127,8 @@ def run(per_capita, seed, ticks, reversal):
     return np.array(traj)
 
 
-def mean_traj(per_capita, seeds, ticks, reversal):
-    return np.mean([run(per_capita, s, ticks, reversal) for s in seeds], axis=0)
+def mean_traj(per_capita, seeds, ticks, reversal, memory=False):
+    return np.mean([run(per_capita, s, ticks, reversal, memory) for s in seeds], axis=0)
 
 
 def steady(traj, lo, hi):
@@ -139,22 +139,25 @@ def main():
     ticks = 1600
     reversal = ticks // 2
     seeds = list(range(8))
-    pc = mean_traj(True, seeds, ticks, reversal)
-    gr = mean_traj(False, seeds, ticks, reversal)
+    pc = mean_traj(True, seeds, ticks, reversal)                    # R1 per-capita (memory off)
+    gr = mean_traj(False, seeds, ticks, reversal)                   # null: greedy
+    rate = mean_traj(True, seeds, ticks, reversal, memory=True)     # R1b: rate-perceiving
 
     pre = (int(reversal * 0.6), reversal)          # steady window before reversal
     post = (int(reversal + reversal * 0.6), ticks) # steady window after reversal
     out = {
         "size": SIZE, "n_fish": N_FISH, "ratio": RATIO, "ideal_A": round(IDEAL_A, 3),
-        "ticks": ticks, "reversal": reversal, "seeds": len(seeds),
-        "percap": [round(float(x), 3) for x in pc[::4]],   # downsample for the figure
+        "ticks": ticks, "reversal": reversal, "seeds": len(seeds), "stride": 4,
+        "percap": [round(float(x), 3) for x in pc[::4]],
         "greedy": [round(float(x), 3) for x in gr[::4]],
-        "stride": 4,
+        "rate": [round(float(x), 3) for x in rate[::4]],
         "summary": {
             "percap_rich_pre": round(steady(pc, *pre), 3),
-            "percap_rich_post": round(1 - steady(pc, *post), 3),   # share on new-rich (B)
+            "percap_rich_post": round(1 - steady(pc, *post), 3),
             "greedy_rich_pre": round(steady(gr, *pre), 3),
             "greedy_rich_post": round(1 - steady(gr, *post), 3),
+            "rate_rich_pre": round(steady(rate, *pre), 3),
+            "rate_rich_post": round(1 - steady(rate, *post), 3),
         },
     }
     path = Path(__file__).resolve().parents[2] / "public" / "runs" / "ifd_retrodiction.json"
@@ -162,10 +165,9 @@ def main():
     path.write_text(json.dumps(out, separators=(",", ":")))
     s = out["summary"]
     print(f"ideal share on rich patch = {IDEAL_A:.3f}  (5:1)")
-    print(f"per-capita : rich-patch share  pre {s['percap_rich_pre']:.2f}   "
-          f"post-reversal {s['percap_rich_post']:.2f}")
-    print(f"greedy     : rich-patch share  pre {s['greedy_rich_pre']:.2f}   "
-          f"post-reversal {s['greedy_rich_post']:.2f}")
+    print(f"R1  per-capita (mem off): rich share  pre {s['percap_rich_pre']:.2f}   post {s['percap_rich_post']:.2f}")
+    print(f"    greedy null          : rich share  pre {s['greedy_rich_pre']:.2f}   post {s['greedy_rich_post']:.2f}")
+    print(f"R1b rate-perceiving (mem): rich share  pre {s['rate_rich_pre']:.2f}   post {s['rate_rich_post']:.2f}")
     print(f"→ {path}")
 
 

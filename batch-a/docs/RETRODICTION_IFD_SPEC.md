@@ -120,3 +120,32 @@ matching + undermatching + re-tracking that R1 could not, the finding is precise
 *the IFD is reproduced by an agent that perceives intake rate, and not by one that
 perceives only standing food* — a statement about required cognition, earned against
 real data. If R1b also fails, the model cannot yet reproduce Milinski, and we say so.
+
+**R1b (rate-perceiving, foraging memory ON) — ALSO FAILED.** Rich-patch share
+0.56 (pre) / 0.50 (post), essentially identical to R1 and still below greedy's
+0.61. Memory did not rescue it. **We say so: the model does not reproduce Milinski
+under either preregistered configuration.**
+
+**The deeper diagnosis — a real representational gap, and the useful finding.**
+The two failures share one root. Milinski's richness is a *per-location delivery
+rate*: a lone fish at the 30/min feeder eats five times as fast as one at the 6/min
+feeder, an enormous per-individual signal even with no competitor present. Our model
+has no such thing. Patch richness is encoded as *tile-count* over a field whose
+every source tile caps at the same capacity, so a lone forager eats about equally
+well at either patch; the 5:1 only appears **in the aggregate under crowding** (more
+tiles feed more foragers before depletion), which six sparse fish never generate
+strongly enough. Stock is not rate. The model represents *depletable standing
+resource*, which is the right physics for a population eating down a range — and the
+wrong physics for a rate-matching feeder experiment. This is not a tuning failure; it
+is a statement of what the model can and cannot currently be pointed at.
+
+**Consequence for the retrodiction program (honest pivot).** The clean-in-the-field
+choice (IFD) is a poor match for *this* model's representation. The episodes that are
+mechanistically native to a depletable-stock + density-dependent-mortality model are
+the **population overshoot-and-collapse** cases — St. Matthew reindeer, Soay sheep —
+where the generating process *is* eat-down-the-resource. Reproducing Milinski would
+require adding per-patch delivery-rate differentiation (a model extension, its own
+preregistered piece of work), not a stage tweak. Recommended: lead the retrodiction
+program with the reindeer overshoot, whose physics the model already has, and treat
+rate-differentiated foraging as a separate, later capability. R1 stands as a
+published negative result with a precise, load-bearing diagnosis.
