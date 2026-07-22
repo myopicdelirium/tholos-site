@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { appendFile, mkdir } from "node:fs/promises";
 import path from "node:path";
+import { deliverSubmission } from "@/lib/deliver";
 
-// Submissions are appended to data/applications.ndjson (gitignored — it holds
-// applicant PII). NOTE: on serverless hosting this filesystem is ephemeral;
-// before launch, wire delivery to email or durable storage here.
+// Applications are emailed (see src/lib/deliver.ts). Production runs on a
+// read-only filesystem, so the local ndjson append is kept for development
+// convenience only and is never allowed to fail the request.
 
 const REQUIRED = [
   "name",
@@ -62,13 +63,29 @@ export async function POST(req: Request) {
     heard: data.heard ?? "",
   };
 
+  // Local convenience copy; best effort, never fatal (read-only in production).
+  if (process.env.NODE_ENV !== "production") {
+    try {
+      const dir = path.join(process.cwd(), "data");
+      await mkdir(dir, { recursive: true });
+      await appendFile(path.join(dir, "applications.ndjson"), JSON.stringify(record) + "\n", "utf8");
+    } catch {
+      /* ignore — email below is the system of record */
+    }
+  }
+
   try {
-    const dir = path.join(process.cwd(), "data");
-    await mkdir(dir, { recursive: true });
-    await appendFile(path.join(dir, "applications.ndjson"), JSON.stringify(record) + "\n", "utf8");
+    await deliverSubmission({
+      subject: `Summer Residency application — ${record.name}`,
+      record,
+      replyTo: typeof record.email === "string" ? record.email : undefined,
+    });
   } catch (err) {
-    console.error("[opportunities/apply] failed to record application:", err);
-    return NextResponse.json({ ok: false, error: "storage failed" }, { status: 500 });
+    // Never silently lose an application: log the full record so it can be
+    // recovered from the deployment logs if email delivery is down.
+    console.error("[opportunities/apply] delivery failed:", err);
+    console.error("[opportunities/apply] undelivered record:", JSON.stringify(record));
+    return NextResponse.json({ ok: false, error: "delivery failed" }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true });
