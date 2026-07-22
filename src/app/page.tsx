@@ -16,18 +16,20 @@ export default function Home() {
         <div className="mt-[18px] h-[2px] w-full bg-[var(--site-accent)]" />
       </section>
 
+
       {/* Panel II — the mission (text left, framed piece right) */}
-      <section className="grid min-h-screen grid-cols-1 md:grid-cols-[0.94fr_1.06fr]">
-        <div className="flex flex-col justify-center px-8 py-16 sm:px-14">
-          <div className="font-mono text-[11px] uppercase tracking-[0.34em] text-[var(--site-muted)]">
-            <span className="text-[var(--site-accent)]">Nº II</span>&nbsp;&nbsp;/&nbsp;&nbsp;Our Mission
-          </div>
-          <p className="mt-6 max-w-[46ch] text-[clamp(15px,1.5vw,17px)] leading-[1.7] text-[var(--site-body)]">
+      <section className="grid min-h-screen grid-cols-1 md:grid-cols-[1fr_1fr]">
+        <div className="flex flex-col justify-center px-8 py-20 sm:px-14">
+          <div aria-hidden className="h-[2px] w-14 bg-[var(--site-accent)]" />
+          <p className="md-display mt-8 max-w-[26ch] text-[clamp(21px,2.3vw,30px)] leading-[1.24] tracking-[-0.01em] text-[var(--site-ink)]">
             Myopic Delirium is a student-led research group enriching agent architectures for large-scale social
-            simulation. Agents stand in for people — yet across the field they are treated as convenient characters,
-            tuned until the results flatter whoever paid for them.
+            simulation.
           </p>
-          <p className="mt-4 max-w-[48ch] text-[13px] leading-[1.75] text-[var(--site-muted)]">
+          <p className="mt-7 max-w-[54ch] text-[clamp(14.5px,1.1vw,16px)] leading-[1.85] text-[var(--site-body)]">
+            Agents stand in for people — yet across the field they are treated as convenient characters, tuned until
+            the results flatter whoever paid for them.
+          </p>
+          <p className="mt-5 max-w-[54ch] text-[clamp(14.5px,1.1vw,16px)] leading-[1.85] text-[var(--site-body)]">
             We assert ourselves on experimentation devoid of imposed structure and ideology, building dynamic, emergent
             systems rather than fixed incentives. The rigor of those systems, and the uncertainty of their outcomes,
             gave us our name.
@@ -42,35 +44,39 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Panel III — the technical (framed piece left, text right) */}
-      <section className="grid min-h-screen grid-cols-1 md:grid-cols-[1.06fr_0.94fr]">
+      {/* Panel III — the argument (framed piece left, text right) */}
+      <section className="grid min-h-screen grid-cols-1 md:grid-cols-[0.8fr_1.2fr]">
         <div className="flex items-center justify-center px-8 pb-10 pt-2 sm:p-12 md:order-1 md:p-14">
-          <div className="flex aspect-[4/5] w-full max-w-[520px] flex-col border border-[var(--nav-bg)] p-4 sm:p-5">
+          <div className="flex aspect-[4/5] w-full max-w-[420px] flex-col border border-[var(--nav-bg)] p-4 sm:p-5">
             <div className="relative flex-1 bg-[rgb(var(--plate-bg))]">
               <PlateCanvas kind="consensus" seed={7} className="absolute inset-0" />
             </div>
           </div>
         </div>
-        <div className="flex flex-col justify-center px-8 py-16 sm:px-14 md:order-2">
-          <div className="font-mono text-[11px] uppercase tracking-[0.34em] text-[var(--site-muted)]">
-            <span className="text-[var(--site-accent)]">Nº III</span>&nbsp;&nbsp;/&nbsp;&nbsp;The Technical
-          </div>
-          <p className="mt-6 max-w-[52ch] text-[13px] leading-[1.75] text-[var(--site-body)]">
-            Our initiative developed with a small core team, most of whom had worked in the development of limited
-            models — RBC / New Keynesian DSGE models, CGE and IAM policy workhorses, macroprudential scenario models,
-            and shallow, goal-seeking ABMs. Our core model is a hybrid cognitive-institutional ABM, treating bounded
-            cognition as the state space and using ensemble runs with sensitivity and ablation to map regime structures
-            of social emergence.
+        <div className="flex flex-col justify-center px-8 py-20 sm:px-14 md:order-2">
+          <div aria-hidden className="h-[2px] w-14 bg-[var(--site-accent)]" />
+          <p className="md-display mt-8 max-w-[45rem] text-balance text-[clamp(22px,2.5vw,34px)] leading-[1.22] tracking-[-0.01em] text-[var(--site-ink)]">
+            Every law is a hypothesis about human behaviour, executed at full scale, on a live population, with no
+            control group and no clean way back.
           </p>
-          <p className="mt-4 max-w-[54ch] text-[12.5px] leading-[1.75] text-[var(--site-muted)]">
-            Experiments are designed for reproducible batch execution across multi-core CPU infrastructure. We are
-            grateful to the Stevens Institute of Technology&rsquo;s Research Computing Services for access to the JARVIS
-            cluster, and the Hanlon Financial Systems Center for compute that supported this work.
+          <p className="mt-8 max-w-[45rem] hyphens-auto text-justify text-[clamp(14.5px,1.1vw,16px)] leading-[1.85] text-[var(--site-body)]">
+            The effects of an intervention on a generation emerge over a decade, by which point the decision, the
+            government that made it and the conditions it addressed have all changed. Every institution is steering on
+            evidence produced by a world that no longer exists. Our work begins below the level of the trend, at the
+            point where a person decides what to attend to and what to disregard. Populations built this way can be run
+            forward under conditions that have not yet arrived, and run again with the assumptions changed.
           </p>
-          <p className="mt-4 max-w-[54ch] text-[12.5px] leading-[1.75] text-[var(--site-muted)]">
-            We currently maintain 21 core members across four teams: Agent Cognition and Behavioral Mechanics (ABBY),
-            Research Software and Reproducibility (RODY), Empirical Methods, Metrics and Validation (EMMY), and
-            High-Performance Simulation Systems (HOBY).
+          <p className="mt-5 max-w-[45rem] hyphens-auto text-justify text-[clamp(14.5px,1.1vw,16px)] leading-[1.85] text-[var(--site-body)]">
+            We began this work in 2024. The starting point was an observation that standardised metrics had stopped
+            serving as proxies for how a society might improve and had begun to function as statements of what a person
+            is worth. The early models were deliberately crude with agents with little more than the drive to persist.
+            We added capacity gradually, not to reproduce human experience but to find out what would emerge once
+            agency amounted to more than optimisation, whether agents would come to care, to be irrational, to confuse
+            themselves, and whether any of it would produce commitments that outranked their most base interests.
+            Institutions rarely fail because they misread how a population leans but because its priorities moved
+            beneath the instruments used to measure them. Populations of several thousand agents, and tens of thousands
+            on high-performance infrastructure, let us examine not what a policy does to an aggregate, but how it
+            rearranges the pressures, options and priorities facing each person inside it.
           </p>
         </div>
       </section>
