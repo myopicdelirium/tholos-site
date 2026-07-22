@@ -28,22 +28,46 @@ export default function HomePosts() {
   }, []);
 
   useEffect(() => {
-    updateArrows();
     const el = railRef.current;
     if (!el) return;
     const on = () => updateArrows();
+    on();
     el.addEventListener("scroll", on, { passive: true });
-    window.addEventListener("resize", on);
+    // ResizeObserver fires after layout (unlike window "resize", which can run
+    // before the rail has reflowed), so the arrow visibility stays correct.
+    const ro = new ResizeObserver(on);
+    ro.observe(el);
     return () => {
       el.removeEventListener("scroll", on);
-      window.removeEventListener("resize", on);
+      ro.disconnect();
     };
   }, [updateArrows]);
 
   const slide = (dir: 1 | -1) => {
     const el = railRef.current;
     if (!el) return;
-    el.scrollBy({ left: dir * Math.max(el.clientWidth * 0.8, 320), behavior: "smooth" });
+    const amount = dir * Math.max(el.clientWidth * 0.8, 320);
+    const start = el.scrollLeft;
+    const max = el.scrollWidth - el.clientWidth;
+    const target = Math.max(0, Math.min(max, start + amount));
+    const dist = target - start;
+    if (dist === 0) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.scrollLeft = target;
+      return;
+    }
+    // Time-based tween. setTimeout (unlike scrollBy({behavior:"smooth"}) or
+    // requestAnimationFrame) still fires in a backgrounded tab, so the scroll
+    // always completes; each tick eases to the position for the elapsed time.
+    const dur = 420;
+    const t0 = performance.now();
+    const step = () => {
+      const p = Math.min(1, (performance.now() - t0) / dur);
+      el.scrollLeft = start + dist * (1 - Math.pow(1 - p, 3));
+      updateArrows(); // don't rely on the scroll event firing for programmatic scroll
+      if (p < 1) window.setTimeout(step, 16);
+    };
+    step();
   };
 
   const openPost = (id: string, e: React.MouseEvent<HTMLElement>) => {
@@ -144,14 +168,14 @@ export default function HomePosts() {
 
         <div
           ref={railRef}
-          className="mt-8 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="mt-8 flex gap-5 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {posts.map((p) => (
             <button
               key={p.id}
               type="button"
               onClick={(e) => openPost(p.id, e)}
-              className="group flex w-[clamp(280px,32vw,400px)] shrink-0 snap-start flex-col text-left outline-none transition-transform duration-300 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--site-accent)]"
+              className="group flex w-[clamp(272px,30vw,360px)] shrink-0 flex-col text-left outline-none transition-transform duration-300 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--site-accent)]"
             >
               <div className="relative flex h-full flex-col border border-[var(--site-line)] p-6 transition-colors group-hover:border-[var(--site-accent)]">
                 <span aria-hidden className="absolute left-0 top-0 h-full w-[3px] bg-[var(--site-accent)]" />
