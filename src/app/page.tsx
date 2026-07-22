@@ -39,7 +39,8 @@ export default function Home() {
             prioritized once more basic ones satisfied. The aim is not to show that some phenomenon can emerge, but to
             model that phenomenon carefully enough that its accompaniments become visible. That includes the costs,
             dependencies, and side effects that travel with it and that we routinely fail to notice in ourselves. This
-            site holds the work we can safely&nbsp;make&nbsp;public.
+            site holds the work we can{" "}
+            <span className="hyphens-none">safely&nbsp;make&nbsp;public.</span>
           </p>
         </div>
         <div className="flex items-center justify-center px-8 pb-10 pt-2 sm:p-12 md:p-14">
