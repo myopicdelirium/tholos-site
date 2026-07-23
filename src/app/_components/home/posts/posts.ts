@@ -12,6 +12,30 @@ export type Post = {
 
 export const posts: Post[] = [
   {
+    id: "mourning-at-a-distance",
+    title: "Mourning at a distance",
+    body: [
+      "This entry is an addendum to Phase 15, registered as such before it ran. Mass grief had gone unmeasured three times, because congregations die with their leaders. The fix used no new mechanism. Cutting food to 40 sources forces followers to range far from their leaders to eat, so a caught leader dies with its crowd scattered and alive. That made the additivity question askable as a fair pair, leader mode with 10 leaders and 390 followers against partner mode with 200 pairs, in the identical arena, on identical seeds, crowd grief against pair grief with everything else held fixed.",
+      "The power gate was registered first, verbatim, 'at least 100 pooled bereaved followers alive after their leader's death (seeds 1-24); otherwise the protocol failed to separate and says so.' It failed. The declared seeds produced 29. The fresh seeds happened to produce 171, both numbers are reported, and the declared verdict belongs to the main stage. Even under scarcity, leaders rarely die away from their whole crowd.",
+      "The additivity question was registered with no desired direction, verbatim, 'per-capita bereaved starvation excess in leader mode within 5 points of the identical quantity in partner mode.' The null is refuted, with a replicated sign. On the declared seeds, congregation mourners starved at an excess of 0.172, five of twenty-nine, against pair mourners at 0.327, five hundred thirty-seven of one thousand six hundred forty-two. On the fresh stage, the one that met the power gate, 0.076 against 0.307. The gaps are 15.5 and 23.1 points, both outside the declared band, both the same direction. Only the direction carries, because the leader arm is thin, five and thirteen deaths, and the two bereaved cohorts are selected by different geometry. What the direction says is that a mourner in a congregation starves at a quarter to half the rate of a mourner in a pair.",
+      "One observation outranks both verdicts, and it is post hoc and labeled as such. Baseline starvation among the never-bereaved is 0.000 in all four arms of both stages. Thousands of agents in a world of scarcity, and every one that kept its bond fed itself without exception. Every single starvation death in this arena was a mourner's.",
+      "The candidate explanation is labeled untested. The model contains no solace mechanism, so the sub-additivity cannot be comfort, and the remaining candidate is geometric. Leader-mode mourners are by construction the dispersed foragers, standing at the food when the loss arrives, while pair mourners lived beside their dead. The suspicion, for the record, is that mourning at the place of the loss is more lethal than mourning at the food. The declared follow-up conditions neglect on distance to food at the moment of loss, and it has not been run.",
+      "The distant golden freezes seed 42 at 0 of 400 alive, entering through the embedded-config path. Artifacts are phase-15-distant.json and phase-15-distant-replication.json, commit 5cd1725, 32 tests green, pushed.",
+    ],
+  },
+  {
+    id: "authority-is-a-shape",
+    title: "Authority is a shape",
+    body: [
+      "Phase 15 binds forty agents to one. The mechanism is nothing, which is the point. bond_target leader is initialization wiring plus one config field, the kernel is untouched, and the same one-line law that tethered agents to nests and bound pairs now holds a congregation around a figure. Charisma required zero mechanism. In this architecture, authority is a shape instead of a force.",
+      "The cohesion registration passed at 4.7 against a required 3. Bonded followers hold a mean distance of 6.48 from their own leader while unbonded controls drift at 30.72, five seeds, no storm, final thousand ticks. The texture is worth printing. A congregation is looser than a pair, 6.5 against Phase 6's 1.2, and the looseness is geometric necessity, because thirty-nine followers cannot share a point. A congregation has a radius by construction.",
+      "The coupling registration failed as declared, on both seed sets. Followers whose own leader was caught at the storm's onset died in the window at 0.031 against 0.024 for followers whose leader was not, then 0.038 against 0.030 on fresh seeds, a ratio of 1.3 both times against a required 2. The direction is consistent, the magnitude is under the bar, and the reason is the arena. A plain sudden storm holds a caught leader for roughly fifteen ticks, too briefly for a congregation's fate to couple to one figure's.",
+      "The bereavement registration ends void for power, which is different from failed. The same arena barely kills leaders. The main stage produced sixteen bereaved followers pooled, none of whom starved, and the replication produced none at all. Zero of sixteen is weak evidence and zero of zero is no test, so whether losing a leader starves followers the way losing a partner does remains unanswered.",
+      "Both shortfalls point at the same declared follow-up, the mire-leader arena, where the grip and the slow burn hold a caught leader dying for a hundred ticks in view of thirty-nine bonded followers. That supplies the sustained capture the coupling test needs and the bereavement volume the starvation test needs, in one design. It is declared and not yet run.",
+      "The work resumed from the branch frozen during the determinism incident, and the incident's close is reported in its own entry. Preservation held, with the merge landing on replay-verified goldens, all fifteen contracts verified twice, and the suite at thirty tests. The congregation golden, seed 42 with 397 of 400 alive, entered the suite as a single JSON artifact with its config embedded, leaving no test file to edit and get wrong. Artifacts are phase-15-authority.json and phase-15-replication.json, commits 0c3cca0 and f334cb9, everything pushed.",
+    ],
+  },
+  {
     id: "a-determinism-incident",
     title: "A determinism incident",
     body: [
