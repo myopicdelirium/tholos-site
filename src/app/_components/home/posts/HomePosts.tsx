@@ -147,6 +147,12 @@ export default function HomePosts() {
             <h2 className="md-display mt-6 text-[clamp(24px,3vw,38px)] leading-[1.05] tracking-[-0.01em] text-[var(--site-ink)]">
               Articles
             </h2>
+            <a
+              href="/public-logbook"
+              className="mt-3 inline-block font-mono text-[10px] uppercase tracking-[0.28em] text-[var(--site-muted)] underline decoration-[var(--site-line)] underline-offset-4 transition-colors hover:text-[var(--site-accent)]"
+            >
+              All entries in the logbook
+            </a>
           </div>
           {showArrows ? (
             <div className="flex shrink-0 gap-2">
