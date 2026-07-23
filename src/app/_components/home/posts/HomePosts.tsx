@@ -140,7 +140,7 @@ export default function HomePosts() {
 
   return (
     <section className="bg-[var(--site-bg)] px-8 py-10 sm:px-14 sm:py-12">
-      <div className="max-w-6xl">
+      <div>
         <div className="flex items-end justify-between gap-4">
           <div>
             <div aria-hidden className="h-[2px] w-14 bg-[var(--site-accent)]" />
@@ -181,17 +181,17 @@ export default function HomePosts() {
               key={p.id}
               type="button"
               onClick={(e) => openPost(p.id, e)}
-              className="group flex w-[clamp(240px,22vw,272px)] shrink-0 flex-col text-left outline-none transition-transform duration-300 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--site-accent)]"
+              className="group flex w-[clamp(272px,30vw,360px)] shrink-0 flex-col text-left outline-none transition-transform duration-300 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--site-accent)]"
             >
-              <div className="relative flex h-full flex-col border border-[var(--site-line)] p-5 transition-colors group-hover:border-[var(--site-accent)]">
+              <div className="relative flex h-full flex-col border border-[var(--site-line)] p-6 transition-colors group-hover:border-[var(--site-accent)]">
                 <span aria-hidden className="absolute left-0 top-0 h-full w-[3px] bg-[var(--site-accent)]" />
-                <h3 className="md-display line-clamp-2 min-h-[2.6em] text-[17px] leading-snug text-[var(--site-ink)] transition-colors group-hover:text-[var(--site-accent)]">
+                <h3 className="md-display line-clamp-2 min-h-[2.6em] text-[20px] leading-snug text-[var(--site-ink)] transition-colors group-hover:text-[var(--site-accent)]">
                   {p.title}
                 </h3>
-                <p className="mt-2.5 line-clamp-3 text-[12.5px] leading-relaxed text-[var(--site-body)]">
+                <p className="mt-3 line-clamp-4 text-[13px] leading-relaxed text-[var(--site-body)]">
                   {p.body[0]}
                 </p>
-                <span className="mt-4 font-mono text-[10px] uppercase tracking-[0.28em] text-[var(--site-muted)] transition-colors group-hover:text-[var(--site-accent)]">
+                <span className="mt-5 font-mono text-[10px] uppercase tracking-[0.28em] text-[var(--site-muted)] transition-colors group-hover:text-[var(--site-accent)]">
                   Read
                 </span>
               </div>
