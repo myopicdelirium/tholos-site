@@ -11,6 +11,7 @@ export default function HomePosts() {
   const railRef = useRef<HTMLDivElement>(null);
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const lastFocusRef = useRef<HTMLElement | null>(null);
+  const slideTimer = useRef<number | null>(null);
 
   const [openId, setOpenId] = useState<string | null>(null);
   const [canLeft, setCanLeft] = useState(false);
@@ -46,6 +47,11 @@ export default function HomePosts() {
   const slide = (dir: 1 | -1) => {
     const el = railRef.current;
     if (!el) return;
+    // Supersede any tween still running, so rapid clicks don't fight each other.
+    if (slideTimer.current !== null) {
+      window.clearTimeout(slideTimer.current);
+      slideTimer.current = null;
+    }
     const amount = dir * Math.max(el.clientWidth * 0.8, 320);
     const start = el.scrollLeft;
     const max = el.scrollWidth - el.clientWidth;
@@ -65,7 +71,7 @@ export default function HomePosts() {
       const p = Math.min(1, (performance.now() - t0) / dur);
       el.scrollLeft = start + dist * (1 - Math.pow(1 - p, 3));
       updateArrows(); // don't rely on the scroll event firing for programmatic scroll
-      if (p < 1) window.setTimeout(step, 16);
+      slideTimer.current = p < 1 ? window.setTimeout(step, 16) : null;
     };
     step();
   };
