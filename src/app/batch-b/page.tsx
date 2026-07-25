@@ -3,7 +3,7 @@ import BatchSwitcher from "@/components/BatchSwitcher";
 import SimPlayerMount from "@/components/sim/SimPlayerMount";
 
 export const metadata: Metadata = {
-  title: "Batch B · Tholos",
+  title: "Batch B · MyoDel",
   description:
     "Batch B on the Batch A substrate: bounded attention, grief latch, emergent terminal commitment (case B1).",
 };

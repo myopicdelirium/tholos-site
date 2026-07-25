@@ -3,7 +3,7 @@ import BatchSwitcher from "@/components/BatchSwitcher";
 import SimPlayerMount from "@/components/sim/SimPlayerMount";
 
 export const metadata: Metadata = {
-  title: "Batch A · Tholos",
+  title: "Batch A · MyoDel",
   description: "Interactive replays of Batch A agent-ecology runs (A1–A4).",
 };
 
