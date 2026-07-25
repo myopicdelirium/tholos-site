@@ -8,7 +8,7 @@ const ui = Inter({ subsets: ['latin'], variable: '--font-ui' })
 const display = Ibarra_Real_Nova({ subsets: ['latin'], variable: '--font-display' })
 
 export const metadata: Metadata = {
-  title: 'Tholos.',
+  title: 'MyoDel',
   description: 'Myopic Delirium',
 }
 
