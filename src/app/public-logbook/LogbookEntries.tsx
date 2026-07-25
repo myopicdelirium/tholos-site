@@ -13,10 +13,6 @@ function teaser(text: string, max = 240) {
   return t.slice(0, max).replace(/[,\.;:\s]+$/g, "") + "…";
 }
 
-function words(body: string[]) {
-  return body.join(" ").trim().split(/\s+/).length;
-}
-
 export default function LogbookEntries() {
   const [openIds, setOpenIds] = useState<string[]>([]);
   const allOpen = openIds.length === posts.length;
@@ -67,6 +63,8 @@ export default function LogbookEntries() {
                   </span>
                 </div>
 
+                <div className="mt-2 smallcaps text-[10px] text-[var(--site-muted)]">{p.author}</div>
+
                 {isOpen ? null : (
                   <p className="mt-3 max-w-[92ch] text-[13px] leading-relaxed text-[var(--site-body)]">
                     {teaser(p.body[0])}
@@ -87,10 +85,7 @@ export default function LogbookEntries() {
                       {para}
                     </p>
                   ))}
-                  <div className="mt-7 flex items-center gap-4">
-                    <span className="smallcaps text-[10px] text-[var(--site-muted)]">
-                      {words(p.body).toLocaleString()} words
-                    </span>
+                  <div className="mt-7">
                     <button
                       type="button"
                       onClick={() => toggle(p.id)}
