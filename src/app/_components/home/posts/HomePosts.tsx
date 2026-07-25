@@ -151,7 +151,7 @@ export default function HomePosts() {
               href="/public-logbook"
               className="mt-3 inline-block font-mono text-[10px] uppercase tracking-[0.28em] text-[var(--site-muted)] underline decoration-[var(--site-line)] underline-offset-4 transition-colors hover:text-[var(--site-accent)]"
             >
-              All entries in the logbook
+              All entries in the public log
             </a>
           </div>
           {showArrows ? (
@@ -239,6 +239,8 @@ export default function HomePosts() {
                 >
                   {post.title}
                 </h2>
+
+                <div className="mt-4 text-[11px] uppercase tracking-[0.28em] text-[var(--nav-muted)]">{post.author}</div>
 
                 <div className="mt-7 h-px w-full bg-[var(--nav-line)]" />
 
