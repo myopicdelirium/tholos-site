@@ -1,6 +1,6 @@
 import type { CopenWienArticle } from "./types"
 
+import a1 from "./honest-display-credence-public-composure"
+
 // CopenWien Chapter articles, newest first.
-// Empty until the first extended abstract lands; add each as its own module
-// and import it here, mirroring src/content/artifacts/index.ts.
-export const copenwienArticles: CopenWienArticle[] = []
+export const copenwienArticles: CopenWienArticle[] = [a1]
