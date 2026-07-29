@@ -145,7 +145,7 @@ export default function HomePosts() {
           <div>
             <div aria-hidden className="h-[2px] w-14 bg-[var(--site-accent)]" />
             <h2 className="md-display mt-6 text-[clamp(24px,3vw,38px)] leading-[1.05] tracking-[-0.01em] text-[var(--site-ink)]">
-              Articles
+              Patch notes
             </h2>
             <a
               href="/public-logbook"
@@ -158,7 +158,7 @@ export default function HomePosts() {
             <div className="flex shrink-0 gap-2">
               <button
                 type="button"
-                aria-label="Previous articles"
+                aria-label="Previous patch notes"
                 onClick={() => slide(-1)}
                 disabled={!canLeft}
                 className="grid h-11 w-11 place-items-center border border-[var(--site-line)] text-[var(--site-ink)] transition-colors hover:bg-[var(--site-hover)] disabled:cursor-default disabled:opacity-25"
@@ -167,7 +167,7 @@ export default function HomePosts() {
               </button>
               <button
                 type="button"
-                aria-label="More articles"
+                aria-label="More patch notes"
                 onClick={() => slide(1)}
                 disabled={!canRight}
                 className="grid h-11 w-11 place-items-center border border-[var(--site-line)] text-[var(--site-ink)] transition-colors hover:bg-[var(--site-hover)] disabled:cursor-default disabled:opacity-25"
@@ -208,7 +208,7 @@ export default function HomePosts() {
 
       {open && post ? (
         <div className="fixed inset-0 z-[100]">
-          <button type="button" aria-label="Close article" onClick={close} className="absolute inset-0 bg-black/45" />
+          <button type="button" aria-label="Close patch note" onClick={close} className="absolute inset-0 bg-black/45" />
 
           <div className="absolute inset-x-0 top-0 px-4 pt-6 sm:px-6 sm:pt-10">
             <div
