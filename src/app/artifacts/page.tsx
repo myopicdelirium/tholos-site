@@ -9,7 +9,10 @@ function teaser(text: string, max = 220) {
 }
 
 export default function ArtifactsPage() {
+  // NYC chapter shown newest first, by date (ISO strings sort chronologically).
   const artifacts = listArtifacts()
+    .slice()
+    .sort((a, b) => (b.updated ?? b.year ?? "").localeCompare(a.updated ?? a.year ?? ""))
   const copenwien = listCopenWien()
 
   return (
