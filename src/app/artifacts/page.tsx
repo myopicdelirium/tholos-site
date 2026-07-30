@@ -18,11 +18,11 @@ export default function ArtifactsPage() {
         <div className="smallcaps text-[11px] text-[var(--site-muted)]">Research</div>
         <h1 className="mt-3 md-display text-[54px] leading-[1.02] tracking-[-0.02em] text-[var(--site-ink)]">Artifacts</h1>
 
-        {/* ── CopenWien Chapter — extended abstracts, shown in full ── */}
+        {/* ── Købenwien Chapter — extended abstracts, shown in full ── */}
         <div className="mt-16">
           <div className="smallcaps text-[11px] text-[var(--site-accent)]">Chapter</div>
           <h2 className="mt-2 md-display text-[32px] leading-[1.06] tracking-[-0.01em] text-[var(--site-ink)]">
-            CopenWien
+            Købenwien
           </h2>
           <p className="mt-3 max-w-[68ch] text-[14px] leading-relaxed text-[var(--site-body)]">
             Extended abstracts for next publication cycle. Additional information and github access requires

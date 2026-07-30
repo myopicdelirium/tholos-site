@@ -26,7 +26,7 @@ export default async function CopenWienArticlePage({ params }: { params: Promise
           <span aria-hidden>←</span> Artifacts
         </Link>
 
-        <div className="smallcaps text-[11px] text-[var(--site-accent)]">CopenWien Chapter</div>
+        <div className="smallcaps text-[11px] text-[var(--site-accent)]">Købenwien Chapter</div>
 
         <h1 className="mt-4 md-display text-[clamp(30px,4vw,44px)] leading-[1.06] tracking-[-0.01em] text-[var(--site-ink)]">
           {article.title}
