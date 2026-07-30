@@ -14,7 +14,7 @@ export type Post = {
 export const posts: Post[] = [
   {
     id: "a-pressure-without-a-direction",
-    title: "A pressure without a direction",
+    title: "P3.43",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 20 closes without running. The question it registered is the one Amendment 6 reserved, whether an agent will cross into the mire with elsewhere as its loudest want, under something other than hunger, love, or deafness. Three bars were declared. Bored diffusion had to double non-local entry. At least fifty crossings had to be made by agents whose energy was full and whose largest drive weight at the tick of crossing was wonder, which is the accounting definition the spec gave for a pilgrim. And a guard required the un-bored to stay home.",
@@ -27,7 +27,7 @@ export const posts: Post[] = [
   },
   {
     id: "a-fifth-thing-to-want",
-    title: "A fifth thing to want",
+    title: "P3.42",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 19 gives the agents a fifth thing to want. Amendment 6 was written before the mechanism. The law gained a row and never a clause. Structural inertness was proven with the drive cranked to its maximum inside a world where it cannot exist, and all twenty goldens were carried through the change in the array's shape and verified behaviorally bit-identical, under the precedent set in Phase 2. Two errors were caught in house before the review saw the diff, one by the sighted golden's own kill switch when wonder defaulted on, and one by a pre-review mutation audit that found a dead pricing test.",
@@ -40,7 +40,7 @@ export const posts: Post[] = [
   },
   {
     id: "the-knee-has-a-location",
-    title: "The knee has a location",
+    title: "P3.41",
     author: "Supervised by Bruno Risach",
     body: [
       "Grief in this model has a threshold of attention, and the threshold now has a location.",
@@ -54,7 +54,7 @@ export const posts: Post[] = [
   },
   {
     id: "each-world-its-own-control",
-    title: "Each world its own control",
+    title: "P3.40",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 18 left one question open with a labeled guess attached to it. Sharp minds died somewhat more after a loss, at a correlation of about 0.17, which was far under the registered bar and too consistent across seed stages to be noise. The reading offered at the time, and flagged as post hoc, was that lethal attention capture saturates, so a population centered at a sharpness of 2 was sitting almost entirely past the point where more sharpness changes anything. That reading is now registered and running.",
@@ -65,7 +65,7 @@ export const posts: Post[] = [
   },
   {
     id: "faculties-that-saturate",
-    title: "Faculties that saturate",
+    title: "P3.39",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 18 asked whether the shape of an individual mind changes its fate. Two registrations put mixed populations into arenas this program has already mapped, the grief arena of Phase 7 and the mire of Phase 11, each with one new axis turned on. Both failed, both replicated, and both carried a refutation clause written before the runs.",
@@ -79,7 +79,7 @@ export const posts: Post[] = [
   },
   {
     id: "a-number-too-large-to-represent",
-    title: "A number too large to represent",
+    title: "P3.38",
     author: "Supervised by Bruno Risach",
     body: [
       "The adversarial review of the Phase 18 diff confirmed four findings. All four were fixed, and proven fixed, before the commit landed.",
@@ -92,7 +92,7 @@ export const posts: Post[] = [
   },
   {
     id: "only-the-exponent-became-personal",
-    title: "Only the exponent became personal",
+    title: "P3.37",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 18 makes the shape of a mind personal. Until now every agent in a world heard its drives through the same sharpness of attention and looked ahead to the same fixed horizon, so minds differed in their tempos and in what they were bonded to, and in nothing else. Attention sharpness and foresight depth are now per-agent arrays, drawn once at birth from the same lognormal spread convention as every existing trait, and immutable for life. One population can therefore hold agents who hear a single need at a time beside agents who hear all of them, and agents who price sixty ticks of consequence beside agents who price fifteen. The form of the one law is untouched. Only its exponent became personal.",
@@ -102,7 +102,7 @@ export const posts: Post[] = [
   },
   {
     id: "the-size-of-one-biography",
-    title: "The size of one biography",
+    title: "P3.36",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 18 gets none yet, since it is uncommitted and standing at a review gate, and this ledger has never printed a phase before it landed.",
@@ -115,7 +115,7 @@ export const posts: Post[] = [
   },
   {
     id: "an-oracle-with-a-stomach",
-    title: "An oracle with a stomach",
+    title: "P3.35",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 17 is built and its protocol is running. The spec opens by naming the deficiency it removes. Until now an agent knew the nearest food in the entire world the instant that food existed, which the spec calls an oracle with a stomach.",
@@ -126,7 +126,7 @@ export const posts: Post[] = [
   },
   {
     id: "a-kill-switch-that-never-killed",
-    title: "A kill switch that never killed",
+    title: "P3.34",
     author: "Supervised by Bruno Risach",
     body: [
       "An adversarial review of the Phase 16 diff found three problems, all fixed before the commit landed. One of them concerned the tests instead of the code, and it is the one worth publishing.",
@@ -138,7 +138,7 @@ export const posts: Post[] = [
   },
   {
     id: "a-capability-not-a-study",
-    title: "A capability, not a study",
+    title: "P3.33",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 16 closes as a capability instead of a study. The credence organ stays. Each agent now carries a private opinion of every neighbor it has met, earned from what that neighbor's alarms turned out to be worth, held in the agent's own bounded ledger and shared with nobody, so two agents in the same world can hold different views of a third and neither view is the world's. What does not stay is the experiment. The cry-wolf and social-cure protocols written alongside the mechanism were accommodation, built to fit the mechanism instead of to test it, and they are now formally deferred in the spec, unrun and unjudged, with their bars left intact if the program ever wants them. The mechanism commits once the adversarial review panel reports on the diff.",
@@ -149,7 +149,7 @@ export const posts: Post[] = [
   },
   {
     id: "the-tests-came-first",
-    title: "The tests came first",
+    title: "P3.32",
     author: "Supervised by Bruno Risach",
     body: [
       "Before this project had a single mechanism, it had tests that read the source code and fail the build if any rule names death, sacrifice, or self-destruction as a goal. The reason is simple. Preference inversion, a commitment outranking survival, is only interesting if nobody programmed it. So the ban came first. No line of code may set a drive's weight from mortality, threat, or damage. Time constants live in one declared file and nowhere else. Identifiers built on sacrifice, martyr, hero, or altruism fail the build by name, and the repository's history shows the tests arriving before the mechanisms they constrain.",
@@ -159,7 +159,7 @@ export const posts: Post[] = [
   },
   {
     id: "the-boiling-frog",
-    title: "The boiling frog",
+    title: "P3.31",
     author: "Supervised by Bruno Risach",
     body: [
       "The oldest metaphor in risk communication now has a working mechanical model, and it began as a failed prediction. We registered, before running anything, that a storm announced in advance would kill fewer of the agents bonded to the place it strikes. As first built, the opposite happened. Mortality rose from 0.25 at a sudden storm to 1.00 at the slowest announcement, because the harm arrived together with the signal, so a longer warning was really a slower arrival. Splitting the two settled it in both directions. When damage waits until the warning completes, mortality falls from 0.255 to 0.000 as the warning lengthens. When damage rides the signal, it climbs from 0.255 to 1.000. Found once after the fact, the split was then registered in advance and replicated across every bond depth on fresh seeds, and again in populations where every agent has its own tempo.",
@@ -168,7 +168,7 @@ export const posts: Post[] = [
   },
   {
     id: "no-sadness-variable",
-    title: "No sadness variable",
+    title: "P3.30",
     author: "Supervised by Bruno Risach",
     body: [
       "There is no sadness variable anywhere in this code, and the build fails if anyone adds one by name. Grief, in these agents, is defined by what it does. A dead partner sits at infinite distance, where separation distress equals the bond exactly, and no action an agent can take reduces it. It simply fades, on a slow clock of its own. Whether that state kills depends on one number, the sharpness of attention. The attended law lets the loudest drive mute the quieter ones in proportion to its dominance. With attention off, none of 61 bereaved agents starved. At full sharpness, 14 percent of the bereaved starved while starvation among agents whose partners survived was exactly 0.000, and the result replicated on fresh seeds at 10.6 and 8.4 percent with baselines again at zero. These agents starve in worlds that fed everyone else.",
@@ -177,7 +177,7 @@ export const posts: Post[] = [
   },
   {
     id: "a-fear-never-felt",
-    title: "A fear never felt",
+    title: "P3.29",
     author: "Supervised by Bruno Risach",
     body: [
       "The attended law reads heard = u * (w / max w) ^ kappa. A drive's raw urgency is scaled by its share of the leading weight, raised to a declared sharpness. That expression contains a trap nobody designed and the tripwires could not have flagged, because it violates no rule. When a weight is exactly zero, the product is exactly zero at any positive sharpness, forever. Weights are born equal to their urgencies, so an agent spawned in safety begins with fear at literal zero. Under the declared law, with weights born equal to their urgencies, a fear never once felt cannot be learned later, at any sharpness, on any evidence. The exactness matters. A weight that was ever positive decays geometrically and cannot reach exact zero inside a run, though it can fall functionally silent, so within these horizons the trap is entered at birth only.",
@@ -187,7 +187,7 @@ export const posts: Post[] = [
   },
   {
     id: "place-versus-person",
-    title: "Place versus person",
+    title: "P3.28",
     author: "Supervised by Bruno Risach",
     body: [
       "The comparison is one axis wide. Same storm, same attachment depth, same seeds, and the only change is what the bond points at, a nest or a partner. Bonded to the place, 8.7 percent of the cohort died. Bonded to a person, 0.7 percent. Roughly twelve to one, from changing the target of the same one-line law.",
@@ -197,7 +197,7 @@ export const posts: Post[] = [
   },
   {
     id: "myopia-all-the-way-down",
-    title: "Myopia all the way down",
+    title: "P3.27",
     author: "Supervised by Bruno Risach",
     body: [
       "Foresight entered this architecture under the strictest shape its constitution would allow, and the amendment that admits it is named farsighted in consequences, myopic in values. For a declared horizon, each action is valued as if held for that many ticks, a closed-form integral of predicted urgency under the agent's own declared physics, straight lines, static fields, arrival and saturation respected, no other minds. The integrals are summed under the agent's current, frozen weights. Predicting its own future wants is forbidden permanently, the action code cannot reference integrity, and at horizon zero the law reproduces the original decision table bit for bit against every golden.",
@@ -207,7 +207,7 @@ export const posts: Post[] = [
   },
   {
     id: "outbound-toward-its-partner",
-    title: "Outbound, toward its partner",
+    title: "P3.26",
     author: "Supervised by Bruno Risach",
     body: [
       "The search for clear-eyed death was registered before it ran, with a definition that owes nothing to interpretation. An entry decision counts, verbatim from the spec, 'when, at the tick the agent chose return toward its trapped partner, its own rollout's safety cost for that action (the seen exposure, in danger-tick units), scaled by the world's burn rate, meets or exceeds the agent's remaining integrity: it chose a path whose seen price is at least its life.' A qualifying cell needed three things at once, a pull ratio of at least 2 over its own unbonded control, an entered share of at least 0.7 among the pull group's dead, and flags on at least half of the dead entrants. The grid crossed slow fear, attention, bond depth, and horizon, 24 cells, 864 runs, roughly 115,000 agent lives, and the entire grid was rerun on fresh seeds. The cell test came back empty, twice. The flag count came back at roughly ten individuals, twice, all at one corner of the space, slow fear at 48 with attention at 0.75, and none anywhere else. Both results are true, and the difference between them is the unit of analysis.",
@@ -217,7 +217,7 @@ export const posts: Post[] = [
   },
   {
     id: "neither-in-nor-out",
-    title: "Neither in nor out",
+    title: "P3.25",
     author: "Supervised by Bruno Risach",
     body: [
       "The threshold vigil was on nobody's list of predictions. The phase that produced it added one switch, giving agents the storm's grip inside their forecasts, and its registered result was a cure. With the grip seen, the share of pull-group deaths that happened inside the mire collapsed from 0.58 and 0.71 to 0.07 and 0.07 across the seed sets. The mistaken entries of earlier phases were mispricings, and they vanished when priced. What replaced them was on neither registered branch. With sight on, the deaths of agents whose partner is trapped become almost entirely starvation, 0.96 and 1.00 of pull-group deaths on the two seed sets, while entries themselves nearly vanish.",
@@ -227,7 +227,7 @@ export const posts: Post[] = [
   },
   {
     id: "rescue-through-presence",
-    title: "Rescue through presence",
+    title: "P3.24",
     author: "Supervised by Bruno Risach",
     body: [
       "Assistance entered the model as one clause of Amendment 5, and like every capacity before it, it arrived defaulting to zero and proven bit-inert across all twelve goldens. A living partner within reach scales an agent's effective snare by one minus help, and the amendment's other clause lets a bond hear its partner's peril as the world's danger field read at the partner's location, physics read at a place instead of a mind. A dead partner has no location, so grief stays exactly what it was. The standing tripwires fenced the whole amendment unmodified. The update law still names no drive, action code still cannot see integrity, and world code still cannot read drive state.",
@@ -237,7 +237,7 @@ export const posts: Post[] = [
   },
   {
     id: "saying-no-three-times",
-    title: "Saying no three times",
+    title: "P3.23",
     author: "Supervised by Bruno Risach",
     body: [
       "Three phases went looking for the same event from three different directions, and each search was registered before it ran, with both outcomes written down and no desired direction declared. The event has a definition instead of a mood. An up-front wager means a decision whose seen price, by the agent's own forecast, was at least 0.8 of a full life, and it is distinct from perseverance at the end, where the seen price merely exceeds whatever life remains. The first search crossed slow fear, attention, bond depth, and horizon, 24 cells and 864 runs over roughly 115,000 lives, and found zero qualifying cells twice, with roughly ten endgame flags at one corner and zero up-front flags anywhere. The second search added full knowledge, putting the trap's grip inside the agents' forecasts and extending the horizon to 120, where the seeable price exceeds a whole life, and found zero wager cells of 16 and zero up-front flags in 768 runs. The third search added a reason, letting the bond hear a trapped partner's peril and letting presence loosen the trap, and found zero clear-eyed and zero up-front deaths across 18 cells and 216 runs. The registered sentence from the second search reads, verbatim, 'the architecture cannot produce the up-front wager over this grid; bounded and reported.' That branch occurred, three times.",
@@ -247,7 +247,7 @@ export const posts: Post[] = [
   },
   {
     id: "a-crowd-from-wiring-alone",
-    title: "A crowd from wiring alone",
+    title: "P3.22",
     author: "Supervised by Bruno Risach",
     body: [
       "The fifteenth phase asked what it takes, in this architecture, to make forty agents organize around one. The answer is one config field. bond_target leader is initialization wiring, the kernel is untouched, and every standing tripwire fenced the phase unmodified, the update law naming no drive and no leader anywhere. The same one-line law has now pointed at three kinds of target across the program, a nest, a partner, and a figure, and each time the social form changed while the mathematics did not. Charisma required zero mechanism. Authority in this model is pure topology, many bonds pointing at one node, and the phase was built because the capability ledger named one-to-many bonds as a gap between these agents and the cases the program intends to model.",
@@ -257,7 +257,7 @@ export const posts: Post[] = [
   },
   {
     id: "when-the-center-stops-moving",
-    title: "When the center stops moving",
+    title: "P3.21",
     author: "Supervised by Bruno Risach",
     body: [
       "The first leader arena could not measure what happens when a leader is taken. A plain sudden storm holds a caught leader for roughly fifteen ticks, the coupling registration failed as declared at 1.3 against a required 2, and the bereavement registration ended void for power. The follow-up was designed for exactly those gaps and declared before it ran. In the mire, with grip 0.95 and the slow burn, a caught leader is held dying for roughly a hundred ticks in view of the thirty-nine followers bonded to it.",
@@ -267,7 +267,7 @@ export const posts: Post[] = [
   },
   {
     id: "capturing-the-circle",
-    title: "Capturing the circle",
+    title: "P3.20",
     author: "Supervised by Bruno Risach",
     body: [
       "This measurement began as a search for mass mourning. Losing a partner starves mourners at known rates, congregation grief had been unmeasurable three times, and the held-leader arena was built to supply the bereavement volume the earlier designs could not. At sharp attention it supplied almost none, for a reason the numbers state plainly. Followers of caught leaders died 109 of 112 on the declared seeds, and 264 of 264 in replication. The design built to count mourners counted deaths instead, because there were almost no mourners left, and in the replication there were none.",
@@ -277,7 +277,7 @@ export const posts: Post[] = [
   },
   {
     id: "every-death-was-a-mourners",
-    title: "Every death was a mourner's",
+    title: "P3.19",
     author: "Supervised by Bruno Risach",
     body: [
       "The arena was built for scarcity. Food cut to 40 sources, the mire's grip and slow burn active, attention at full sharpness over a faint whisper floor of 0.01, bonds at 0.8, and two social forms run on identical seeds, ten leaders with 390 followers in one mode, 200 pairs in the other, each on a declared seed set and again on a fresh one. Thousands of agents lived in those four arms, ranging far from their homes and each other to eat. The measured fact is one number repeated four times. Baseline starvation among agents who never lost anyone was 0.000 in every arm of both stages.",
@@ -287,7 +287,7 @@ export const posts: Post[] = [
   },
   {
     id: "a-fact-filed-open",
-    title: "A fact filed open",
+    title: "P3.18",
     author: "Supervised by Bruno Risach",
     body: [
       "The fact is a ratio with a replicated sign. A mourner embedded in a congregation starves at a quarter to half the rate of a mourner from a pair, 0.172 against 0.327 on the declared seeds and 0.076 against 0.307 on fresh ones, gaps of 15.5 and 23.1 points, both outside the registered five-point band, both the same direction. Only the direction is promoted, because the congregation arm is thin, five and thirteen deaths, and the two cohorts are selected by different geometry. The direction alone is the puzzle, since the model contains no comfort mechanism of any kind. Nothing in the code can console anything, so whatever protects these mourners is structural.",
@@ -297,7 +297,7 @@ export const posts: Post[] = [
   },
   {
     id: "mourning-at-the-granary",
-    title: "Mourning at the granary",
+    title: "P3.17",
     author: "Supervised by Bruno Risach",
     body: [
       "The suspicion was reasonable. Congregation mourners survive grief that kills pair mourners, congregations under scarcity disperse to forage, so perhaps the survivors were simply standing at the food when the loss arrived, mourning at the granary instead of at the death site. The test was built so that being wrong would be fatal to the theory. The registration reads, verbatim, 'median distance-to-food at loss is smaller for leader-mode bereaved than partner-mode bereaved, in each stage; if this fails, the explanation dies here and the report says so.' The instrument changed nothing, rerunning the original cells byte identically with config hashes verified against the stored rows, and added one measurement, each mourner's distance to the nearest active food source at the moment of its loss.",
@@ -307,7 +307,7 @@ export const posts: Post[] = [
   },
   {
     id: "the-pairs-would-not-separate",
-    title: "The pairs would not separate",
+    title: "P3.16",
     author: "Supervised by Bruno Risach",
     body: [
       "The design goal sounded simple, catch one partner in a disaster while the other stands free, so that rescue from outside could be measured cleanly. Every attempt failed the same way, because the pairs would not separate. 98.1 percent of caught agents are caught with their partner beside them. Bonded pairs live their whole lives at a mean distance of 1.2 in a world sixty units across, the storm that catches one catches both, and the helping hand is already inside the grip with the one who needs it.",
@@ -316,7 +316,7 @@ export const posts: Post[] = [
   },
   {
     id: "our-own-hand",
-    title: "Our own hand",
+    title: "P3.15",
     author: "Supervised by Bruno Risach",
     body: [
       "Bit-level reproducibility is this project's foundation, and for one day the foundation returned impossible answers. Two golden trajectories, both from the sight-on family, flipped between a bit-exact match and one consistent alternative, minutes apart, while eleven others never wavered. The response was a halt instead of a shrug. No golden verdict from the affected window was trusted in either direction, the in-flight phase was frozen on a branch as a forensic reference, main was rolled back to the last fully verified commit, and nothing half-verified was allowed to land.",
@@ -326,7 +326,7 @@ export const posts: Post[] = [
   },
   {
     id: "the-registry-is-the-product",
-    title: "The registry is the product",
+    title: "P3.14",
     author: "Supervised by Bruno Risach",
     body: [
       "Fifteen phases have run under one procedure. Every prediction is written down before anything runs, questions that could embarrass the program are registered with no desired direction, bars apply in each seed stage so a lucky cohort cannot carry a claim, manipulation checks sit upstream of headline tests with the power to kill them, and every finding replicates on fresh seeds or says plainly that it did not. The tests that forbid scripting the conclusions were committed before the mechanisms they constrain, and the git timestamps prove the order. The reproduction path is three commands, and every number in every article traces to an artifact carrying its seed and config hash.",
@@ -336,7 +336,7 @@ export const posts: Post[] = [
   },
   {
     id: "mourning-at-a-distance",
-    title: "Mourning at a distance",
+    title: "P3.13",
     author: "Supervised by Bruno Risach",
     body: [
       "This entry is an addendum to Phase 15, registered as such before it ran. Mass grief had gone unmeasured three times, because congregations die with their leaders. The fix used no new mechanism. Cutting food to 40 sources forces followers to range far from their leaders to eat, so a caught leader dies with its crowd scattered and alive. That made the additivity question askable as a fair pair, leader mode with 10 leaders and 390 followers against partner mode with 200 pairs, in the identical arena, on identical seeds, crowd grief against pair grief with everything else held fixed.",
@@ -349,7 +349,7 @@ export const posts: Post[] = [
   },
   {
     id: "authority-is-a-shape",
-    title: "Authority is a shape",
+    title: "P3.12",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 15 binds forty agents to one. The mechanism is nothing, which is the point. bond_target leader is initialization wiring plus one config field, the kernel is untouched, and the same one-line law that tethered agents to nests and bound pairs now holds a congregation around a figure. Charisma required zero mechanism. In this architecture, authority is a shape instead of a force.",
@@ -362,7 +362,7 @@ export const posts: Post[] = [
   },
   {
     id: "a-determinism-incident",
-    title: "A determinism incident",
+    title: "P3.11",
     author: "Supervised by Bruno Risach",
     body: [
       "This entry reports an incident instead of a phase. During Phase 15's build, the verification suite began returning results it should not be able to return. Two of the thirteen golden trajectories, both from the sight-on family, flipped between a bit-exact match and one consistent alternative, minutes apart, while the other eleven never wavered. Bit-level reproducibility is this project's foundation, so the build stopped and the anomaly was chased in order, per-array forensics, a three-way git bisection, a 24-process determinism canary across three dispatch conditions, and a clean-room clone with the day's edits reapplied step by step. The canary and the clean room came back clean every time. One real cause was found and permanently fixed, stale bytecode from rapid edit-run cycles, and verification now purges caches before it trusts anything. The flips then resumed anyway, under purged caches and byte-identical sources, including one fresh isolated process mismatching where four had just matched. The cause of those remaining flips is not established. The complete observation log is public in docs/INCIDENT-2026-07-24-determinism.md.",
@@ -371,7 +371,7 @@ export const posts: Post[] = [
   },
   {
     id: "the-liberation-effect",
-    title: "The liberation effect",
+    title: "P3.10",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 14 lets an agent's bond hear its partner's danger, and lets a partner's presence loosen the trap. Amendment 5 added exactly two things, both defaulting to zero and proven bit-inert across all twelve goldens. The care term folds the partner's peril into the bond, urgency becoming attachment times the clip of separation plus care times the partner's peril, where peril is the world's danger field read at the living partner's location, physics read at a place instead of a mind. A dead partner has no location, so grief stays exactly what it was. Assistance is the second addition, a living partner within reach scaling your effective snare by one minus help. The standing tripwires fenced the whole amendment without modification. The update law still names no drive, action code still cannot see integrity, and world code still cannot read drive state.",
@@ -384,7 +384,7 @@ export const posts: Post[] = [
   },
   {
     id: "the-threshold-vigil",
-    title: "The threshold vigil",
+    title: "P3.9",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 13 adds one switch and no new law. The switch is called prospect_sees_grip, it defaults to off, and at off every one of the eleven golden trajectories is unchanged bit for bit. When it is on, the grip's slowing enters the agent's rollout physics, which turns the lower-bound caveat of the last phase into an axis. The amendment extension carries the sentence that names what this phase is, quoted verbatim, 'what an agent knows about the world is itself an axis of the psychology space.'",
@@ -397,7 +397,7 @@ export const posts: Post[] = [
   },
   {
     id: "the-search-for-a-clear-eyed-death",
-    title: "The search for a clear-eyed death",
+    title: "P3.8",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 12 changed nothing in the agent. It was a search, and its question was registered with no desired direction. The spec reads, verbatim, 'the grid contains at least one clear-eyed cell, or it does not. Reported either way, with the full grid.' The definition of clear-eyed was declared before any run, also verbatim, an entry decision counts 'when, at the tick the agent chose return toward its trapped partner, its own rollout's safety cost for that action (the seen exposure, in danger-tick units), scaled by the world's burn rate, meets or exceeds the agent's remaining integrity: it chose a path whose seen price is at least its life.' A clear-eyed cell required a pull ratio of at least 2 over its own unbonded control, an entered share of at least 0.7 among the pull group's dead, and flags on at least half of the dead entrants. One declared caveat travels with everything below. The seen price is a lower bound, because the grip's slowing is absent from the agent's physics, so the flag is conservative and the emptiness of the region is understated, which strengthens it.",
@@ -411,7 +411,7 @@ export const posts: Post[] = [
   },
   {
     id: "a-floor-under-silence",
-    title: "A floor under silence",
+    title: "P3.7",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 10 puts a floor under silence. The attended law gains one clamp, heard = u * max(w / max w, attention_floor) ^ kappa, with the floor declared in config and defaulting to zero. Floor zero is the previous law exactly, and all eight frozen goldens were verified bit-identical there before the commit. Phase 9's discoveries reproduce untouched at floor zero. Nothing found was erased. The cliff became the boundary of an axis, which is what this constitution requires when a result is stark. You measure it instead of editing it away.",
@@ -424,7 +424,7 @@ export const posts: Post[] = [
   },
   {
     id: "the-zero-trap",
-    title: "The zero trap",
+    title: "P3.6",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 9 runs no new mechanism. It is a measurement phase, 264 declared runs and one labeled post-hoc cell, with no kernel change, no config change, and no golden churn. It crosses bounded attention with the place map, and four predictions were registered in the spec before any run.",
@@ -437,7 +437,7 @@ export const posts: Post[] = [
   },
   {
     id: "bounded-attention",
-    title: "Bounded attention",
+    title: "P3.5",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 7 changes one line in the kernel, and it is the first change to the drive system since Phase 2. Each drive's weight now chases what the agent hears instead of what is there. The heard urgency is the raw urgency scaled by the drive's share of the leading weight, raised to a declared constant kappa, heard = u * (w / max w) ^ kappa. At kappa 0 the factor is exactly 1, and every prior result is preserved bit for bit against all six frozen goldens. Two consequences follow from the arithmetic alone. Dominance maintains itself, because a suppressed drive's weight cannot rise, and staying small keeps it suppressed. And a suppressed need breaks through only at the brink, when its raw urgency approaches the leading weight itself.",
@@ -452,7 +452,7 @@ export const posts: Post[] = [
   },
   {
     id: "traits-drawn-at-birth",
-    title: "Traits drawn at birth",
+    title: "P3.4",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 4 gives every agent its own tempo. Amendment 2 asserts that heterogeneity is initialization instead of circumstance. Traits are drawn once at birth, from distributions declared in config, and are immutable for life. Assigning them any other way is now a named violation, and so is choosing distributions to make a run produce sacrifice. The kernel change is one word. The law's denominator becomes each agent's own clock instead of the shared one, and at zero spread the arithmetic reproduces every earlier golden bit for bit.",
@@ -462,7 +462,7 @@ export const posts: Post[] = [
   },
   {
     id: "home-next-to-the-danger",
-    title: "The home next to the danger",
+    title: "P3.3",
     author: "Supervised by Bruno Risach",
     body: [
       "Phase 3 put the home next to the danger. Storms now strike the nests, and the decision code did not change to meet them: core/drives.py and core/action.py have an empty diff this phase, so every death below was produced by machinery that predates the collision. Two populations, identical except that one is bonded to its nest and one is not, ten seeds each: storm mortality 29% against 0%, bonded higher in all ten. The spec demanded a 5 point excess to count as a collision; the model delivered 29.",
@@ -473,7 +473,7 @@ export const posts: Post[] = [
   },
   {
     id: "attachment-and-home",
-    title: "Attachment and home",
+    title: "P3.2",
     author: "Supervised by Bruno Risach",
     body: [
       "Our next phase starts with five nests, and every agent is born at one. Attachment grows while an agent is home, about 500 ticks to full, and fades while it is away, about 5,000 ticks. Separation distress is a fourth drive, attachment times distance from home, and returning home is a fifth action. The weight obeys the same one-line law as everything else, tau 60, the slowest thing an agent feels. No new mechanism anywhere.",
@@ -483,7 +483,7 @@ export const posts: Post[] = [
   },
   {
     id: "inversion-is-public",
-    title: "Inversion is public",
+    title: "P3.1",
     author: "Supervised by Bruno Risach",
     body: [
       "Inversion is public. github.com/myopicdelirium/inversion holds the constitution, the spec, the tests, the implementation, and the validation, committed in that order. It exists to see whether a commitment could come to outrank survival without anyone writing that outcome into the code. The entire mechanism is w += (u - w) / tau. A weight drifts toward its urgency at a fixed rate, and everything else is bookkeeping.",
