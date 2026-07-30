@@ -47,15 +47,18 @@ export default function PlateCanvas({ kind, className, seed = 0 }: { kind: Kind;
     // Plate palette read from the active theme tokens, cross-faded on theme change
     // so the art turns day → night in sync with the chrome. Data plates elsewhere
     // stay fixed cream; only these expressive homepage figures theme.
-    type Pal = { bg: number[]; ink: number[]; acc: number[] };
+    type Pal = { bg: number[]; bg2: number[]; ink: number[]; acc: number[] };
     const triplet = (s: string, fb: number[]) => {
       const p = s.trim().split(/\s+/).map(Number);
       return p.length >= 3 && !p.some(isNaN) ? [p[0], p[1], p[2]] : fb;
     };
     const readPal = (): Pal => {
       const cs = getComputedStyle(document.documentElement);
+      const bg = triplet(cs.getPropertyValue("--plate-bg"), [244, 239, 228]);
       return {
-        bg: triplet(cs.getPropertyValue("--plate-bg"), [244, 239, 228]),
+        bg,
+        // horizon color for the ground gradient; falls back to bg, which renders flat
+        bg2: triplet(cs.getPropertyValue("--plate-bg2"), bg),
         ink: triplet(cs.getPropertyValue("--plate-ink"), [38, 30, 20]),
         acc: triplet(cs.getPropertyValue("--plate-acc"), [246, 181, 69]),
       };
@@ -66,7 +69,7 @@ export default function PlateCanvas({ kind, className, seed = 0 }: { kind: Kind;
     const curPal = (now: number): Pal => {
       const t = palStart ? Math.min(1, (now - palStart) / PAL_DUR) : 1;
       if (t >= 1) return palTo;
-      return { bg: lerp3(palFrom.bg, palTo.bg, t), ink: lerp3(palFrom.ink, palTo.ink, t), acc: lerp3(palFrom.acc, palTo.acc, t) };
+      return { bg: lerp3(palFrom.bg, palTo.bg, t), bg2: lerp3(palFrom.bg2, palTo.bg2, t), ink: lerp3(palFrom.ink, palTo.ink, t), acc: lerp3(palFrom.acc, palTo.acc, t) };
     };
     // Track the active theme by reading the cheap dataset string each frame; only
     // re-read the (costlier) computed palette when it actually changes. This is
@@ -132,7 +135,14 @@ export default function PlateCanvas({ kind, className, seed = 0 }: { kind: Kind;
     }
     function drawConsensus(now: number, ax: number, ay: number) {
       const P = curPal(now), I = P.ink, A = P.acc;
-      ctx!.fillStyle = "rgb(" + Math.round(P.bg[0]) + "," + Math.round(P.bg[1]) + "," + Math.round(P.bg[2]) + ")";
+      // ground: a radial wash rising from the bottom edge, bg2 at the horizon
+      // fading to bg overhead; where bg2 equals bg this is a flat fill
+      const sunX = W / 2, sunY = H * 1.06;
+      const ground = ctx!.createRadialGradient(sunX, sunY, 0, sunX, sunY, Math.hypot(W / 2, sunY));
+      const rgb = (c: number[]) => "rgb(" + Math.round(c[0]) + "," + Math.round(c[1]) + "," + Math.round(c[2]) + ")";
+      ground.addColorStop(0, rgb(P.bg2));
+      ground.addColorStop(1, rgb(P.bg));
+      ctx!.fillStyle = ground;
       ctx!.fillRect(0, 0, W, H); ctx!.lineCap = "round";
       const R = 0.21 * Math.min(W, H), Ra = R * 0.85, len = sp * 0.82;
       for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {

@@ -366,6 +366,10 @@ html.lenis, html.lenis body { height: auto; }
   --nav-active-bg: rgba(244, 238, 216, 0.10);
   /* homepage art plate — expressive figures theme with the light (data plates stay fixed cream) */
   --plate-bg: 244 239 228;
+  /* horizon color: the plate background grades to this at its bottom edge, a
+     rising sun in the site's gold; themes without the effect set it equal to
+     --plate-bg */
+  --plate-bg2: 245 219 172;
   --plate-ink: 38 30 20;
   --plate-acc: 246 181 69;
 }
@@ -390,6 +394,7 @@ html.lenis, html.lenis body { height: auto; }
   --nav-active-bg: rgba(236, 228, 213, 0.08);
   /* inverted night plate — deep indigo ground, pale glowing strokes, amber agent */
   --plate-bg: 29 39 64;
+  --plate-bg2: 29 39 64;
   --plate-ink: 214 208 192;
   --plate-acc: 236 158 64;
 }
@@ -414,6 +419,7 @@ html.lenis, html.lenis body { height: auto; }
   --nav-active-bg: rgba(240, 234, 224, 0.09);
   /* noon plate — "fern": inverted deep-green field, pale strokes, gold agent */
   --plate-bg: 40 58 40;
+  --plate-bg2: 40 58 40;
   --plate-ink: 214 226 206;
   --plate-acc: 233 174 70;
 }
