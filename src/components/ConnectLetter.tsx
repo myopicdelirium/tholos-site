@@ -43,7 +43,23 @@ function CopyButton({ value }: { value: string }) {
   );
 }
 
-const channels = [
+const channels: Array<{ label: string; value: string; href: string; note?: string }> = [
+  {
+    label: "Felix Tinio",
+    value: "felixtinio@myopicdelirium.com",
+    href: "mailto:felixtinio@myopicdelirium.com",
+    note: "General inquiries and press.",
+  },
+  {
+    label: "Sales",
+    value: "sales@myopicdelirium.com",
+    href: "mailto:sales@myopicdelirium.com",
+  },
+  {
+    label: "Invoices",
+    value: "invoices@myopicdelirium.com",
+    href: "mailto:invoices@myopicdelirium.com",
+  },
   {
     label: "Email",
     value: "myopicdelirium@gmail.com",
@@ -207,6 +223,9 @@ export default function ConnectLetter() {
                       >
                         {ch.value}
                       </a>
+                      {ch.note ? (
+                        <p className="mt-1 text-[11px] leading-relaxed text-[var(--nav-muted)]">{ch.note}</p>
+                      ) : null}
                     </div>
                     <div className="mt-4">
                       <CopyButton value={ch.value} />
