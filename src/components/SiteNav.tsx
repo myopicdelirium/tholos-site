@@ -177,7 +177,14 @@ export default function SiteNav() {
           <aside className="absolute right-0 top-0 h-full w-[min(440px,92vw)] border-l border-[var(--nav-line)] bg-[var(--nav-bg)] shadow-paper">
             <div className="flex h-full flex-col p-6">
               <div className="flex items-start justify-between gap-6">
-                <Link href="/" className="group block" onClick={() => setOpen(false)}>
+                <Link
+                  href="/"
+                  onClick={() => setOpen(false)}
+                  className={cx(
+                    "block border border-[var(--nav-line)] p-3 transition-colors hover:bg-[var(--nav-active-bg)]",
+                    pathname === "/" && "bg-[var(--nav-active-bg)]"
+                  )}
+                >
                   <div className="text-[11px] uppercase tracking-[0.45em] text-[var(--site-accent)]">MYOPIC</div>
                   <div className="mt-1 text-[11px] uppercase tracking-[0.45em] text-[var(--site-accent)]">DELIRIUM</div>
                 </Link>
@@ -199,12 +206,6 @@ export default function SiteNav() {
 
               <nav className="mt-5 flex-1">
                 <ul className="space-y-1">
-                  <li>
-                    <Link href="/" onClick={() => setOpen(false)} className={cx(itemBase, itemState(pathname === "/"))}>
-                      Home
-                    </Link>
-                  </li>
-
                   <li>
                     <Link href="/services" onClick={() => setOpen(false)} className={cx(itemBase, itemState(isActive("/services")))}>
                       Services
