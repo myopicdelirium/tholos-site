@@ -205,6 +205,12 @@ export default function SiteNav() {
                     </Link>
                   </li>
 
+                  <li>
+                    <Link href="/services" onClick={() => setOpen(false)} className={cx(itemBase, itemState(isActive("/services")))}>
+                      Services
+                    </Link>
+                  </li>
+
                   <Group label="Projects" active={projectActive} open={projectsOpen} onToggle={() => setProjectsOpen((v) => !v)} items={projectItems} />
                   <Group label="Opportunities" active={opportunityActive} open={opportunitiesOpen} onToggle={() => setOpportunitiesOpen((v) => !v)} items={opportunityItems} />
                   <Group label="Restricted" active={restrictedActive} open={restrictedOpen} onToggle={() => setRestrictedOpen((v) => !v)} items={restrictedItems} />
