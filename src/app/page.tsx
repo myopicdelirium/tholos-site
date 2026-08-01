@@ -29,7 +29,7 @@ export default function Home() {
             produce.
           </p>
           <p className="mt-8 max-w-[45rem] hyphens-auto text-justify text-[clamp(14.5px,1.1vw,16px)] leading-[1.85] text-[var(--site-body)]">
-            Using agent-based modeling, we specify how one individual behaves, what it needs, what it can perceive,
+            Using agent-based modelling, we specify how one individual behaves, what it needs, what it can perceive,
             what it does about it, and then run many of them at once and observe the society that results. The durable
             finding of the field, going back to Thomas Schelling, is that the society is usually not a scaled-up
             version of anyone&rsquo;s intention. Mild individual preferences produce extreme collective outcomes. Nobody
@@ -37,9 +37,9 @@ export default function Home() {
           </p>
           <p className="mt-5 max-w-[45rem] hyphens-auto text-justify text-[clamp(14.5px,1.1vw,16px)] leading-[1.85] text-[var(--site-body)]">
             The work here starts from ordinary survival with agents in a landscape with water, food, heat, and
-            predators and builds toward agents with the constraints that actually characterize human beings: memory
+            predators and builds toward agents with the constraints that actually characterise human beings: memory
             that distorts what it stores, attention too narrow to hold everything that matters, needs that only become
-            prioritized once more basic ones satisfied. The aim is not to show that some phenomenon can emerge, but to
+            prioritised once more basic ones are satisfied. The aim is not to show that some phenomenon can emerge, but to
             model that phenomenon carefully enough that its accompaniments become visible. That includes the costs,
             dependencies, and side effects that travel with it and that we routinely fail to notice in ourselves. This
             site holds the work we can{" "}
