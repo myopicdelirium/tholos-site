@@ -19,7 +19,7 @@ export default function NewVisualsPage() {
         <div className="mt-14">
           <div className="smallcaps text-[11px] text-[var(--site-accent)]">Instrument</div>
           <h2 className="mt-2 md-display text-[32px] leading-[1.06] tracking-[-0.01em] text-[var(--site-ink)]">
-            The Told Place, Severed
+            TTP-S
           </h2>
           <div className="mt-6">
             <SeveredToldPlace />
@@ -29,7 +29,7 @@ export default function NewVisualsPage() {
         <div className="mt-20 border-t border-[var(--site-line)] pt-14">
           <div className="smallcaps text-[11px] text-[var(--site-accent)]">Instrument</div>
           <h2 className="mt-2 md-display text-[32px] leading-[1.06] tracking-[-0.01em] text-[var(--site-ink)]">
-            The Told Place
+            TTP
           </h2>
           <div className="mt-6">
             <TheToldPlace />
@@ -39,7 +39,7 @@ export default function NewVisualsPage() {
         <div className="mt-20 border-t border-[var(--site-line)] pt-14">
           <div className="smallcaps text-[11px] text-[var(--site-accent)]">Instrument</div>
           <h2 className="mt-2 md-display text-[32px] leading-[1.06] tracking-[-0.01em] text-[var(--site-ink)]">
-            The Severed Twin
+            TST
           </h2>
           <div className="mt-6">
             <SeveredTwin />
