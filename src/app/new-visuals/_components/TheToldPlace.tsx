@@ -984,7 +984,7 @@ export default function TheToldPlace() {
         c.stroke()
       }
       c.fillStyle = PAL.muted
-      c.font = "10px ui-monospace, Menlo, monospace"
+      c.font = `10px ${getComputedStyle(document.body).fontFamily}`
       c.fillText("population", 6, 12)
       c.fillStyle = PAL.cb
       c.fillText("believers", 76, 12)
@@ -1122,7 +1122,7 @@ export default function TheToldPlace() {
         aria-label="Population and count of agents holding the danger belief over time"
       />
 
-      <div className="twv-tables mono mt-5 grid gap-6 md:grid-cols-3 md:justify-between">
+      <div className="twv-tables mt-5 grid gap-6 md:grid-cols-3 md:justify-between">
         <table>
           <caption>state</caption>
           <tbody>
@@ -1155,7 +1155,7 @@ export default function TheToldPlace() {
         </table>
       </div>
 
-      <div className="twv-tables mono mt-5">
+      <div className="twv-tables mt-5">
         <table>
           <caption>parameters</caption>
           <tbody>
