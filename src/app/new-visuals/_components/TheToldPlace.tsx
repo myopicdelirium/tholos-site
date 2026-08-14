@@ -476,7 +476,7 @@ function step(w: World) {
   w.t++
 }
 
-const SPEEDS = [1, 2, 4]
+const SPEEDS = [1, 4, 16]
 const SCALE = 10
 const SIDE = 1000
 
@@ -503,27 +503,144 @@ export default function TheToldPlace() {
     // ticks accumulate in a cell and decays to ruin when unused.
     const CELL = 0.8
     const dwell = new Map<number, { level: number; last: number }>()
-    const dayLen = 1600
 
     const buildGround = (s: number) => {
       const rr = mulberry32((s ^ 0x9e3779b9) >>> 0)
       gctx.clearRect(0, 0, SIDE, SIDE)
-      gctx.fillStyle = "#1d2740"
+      gctx.fillStyle = "#2f4a2a"
       gctx.fillRect(0, 0, SIDE, SIDE)
-      // scrubland stipple
-      for (let k = 0; k < 3200; k++) {
+      // landcover mosaic: irregular stands of forest, meadow, dry grass
+      for (let b = 0; b < 26; b++) {
+        const bx = rr() * SIDE
+        const by = rr() * SIDE
+        const br = 40 + rr() * 110
+        const kind = rr()
+        const q1 = rr() * Math.PI * 2
+        const q2 = rr() * Math.PI * 2
+        gctx.beginPath()
+        for (let a = 0; a <= 40; a++) {
+          const th = (a / 40) * Math.PI * 2
+          const rad =
+            br *
+            (1 +
+              0.35 * Math.sin(2 * th + q1) +
+              0.22 * Math.sin(5 * th + q2) +
+              0.12 * Math.sin(9 * th + q1 + q2))
+          const x = bx + rad * Math.cos(th)
+          const y = by + rad * Math.sin(th)
+          if (a === 0) gctx.moveTo(x, y)
+          else gctx.lineTo(x, y)
+        }
+        gctx.closePath()
+        gctx.fillStyle =
+          kind < 0.4
+            ? "rgba(26,48,24,0.28)"
+            : kind < 0.72
+              ? "rgba(116,148,74,0.14)"
+              : "rgba(148,150,82,0.11)"
+        gctx.fill()
+      }
+      // canopy: clumped crowns that cast shadow, so cover reads as trees
+      for (let cl = 0; cl < 620; cl++) {
+        const ccx = rr() * SIDE
+        const ccy = rr() * SIDE
+        const crowd = 6 + Math.floor(rr() * 13)
+        const tone = rr()
+        for (let m = 0; m < crowd; m++) {
+          const x = ccx + (rr() + rr() - 1) * 10
+          const y = ccy + (rr() + rr() - 1) * 10
+          const sz = 1.4 + rr() * 2.2
+          gctx.fillStyle = "rgba(14,26,14,0.3)"
+          gctx.beginPath()
+          gctx.arc(x + 0.9, y + 1.1, sz * 0.62, 0, 2 * Math.PI)
+          gctx.fill()
+          gctx.fillStyle =
+            tone < 0.5
+              ? `rgba(74,112,54,${0.3 + rr() * 0.14})`
+              : tone < 0.82
+                ? `rgba(54,88,44,${0.32 + rr() * 0.14})`
+                : `rgba(104,132,62,${0.26 + rr() * 0.12})`
+          gctx.beginPath()
+          gctx.arc(x, y, sz * 0.58, 0, 2 * Math.PI)
+          gctx.fill()
+        }
+      }
+      // loose scrub between the stands
+      for (let k = 0; k < 3600; k++) {
         const x = rr() * SIDE
         const y = rr() * SIDE
+        const sz = 0.7 + rr() * 1.4
         const g = rr()
         gctx.fillStyle =
-          g < 0.5
-            ? "rgba(74,90,82,0.05)"
-            : g < 0.8
-              ? "rgba(61,74,85,0.05)"
-              : "rgba(120,124,100,0.04)"
-        const r = 1 + rr() * 2.2
-        gctx.fillRect(x, y, r, r)
+          g < 0.6 ? "rgba(112,140,74,0.18)" : "rgba(148,152,84,0.13)"
+        gctx.fillRect(x, y, sz, sz)
       }
+      // the river: enters northwest, strings three settlements, leaves southeast
+      const RIV: Array<[number, number]> = [
+        [-60, 0.16 * SIDE],
+        [P.nests[1][0] * SCALE, P.nests[1][1] * SCALE],
+        [P.nests[0][0] * SCALE, P.nests[0][1] * SCALE],
+        [P.nests[4][0] * SCALE, P.nests[4][1] * SCALE],
+        [SIDE + 60, 0.94 * SIDE],
+      ]
+      const crv = (a: number, b: number, c: number, d: number, u: number) =>
+        0.5 *
+        (2 * b +
+          (-a + c) * u +
+          (2 * a - 5 * b + 4 * c - d) * u * u +
+          (-a + 3 * b - 3 * c + d) * u * u * u)
+      const rp: Array<[number, number]> = []
+      for (let i = 0; i < RIV.length - 1; i++) {
+        const p0 = RIV[Math.max(0, i - 1)]
+        const p1 = RIV[i]
+        const p2 = RIV[i + 1]
+        const p3 = RIV[Math.min(RIV.length - 1, i + 2)]
+        for (let a = 0; a < 44; a++) {
+          const u = a / 44
+          rp.push([
+            crv(p0[0], p1[0], p2[0], p3[0], u),
+            crv(p0[1], p1[1], p2[1], p3[1], u),
+          ])
+        }
+      }
+      const mph = rr() * Math.PI * 2
+      const mp2 = rr() * Math.PI * 2
+      const rpts = rp.map(([x, y], i) => {
+        const j = Math.min(rp.length - 1, i + 1)
+        const dx = rp[j][0] - x
+        const dy = rp[j][1] - y
+        const L = Math.hypot(dx, dy) || 1
+        const off = 13 * Math.sin(i * 0.055 + mph) + 5 * Math.sin(i * 0.16 + mp2)
+        return [x - (dy / L) * off, y + (dx / L) * off] as [number, number]
+      })
+      // riparian growth hugging the banks
+      for (const [x, y] of rpts) {
+        for (let d = 0; d < 3; d++) {
+          const th = rr() * Math.PI * 2
+          const rad = 8 + rr() * rr() * 22
+          gctx.fillStyle = `rgba(64,110,52,${Math.max(0.06, 0.4 - rad * 0.012)})`
+          const sz = 1.2 + rr() * 2
+          gctx.fillRect(x + rad * Math.cos(th), y + rad * Math.sin(th), sz, sz)
+        }
+      }
+      gctx.lineJoin = "round"
+      gctx.lineCap = "round"
+      for (let i = 1; i < rpts.length; i++) {
+        gctx.strokeStyle = "#2a5d84"
+        gctx.lineWidth = 7.5 + 6 * (i / rpts.length)
+        gctx.beginPath()
+        gctx.moveTo(rpts[i - 1][0], rpts[i - 1][1])
+        gctx.lineTo(rpts[i][0], rpts[i][1])
+        gctx.stroke()
+      }
+      gctx.strokeStyle = "rgba(88,150,196,0.5)"
+      gctx.lineWidth = 3
+      gctx.beginPath()
+      for (let i = 0; i < rpts.length; i++) {
+        if (i === 0) gctx.moveTo(rpts[i][0], rpts[i][1])
+        else gctx.lineTo(rpts[i][0], rpts[i][1])
+      }
+      gctx.stroke()
       // each nest is a waterhole with greenery, irregular by seed
       for (let k = 0; k < P.nests.length; k++) {
         const cx = P.nests[k][0] * SCALE
@@ -542,7 +659,7 @@ export default function TheToldPlace() {
         for (let d = 0; d < 340; d++) {
           const th = rr() * Math.PI * 2
           const rad = shore(th) + rr() * rr() * 46
-          gctx.fillStyle = `rgba(69,96,74,${0.3 - 0.24 * Math.min(1, (rad - base) / 50)})`
+          gctx.fillStyle = `rgba(64,110,52,${0.5 - 0.4 * Math.min(1, (rad - base) / 50)})`
           const sz = 1.2 + rr() * 2.4
           gctx.fillRect(cx + rad * Math.cos(th), cy + rad * Math.sin(th), sz, sz)
         }
@@ -557,7 +674,7 @@ export default function TheToldPlace() {
           else gctx.lineTo(x, y)
         }
         gctx.closePath()
-        gctx.fillStyle = "#25464e"
+        gctx.fillStyle = "#2a5d84"
         gctx.fill()
         gctx.beginPath()
         for (let a = 0; a <= 48; a++) {
@@ -569,7 +686,7 @@ export default function TheToldPlace() {
           else gctx.lineTo(x, y)
         }
         gctx.closePath()
-        gctx.fillStyle = "rgba(52,92,100,0.8)"
+        gctx.fillStyle = "rgba(88,150,196,0.75)"
         gctx.fill()
       }
     }
@@ -633,7 +750,7 @@ export default function TheToldPlace() {
           x2: w.x[j] * SCALE,
           y2: w.y[j] * SCALE,
           kind,
-          ttl: 40,
+          ttl: 30,
         })
       }
       if (w.t % 2 === 0) {
@@ -655,6 +772,13 @@ export default function TheToldPlace() {
         if (m !== MODE.GO_FOOD && m !== MODE.GO_HOME) continue
         tctx.fillRect(w.x[i] * SCALE - 0.6, w.y[i] * SCALE - 0.6, 1.2, 1.2)
       }
+      // roads fade by disuse, per tick so pacing cannot change them
+      tctx.save()
+      tctx.globalCompositeOperation = "destination-out"
+      tctx.fillStyle = "rgba(0,0,0,0.004)"
+      tctx.fillRect(0, 0, SIDE, SIDE)
+      tctx.restore()
+      for (const e of edges) e.ttl--
       // dwellings accrue where agents rest
       for (let i = 0; i < w.cap; i++) {
         if (!w.alive[i] || w.mode[i] !== MODE.REST) continue
@@ -669,13 +793,11 @@ export default function TheToldPlace() {
       }
     }
 
-    const paceFor = () => 3 * SPEEDS[speedIdx] * 60
+    const paceFor = () => 12 * SPEEDS[speedIdx]
 
     const draw = () => {
       const c = sctx
       const I = stormIntensity(w.t)
-      const day = 0.55 + 0.45 * Math.sin((2 * Math.PI * w.t) / dayLen)
-      const night = 1 - day
       c.drawImage(ground, 0, 0)
       // fields: parcel quilts at the patches, fill tracks stock
       for (let k = 0; k < P.patches; k++) {
@@ -695,11 +817,6 @@ export default function TheToldPlace() {
         }
       }
       // roads
-      tctx.save()
-      tctx.globalCompositeOperation = "destination-out"
-      tctx.fillStyle = "rgba(0,0,0,0.011)"
-      tctx.fillRect(0, 0, SIDE, SIDE)
-      tctx.restore()
       c.drawImage(trail, 0, 0)
       // dwellings and ruins
       for (const [key, d] of dwell) {
@@ -717,7 +834,7 @@ export default function TheToldPlace() {
         c.fillStyle = `rgba(180,168,146,${alpha})`
         c.fillRect(cx - sz / 2, cy - sz / 2, sz, sz * 0.78)
         if (!ruin) {
-          c.strokeStyle = "rgba(24,30,44,0.5)"
+          c.strokeStyle = "rgba(22,36,22,0.55)"
           c.lineWidth = 0.6
           c.strokeRect(cx - sz / 2, cy - sz / 2, sz, sz * 0.78)
         }
@@ -737,22 +854,13 @@ export default function TheToldPlace() {
         c.lineTo(x - 1.8, y + 1.8)
         c.stroke()
       }
-      // night falls
-      if (night > 0.04) {
-        c.fillStyle = `rgba(5,9,20,${0.52 * night})`
-        c.fillRect(0, 0, SIDE, SIDE)
-        // lit windows where someone is home
-        for (let i = 0; i < w.cap; i++) {
-          if (!w.alive[i] || w.mode[i] !== MODE.REST) continue
-          const x = w.x[i] * SCALE
-          const y = w.y[i] * SCALE
-          c.fillStyle = `rgba(244,196,110,${0.75 * night})`
-          c.fillRect(x - 0.9, y - 0.9, 1.8, 1.8)
-          c.fillStyle = `rgba(244,196,110,${0.1 * night})`
-          c.beginPath()
-          c.arc(x, y, 4.4, 0, 2 * Math.PI)
-          c.fill()
-        }
+      // a steady warm point where someone is home; no cycle, no flash
+      for (let i = 0; i < w.cap; i++) {
+        if (!w.alive[i] || w.mode[i] !== MODE.REST) continue
+        const x = w.x[i] * SCALE
+        const y = w.y[i] * SCALE
+        c.fillStyle = "rgba(244,196,110,0.55)"
+        c.fillRect(x - 0.9, y - 0.9, 1.8, 1.8)
       }
       // storm
       if (I > 0) {
@@ -774,7 +882,7 @@ export default function TheToldPlace() {
       }
       // testimony
       for (const e of edges) {
-        const a = e.ttl / 40
+        const a = Math.max(0, e.ttl / 30)
         c.beginPath()
         c.moveTo(e.x1, e.y1)
         c.lineTo(e.x2, e.y2)
@@ -784,7 +892,6 @@ export default function TheToldPlace() {
             : `rgba(214,208,192,${0.28 * a})`
         c.lineWidth = e.kind === 1 ? 1.1 : 0.6
         c.stroke()
-        e.ttl--
       }
       edges = edges.filter((e) => e.ttl > 0)
       // the living, as motes; the resting are indoors
@@ -795,7 +902,7 @@ export default function TheToldPlace() {
         const child = w.age[i] < P.growTicks
         c.beginPath()
         c.arc(x, y, child ? 0.8 : 1.15, 0, 2 * Math.PI)
-        c.fillStyle = `rgba(224,218,200,${0.9 - 0.45 * night})`
+        c.fillStyle = "rgba(224,218,200,0.9)"
         c.fill()
         if (w.mode[i] === MODE.EAT) {
           c.fillStyle = "rgba(236,158,64,0.6)"
@@ -1063,7 +1170,6 @@ export default function TheToldPlace() {
               <td>hop loss</td><td>0.95</td>
             </tr>
             <tr>
-              <td>day cycle (render)</td><td>1600</td>
               <td>storm onset</td><td>1200</td>
               <td>season</td><td>2500</td>
               <td>length</td><td>200</td>
