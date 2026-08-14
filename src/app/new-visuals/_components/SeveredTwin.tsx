@@ -504,7 +504,7 @@ export default function SeveredTwin() {
         c.stroke()
       }
       c.fillStyle = PAL.muted
-      c.font = "10px ui-monospace, Menlo, monospace"
+      c.font = `10px ${getComputedStyle(document.body).fontFamily}`
       c.fillText("alive", 6, 12)
       c.fillText("200", W - 24, yFor(200) + 3)
       c.fillText("120", W - 24, yFor(120) + 3)
@@ -548,7 +548,7 @@ export default function SeveredTwin() {
       }
       c.stroke()
       c.fillStyle = PAL.muted
-      c.font = "10px ui-monospace, Menlo, monospace"
+      c.font = `10px ${getComputedStyle(document.body).fontFamily}`
       c.fillText("mean twin separation", 6, 12)
       c.fillText(`t=${P.onset}`, ox + 5, 12)
     }
@@ -716,7 +716,6 @@ export default function SeveredTwin() {
         .twv-tables caption {
           text-align: left; font-size: 10px; letter-spacing: 0.18em;
           text-transform: uppercase; color: var(--site-accent); padding-bottom: 6px;
-          font-family: ui-sans-serif, system-ui, sans-serif;
         }
         .twv-tables th, .twv-tables td {
           padding: 3px 10px 3px 0; text-align: right; font-weight: 400; white-space: nowrap;
@@ -753,7 +752,7 @@ export default function SeveredTwin() {
       <canvas data-pop width={1140} height={80} className="mt-2" aria-label="Living population of each world over time" />
       <canvas data-spark width={1140} height={70} className="mt-2" aria-label="Mean separation between twin agents over time" />
 
-      <div className="twv-tables mono mt-5 grid gap-6 md:grid-cols-3 md:justify-between">
+      <div className="twv-tables mt-5 grid gap-6 md:grid-cols-3 md:justify-between">
         <table>
           <caption>state</caption>
           <tbody>
@@ -793,7 +792,7 @@ export default function SeveredTwin() {
         </table>
       </div>
 
-      <div className="twv-tables mono mt-5">
+      <div className="twv-tables mt-5">
         <table>
           <caption>parameters</caption>
           <tbody>

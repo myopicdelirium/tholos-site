@@ -770,7 +770,7 @@ export default function SeveredToldPlace() {
         c.stroke()
       }
       c.fillStyle = PAL.muted
-      c.font = "10px ui-monospace, Menlo, monospace"
+      c.font = `10px ${getComputedStyle(document.body).fontFamily}`
       c.fillText(label + " A", 6, 12)
       c.fillStyle = PAL.cb
       c.fillText(label + " B", 90, 12)
@@ -904,7 +904,7 @@ export default function SeveredToldPlace() {
         aria-label="Believers in each world over time"
       />
 
-      <div className="twv-tables mono mt-5 grid gap-6 md:grid-cols-2 md:justify-between">
+      <div className="twv-tables mt-5 grid gap-6 md:grid-cols-2 md:justify-between">
         <table>
           <caption>state</caption>
           <tbody>
@@ -933,7 +933,7 @@ export default function SeveredToldPlace() {
         </table>
       </div>
 
-      <div className="twv-tables mono mt-5">
+      <div className="twv-tables mt-5">
         <table>
           <caption>storm deaths by season</caption>
           <tbody>
@@ -943,7 +943,7 @@ export default function SeveredToldPlace() {
         </table>
       </div>
 
-      <div className="twv-tables mono mt-5">
+      <div className="twv-tables mt-5">
         <table>
           <caption>parameters</caption>
           <tbody>
