@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import SeveredTwin from "./_components/SeveredTwin"
 import TheToldPlace from "./_components/TheToldPlace"
+import SeveredToldPlace from "./_components/SeveredToldPlace"
 
 export const metadata: Metadata = {
   title: "New Visuals · Myopic Delirium",
@@ -18,7 +19,17 @@ export default function NewVisualsPage() {
         <div className="mt-14">
           <div className="smallcaps text-[11px] text-[var(--site-accent)]">Instrument</div>
           <h2 className="mt-2 md-display text-[32px] leading-[1.06] tracking-[-0.01em] text-[var(--site-ink)]">
-            The Told Place
+            TTP-S
+          </h2>
+          <div className="mt-6">
+            <SeveredToldPlace />
+          </div>
+        </div>
+
+        <div className="mt-20 border-t border-[var(--site-line)] pt-14">
+          <div className="smallcaps text-[11px] text-[var(--site-accent)]">Instrument</div>
+          <h2 className="mt-2 md-display text-[32px] leading-[1.06] tracking-[-0.01em] text-[var(--site-ink)]">
+            TTP
           </h2>
           <div className="mt-6">
             <TheToldPlace />
@@ -28,7 +39,7 @@ export default function NewVisualsPage() {
         <div className="mt-20 border-t border-[var(--site-line)] pt-14">
           <div className="smallcaps text-[11px] text-[var(--site-accent)]">Instrument</div>
           <h2 className="mt-2 md-display text-[32px] leading-[1.06] tracking-[-0.01em] text-[var(--site-ink)]">
-            The Severed Twin
+            TST
           </h2>
           <div className="mt-6">
             <SeveredTwin />
