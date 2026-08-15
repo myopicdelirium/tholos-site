@@ -694,7 +694,7 @@ function step(w: World) {
 // then a fatal shepherding episode with all three children alive after
 // it, where the same-tick severed branch has the parent alive and at
 // least one child dead. Placeholder until the scan completes.
-const RUNS: number[] = [910]
+const RUNS: number[] = [910, 103039, 75450]
 
 const SPEEDS = [1, 4, 16]
 const SIDE = 1000
