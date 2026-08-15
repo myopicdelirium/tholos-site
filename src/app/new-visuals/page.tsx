@@ -20,20 +20,20 @@ export default function NewVisualsPage() {
         <div className="mt-14">
           <div className="smallcaps text-[11px] text-[var(--site-accent)]">Instrument</div>
           <h2 className="mt-2 md-display text-[32px] leading-[1.06] tracking-[-0.01em] text-[var(--site-ink)]">
-            TTP-3
+            TTP-S
           </h2>
           <div className="mt-6">
-            <TTPThree />
+            <SeveredToldPlace />
           </div>
         </div>
 
         <div className="mt-20 border-t border-[var(--site-line)] pt-14">
           <div className="smallcaps text-[11px] text-[var(--site-accent)]">Instrument</div>
           <h2 className="mt-2 md-display text-[32px] leading-[1.06] tracking-[-0.01em] text-[var(--site-ink)]">
-            TTP-S
+            TTP-3
           </h2>
           <div className="mt-6">
-            <SeveredToldPlace />
+            <TTPThree />
           </div>
         </div>
 
