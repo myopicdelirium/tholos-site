@@ -21,7 +21,6 @@ export default function SiteNav() {
   const projectItems: NavItem[] = useMemo(
     () => [
       { href: "/artifacts", label: "Artifacts" },
-      { href: "/batch-a", label: "Visual Demos" },
       { href: "/new-visuals", label: "New Visuals" },
       { href: "/instruments", label: "Instruments" },
       { href: "/public-logbook", label: "Public Patches" },
@@ -31,7 +30,6 @@ export default function SiteNav() {
 
   const opportunityItems: NavItem[] = useMemo(
     () => [
-      { href: "/opportunities/summer-residency", label: "Summer Residency" },
       { href: "/opportunities/roster", label: "Roster Application" },
     ],
     []
@@ -42,6 +40,8 @@ export default function SiteNav() {
       { href: "/logbook", label: "Logbook" },
       { href: "/roster", label: "Roster" },
       { href: "/events", label: "Events" },
+      { href: "/opportunities/summer-residency", label: "Summer Residency" },
+      { href: "/batch-a", label: "Old Batched" },
     ],
     []
   );
