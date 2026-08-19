@@ -12,7 +12,7 @@ const P = {
   size: 100,
   n: 60,
   T: 24000,
-  roundLen: 400,
+  roundLen: 480,
   waveP: 0.55,
   waveSpeed: 0.32,
   waveDepth: 8,
@@ -23,7 +23,7 @@ const P = {
   actAt: 0.34,
   alpha: 0.25,
   alphaEcho: 0.09,
-  vouch: 0.3,
+  vouch: 0.1,
   beta: 0.28,
   epsBase: 0.02,
   epsSpread: 0.05,
@@ -68,9 +68,9 @@ type World = {
   fireOrigin: Int32Array
   sheltered: boolean[]
   shelterT: Float64Array
-  heard: Array<[number, number, boolean]>
+  heard: Array<[number, number, boolean, number]>
   heardKey: Set<number>
-  vouched: Array<[number, number]>
+  vouched: Array<[number, number, number, number]>
   vouchKey: Set<number>
   hitDone: boolean[]
   deaths: number
@@ -152,6 +152,7 @@ function cloneWorld(w: World): World {
 }
 
 function meanInTrust(w: World, s: number) {
+  if (!w.alive[s]) return 0
   let sum = 0
   let n = 0
   for (let j = 0; j < P.n; j++) {
@@ -241,18 +242,22 @@ function startRound(w: World) {
 
 function settleRound(w: World) {
   if (w.reputation) {
-    for (const [j, s, informative] of w.heard) {
-      if (!w.alive[j] || j === s) continue
+    for (const [j, s, informative, heardT] of w.heard) {
+      if (!w.alive[j] || !w.alive[s] || j === s) continue
       const k = j * P.n + s
       if (w.wave) {
-        w.trust[k] += (informative ? P.alpha : P.alphaEcho) * (1 - w.trust[k])
+        // a warning counts only if it arrived before the danger did
+        if (heardT < w.hitT[j])
+          w.trust[k] += (informative ? P.alpha : P.alphaEcho) * (1 - w.trust[k])
       } else w.trust[k] -= P.beta * w.trust[k]
     }
-    for (const [j, r] of w.vouched) {
-      if (!w.alive[j] || j === r) continue
+    for (const [j, r, , heardT] of w.vouched) {
+      if (!w.alive[j] || !w.alive[r] || j === r) continue
       const k = j * P.n + r
-      if (w.wave) w.trust[k] += P.vouch * P.alphaEcho * (1 - w.trust[k])
-      else w.trust[k] -= P.vouch * P.beta * w.trust[k]
+      if (w.wave) {
+        if (heardT < w.hitT[j])
+          w.trust[k] += P.vouch * P.alphaEcho * (1 - w.trust[k])
+      } else w.trust[k] -= P.vouch * P.beta * w.trust[k]
     }
   }
   for (let i = 0; i < P.n; i++) {
@@ -262,7 +267,7 @@ function settleRound(w: World) {
     if (w.E[i] <= 0) {
       w.alive[i] = false
       w.deaths++
-      w.events.push([w.t, "death", i, "exhaustion", w.round])
+      w.events.push([w.t - 1, "death", i, "exhaustion", w.round])
     }
   }
 }
@@ -280,15 +285,12 @@ function step(w: World) {
   }
   due.sort((a, b) => w.fireAt[a] - w.fireAt[b] || a - b)
   for (const i of due) {
-    if (w.fireKind[i] === 1 && w.fireOrigin[i] === i && w.sheltered[i]) {
-      w.fireAt[i] = -1
-      continue
-    }
     w.fired[i] = true
     const org = w.fireOrigin[i]
     const detected = w.fireKind[i] === 1 && org === i && w.wave && w.detectOk[i] ? 1 : 0
     w.events.push([t, "flare", i, w.fireKind[i], org, w.wave ? 1 : 0, detected, w.round])
-    if (detected && !w.sheltered[i]) {
+    // firing your own alarm means believing it
+    if (w.fireKind[i] === 1 && org === i && !w.sheltered[i] && !w.hitDone[i]) {
       w.sheltered[i] = true
       w.shelterT[i] = t
       w.events.push([t, "shelter", i, i, w.round])
@@ -300,18 +302,19 @@ function step(w: World) {
       const key = j * P.n + org
       if (!w.heardKey.has(key)) {
         w.heardKey.add(key)
-        w.heard.push([j, org, !w.sheltered[j]])
+        w.heard.push([j, org, !w.sheltered[j], t])
       }
       if (w.fireKind[i] === 2) {
         const vk = j * P.n + i
         if (!w.vouchKey.has(vk)) {
           w.vouchKey.add(vk)
-          w.vouched.push([j, i])
+          w.vouched.push([j, i, org, t])
         }
       }
       const belief = j === org ? 1 : w.trust[j * P.n + org]
       if (belief >= P.actAt) {
-        if (!w.sheltered[j]) {
+        // a station the front has already passed gains nothing by hiding
+        if (!w.sheltered[j] && !w.hitDone[j]) {
           w.sheltered[j] = true
           w.shelterT[j] = t
           w.events.push([t, "shelter", j, org, w.round])
@@ -357,11 +360,11 @@ function branchWolfReset(w0: World, wolf: number, endT: number) {
   return w
 }
 
-// runs found by scanning: the wolf's credit collapsed, then a night
-// where its genuine early detection went unrelayed, at least three died
-// after the flare, and the same-tick branch with trust in the wolf
-// restored to the prior relays the claim and loses fewer.
-const RUNS: number[] = [16818, 1811, 13533, 43385]
+// runs found by scanning: the station's audience trust at or below 0.2,
+// a night where its genuine earliest detection went unrelayed, at least
+// two dead after the flare, and the same-tick branch with trust in it
+// restored to the prior relaying the claim and losing fewer.
+const RUNS: number[] = [58034, 32801, 44803, 63294]
 
 const SPEEDS = [1, 4, 16]
 const SIDE = 1000
@@ -828,7 +831,7 @@ export default function TheLastFlare() {
     <div ref={rootRef} className="twv-root">
       <div className="flex justify-between smallcaps text-[10.5px] mb-2 text-[var(--site-muted)]">
         <span>run <span data-k="run">1 / 1</span></span>
-        <span>seed <span data-k="seed">1811</span></span>
+        <span>seed <span data-k="seed">58034</span></span>
       </div>
       <canvas
         data-stage
@@ -907,13 +910,13 @@ export default function TheLastFlare() {
         <table>
           <caption>Parameters</caption>
           <tbody>
-            <tr><td>stations</td><td>60</td><td>nights</td><td>60 &times; 400 ticks</td><td>wave chance</td><td>0.55</td></tr>
+            <tr><td>stations</td><td>60</td><td>nights</td><td>50 &times; 480 ticks</td><td>wave chance</td><td>0.55</td></tr>
             <tr><td>wave speed / depth</td><td>0.32 / 8</td><td>severity</td><td>0.6 to 2.2</td><td>hit damage</td><td>0.26 &times; severity</td></tr>
             <tr><td>sense lead</td><td>7</td><td>flare reach</td><td>30</td><td>relay delay</td><td>8</td></tr>
             <tr><td>shelter prep</td><td>62</td><td>shelter cost</td><td>0.035</td><td>regen</td><td>0.03</td></tr>
             <tr><td>trust prior</td><td>0.5</td><td>act threshold</td><td>0.34</td><td>credit + / echo / &minus;</td><td>0.25 / 0.09 / 0.28</td></tr>
-            <tr><td>relay vouch</td><td>0.3</td><td>error rates</td><td>0.02 to 0.07</td><td>one station</td><td>0.5</td></tr>
-            <tr><td>settlement</td><td>each night, per origin heard</td><td>credit</td><td>only if heard before safe</td><td>claims carry</td><td>the origin&apos;s name</td></tr>
+            <tr><td>relay vouch</td><td>0.1</td><td>error rates</td><td>0.02 to 0.07</td><td>one station</td><td>0.5</td></tr>
+            <tr><td>settlement</td><td>each night, per origin heard</td><td>credit</td><td>heard before safe, before hit</td><td>claims carry</td><td>the origin&apos;s name</td></tr>
           </tbody>
         </table>
       </div>
