@@ -440,11 +440,13 @@ function branchWolfReset(w0: World, wolf: number, endT: number) {
   return w
 }
 
-// runs found by scanning: the station's audience trust at or below 0.2,
-// a night where its genuine earliest detection went unrelayed, at least
-// two dead after the flare, and the same-tick branch with trust in it
-// restored to the prior relaying the claim and losing fewer.
-const RUNS: number[] = [58034, 32801, 44803, 63294]
+// Run 1 is a verified arc under the current kernel: station 50's
+// audience trust down to 0.164 after six false alarms, its genuine
+// first-of-the-night warning unrelayed, two dead after the flare, and
+// the same-tick branch with the field's trust in it restored to the
+// prior carrying the claim 44 relays and losing one instead of two.
+// The rest are ordinary runs; the scan for further arcs is unfinished.
+const RUNS: number[] = [6141, 58034, 32801, 44803]
 
 const SPEEDS = [1, 3, 8]
 const SIDE = 1000
@@ -736,23 +738,44 @@ export default function TheLastFlare() {
         c.stroke()
       }
 
-      // trust threads: source to listener, drifting along the line
-      c.lineWidth = 0.6
-      c.setLineDash([2, 7])
-      c.lineDashOffset = -t * 0.8
+      // the trust field, drawn as the force it exerts: a neighbour that
+      // has earned more than the prior draws a station in, one that has
+      // earned less holds it off, and the untested exert nothing
+      c.lineWidth = 0.7
       for (let j = 0; j < P.n; j++) {
         if (!w.alive[j]) continue
         for (let s = 0; s < P.n; s++) {
           if (s === j || !w.alive[s]) continue
-          const tr = w.trust[j * P.n + s]
-          if (tr < 0.5) continue
-          const d = Math.hypot(w.x[j] - w.x[s], w.y[j] - w.y[s])
-          if (d > P.flareR) continue
-          c.beginPath()
-          c.moveTo(w.x[s] * SCALE, w.y[s] * SCALE)
-          c.lineTo(w.x[j] * SCALE, w.y[j] * SCALE)
-          c.strokeStyle = `rgba(150,175,210,${(tr - 0.5) * 0.42})`
-          c.stroke()
+          const e = w.trust[j * P.n + s] - P.trust0
+          if (e > -0.06 && e < 0.06) continue
+          const sx = w.x[s] * SCALE
+          const sy = w.y[s] * SCALE
+          const jx = w.x[j] * SCALE
+          const jy = w.y[j] * SCALE
+          const dx = jx - sx
+          const dy = jy - sy
+          const d = Math.hypot(dx, dy)
+          if (d > P.flareR * SCALE) continue
+          const near = 1 - d / (P.flareR * SCALE)
+          if (e > 0) {
+            // pull: a line that runs from the source into the listener
+            c.setLineDash([2, 7])
+            c.lineDashOffset = -t * 0.8
+            c.beginPath()
+            c.moveTo(sx, sy)
+            c.lineTo(jx, jy)
+            c.strokeStyle = `rgba(158,192,224,${Math.min(0.4, e * near * 1.1)})`
+            c.stroke()
+          } else {
+            // push: a short bar standing off the listener's side
+            c.setLineDash([])
+            const u = Math.min(0.42, -e * near * 1.6)
+            c.beginPath()
+            c.moveTo(jx - (dx / d) * 5, jy - (dy / d) * 5)
+            c.lineTo(jx - (dx / d) * 12, jy - (dy / d) * 12)
+            c.strokeStyle = `rgba(214,118,88,${u})`
+            c.stroke()
+          }
         }
       }
       c.setLineDash([])
@@ -1070,7 +1093,7 @@ export default function TheLastFlare() {
     <div ref={rootRef} className="twv-root">
       <div className="flex justify-between smallcaps text-[10.5px] mb-2 text-[var(--site-muted)]">
         <span>run <span data-k="run">1 / 1</span></span>
-        <span>seed <span data-k="seed">58034</span></span>
+        <span>seed <span data-k="seed">6141</span></span>
       </div>
       <canvas
         data-stage
@@ -1083,7 +1106,8 @@ export default function TheLastFlare() {
         <span>faint sweep: sensing radius, 7</span>
         <span>amber ring: flare</span>
         <span>pale ring: relay</span>
-        <span>threads: trust at 0.5 or more</span>
+        <span>blue threads: pulling, credit above the prior</span>
+        <span>red bars: holding off, credit below it</span>
         <span>red band: the wave</span>
         <span>contracted: sheltered</span>
         <span>dotted ring: audience trust under 0.34</span>
