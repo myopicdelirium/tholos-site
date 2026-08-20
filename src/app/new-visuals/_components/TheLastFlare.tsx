@@ -29,11 +29,18 @@ const P = {
   epsSpread: 0.05,
   epsWolf: 0.5,
   fpScale: 0.35,
-  shelterCost: 0.035,
+  shelterCost: 0.05,
   prepT: 62,
-  hitDmg: 0.26,
-  regen: 0.03,
+  hitDmg: 0.18,
+  regen: 0.038,
   E0: 0.9,
+  moveMax: 3.5,
+  forceRef: 0.6,
+  movePull: 0.6,
+  moveShun: 1.5,
+  minGap: 6,
+  repel: 2.0,
+  moveJitter: 0.14,
 }
 
 type Rng = { s: number }
@@ -58,7 +65,7 @@ type World = {
   dirY: number
   front0: number
   hitT: Float64Array
-  senseT: Float64Array
+  moveJit: Float64Array
   detectOk: boolean[]
   falseFire: boolean[]
   fireJitter: Float64Array
@@ -67,6 +74,7 @@ type World = {
   fireKind: Int32Array
   fireOrigin: Int32Array
   sheltered: boolean[]
+  usedShelter: boolean[]
   shelterT: Float64Array
   heard: Array<[number, number, boolean, number]>
   heardKey: Set<number>
@@ -106,8 +114,8 @@ function makeWorld(seed: number, reputation: boolean): World {
     dirX: 0,
     dirY: 0,
     front0: 0,
-    hitT: new Float64Array(P.n),
-    senseT: new Float64Array(P.n),
+    hitT: new Float64Array(P.n).fill(Infinity),
+    moveJit: new Float64Array(P.n),
     detectOk: new Array(P.n).fill(false),
     falseFire: new Array(P.n).fill(false),
     fireJitter: new Float64Array(P.n),
@@ -116,6 +124,7 @@ function makeWorld(seed: number, reputation: boolean): World {
     fireKind: new Int32Array(P.n),
     fireOrigin: new Int32Array(P.n).fill(-1),
     sheltered: new Array(P.n).fill(false),
+    usedShelter: new Array(P.n).fill(false),
     shelterT: new Float64Array(P.n).fill(-1),
     heard: [],
     heardKey: new Set(),
@@ -195,11 +204,7 @@ function startRound(w: World) {
     if (pr > maxP) maxP = pr
   }
   w.front0 = minP - 18
-  for (let i = 0; i < P.n; i++) {
-    const pr = w.x[i] * w.dirX + w.y[i] * w.dirY
-    w.hitT[i] = t0 + (pr - w.front0) / P.waveSpeed
-    w.senseT[i] = t0 + (pr - w.front0 - P.senseR) / P.waveSpeed
-  }
+  w.hitT.fill(Infinity)
   for (let i = 0; i < P.n; i++) {
     const d1 = draw(w.rng)
     const d2 = draw(w.rng)
@@ -208,12 +213,13 @@ function startRound(w: World) {
     w.detectOk[i] = d1 >= w.eps[i]
     w.falseFire[i] = d2 < w.eps[i] * P.fpScale
     w.fireJitter[i] = d3 * 20
-    void d4
+    w.moveJit[i] = d4
     w.fired[i] = false
     w.fireAt[i] = -1
     w.fireKind[i] = 0
     w.fireOrigin[i] = -1
     w.sheltered[i] = false
+    w.usedShelter[i] = false
     w.shelterT[i] = -1
     w.hitDone[i] = false
   }
@@ -221,17 +227,15 @@ function startRound(w: World) {
   w.heardKey = new Set()
   w.vouched = []
   w.vouchKey = new Set()
+  // only false alarms answer to a clock; a real detection fires when the
+  // front actually reaches sensing range of where the station stands
   for (let i = 0; i < P.n; i++) {
     if (!w.alive[i]) continue
-    if (w.wave && w.detectOk[i]) {
-      w.fireAt[i] = w.senseT[i]
-      w.fireKind[i] = 1
-      w.fireOrigin[i] = i
-    } else if (!w.wave && w.falseFire[i]) {
+    if (!w.detectOk[i] && w.falseFire[i]) {
       w.fireAt[i] = t0 + 40 + w.fireJitter[i] * 8
       w.fireKind[i] = 1
       w.fireOrigin[i] = i
-    } else if (w.wave && !w.detectOk[i] && w.falseFire[i]) {
+    } else if (!w.wave && w.falseFire[i]) {
       w.fireAt[i] = t0 + 40 + w.fireJitter[i] * 8
       w.fireKind[i] = 1
       w.fireOrigin[i] = i
@@ -262,7 +266,7 @@ function settleRound(w: World) {
   }
   for (let i = 0; i < P.n; i++) {
     if (!w.alive[i]) continue
-    if (w.sheltered[i]) w.E[i] -= P.shelterCost
+    if (w.usedShelter[i]) w.E[i] -= P.shelterCost
     w.E[i] = Math.min(1, w.E[i] + P.regen)
     if (w.E[i] <= 0) {
       w.alive[i] = false
@@ -272,12 +276,81 @@ function settleRound(w: World) {
   }
 }
 
+// Trust moves bodies, not just belief: within earshot each neighbour
+// pulls by the credit it holds above the threshold for acting on a
+// warning and pushes by however far it sits below. A station closed up
+// for the night stays put.
+function drift(w: World) {
+  const per = P.moveMax / P.roundLen
+  const nx = new Float64Array(P.n)
+  const ny = new Float64Array(P.n)
+  for (let i = 0; i < P.n; i++) {
+    nx[i] = w.x[i]
+    ny[i] = w.y[i]
+    if (!w.alive[i] || w.sheltered[i]) continue
+    let dx = 0
+    let dy = 0
+    for (let j = 0; j < P.n; j++) {
+      if (j === i || !w.alive[j]) continue
+      const ox = w.x[j] - w.x[i]
+      const oy = w.y[j] - w.y[i]
+      const d = Math.hypot(ox, oy)
+      if (d < 1e-6) continue
+      // only evidence moves anyone: a neighbour still sitting at the
+      // prior exerts nothing. Above it pulls, below it pushes harder.
+      if (d < P.flareR) {
+        const e = w.trust[i * P.n + j] - P.trust0
+        if (e !== 0) {
+          const near = 1 - d / P.flareR
+          const g = e > 0 ? e * near * P.movePull : e * near * P.moveShun
+          dx += (ox / d) * g
+          dy += (oy / d) * g
+        }
+      }
+      // elbow room that actually holds: the push climbs steeply as the
+      // gap closes instead of flattening out
+      if (d < P.minGap) {
+        const push = Math.min(6, P.minGap / Math.max(0.5, d) - 1) * P.repel
+        dx -= (ox / d) * push
+        dy -= (oy / d) * push
+      }
+    }
+    const ang = w.moveJit[i] * Math.PI * 2
+    dx += Math.cos(ang) * P.moveJitter
+    dy += Math.sin(ang) * P.moveJitter
+    const L = Math.hypot(dx, dy)
+    if (L > 1e-9) {
+      const v = Math.min(1, L / P.forceRef) * per
+      nx[i] = Math.max(3, Math.min(P.size - 3, w.x[i] + (dx / L) * v))
+      ny[i] = Math.max(3, Math.min(P.size - 3, w.y[i] + (dy / L) * v))
+    }
+  }
+  for (let i = 0; i < P.n; i++) {
+    w.x[i] = nx[i]
+    w.y[i] = ny[i]
+  }
+}
+
 function step(w: World) {
   if (w.t % P.roundLen === 0) {
     if (w.round >= 0) settleRound(w)
     startRound(w)
   }
   const t = w.t
+  const roundT0 = Math.floor(t / P.roundLen) * P.roundLen
+  const front = w.front0 + (t - roundT0) * P.waveSpeed
+  if (w.wave) {
+    for (let i = 0; i < P.n; i++) {
+      if (!w.alive[i] || w.fired[i] || !w.detectOk[i]) continue
+      if (w.fireAt[i] >= 0) continue
+      const pr = w.x[i] * w.dirX + w.y[i] * w.dirY
+      if (front >= pr - P.senseR) {
+        w.fireAt[i] = t
+        w.fireKind[i] = 1
+        w.fireOrigin[i] = i
+      }
+    }
+  }
   const due: number[] = []
   for (let i = 0; i < P.n; i++) {
     if (!w.alive[i] || w.fired[i]) continue
@@ -292,6 +365,7 @@ function step(w: World) {
     // firing your own alarm means believing it
     if (w.fireKind[i] === 1 && org === i && !w.sheltered[i] && !w.hitDone[i]) {
       w.sheltered[i] = true
+      w.usedShelter[i] = true
       w.shelterT[i] = t
       w.events.push([t, "shelter", i, i, w.round])
     }
@@ -316,6 +390,7 @@ function step(w: World) {
         // a station the front has already passed gains nothing by hiding
         if (!w.sheltered[j] && !w.hitDone[j]) {
           w.sheltered[j] = true
+          w.usedShelter[j] = true
           w.shelterT[j] = t
           w.events.push([t, "shelter", j, org, w.round])
         }
@@ -330,12 +405,16 @@ function step(w: World) {
   if (w.wave) {
     for (let i = 0; i < P.n; i++) {
       if (!w.alive[i] || w.hitDone[i]) continue
-      if (t >= w.hitT[i] && t < w.hitT[i] + P.waveDepth / P.waveSpeed) {
+      const pr = w.x[i] * w.dirX + w.y[i] * w.dirY
+      if (front >= pr) {
         w.hitDone[i] = true
+        w.hitT[i] = t
         const prog = w.sheltered[i]
-          ? Math.max(0, Math.min(1, (w.hitT[i] - w.shelterT[i]) / P.prepT))
+          ? Math.max(0, Math.min(1, (t - w.shelterT[i]) / P.prepT))
           : 0
         const dmg = P.hitDmg * w.waveSev * (1 - prog)
+        // the front has gone by; it comes back out
+        w.sheltered[i] = false
         if (dmg > 0.001) {
           w.E[i] -= dmg
           w.events.push([t, "hit", i, +prog.toFixed(2), w.round])
@@ -350,6 +429,7 @@ function step(w: World) {
       }
     }
   }
+  drift(w)
   w.t++
 }
 
@@ -447,6 +527,9 @@ export default function TheLastFlare() {
     let rings: Ring[] = []
     type Flash = { x: number; y: number; t0: number; kind: number }
     let flashes: Flash[] = []
+    const TRAIL = 26
+    const trail = new Float32Array(P.n * TRAIL * 2).fill(-1)
+    let trailAt = 0
     type BranchRow = {
       t: number
       round: number
@@ -472,6 +555,8 @@ export default function TheLastFlare() {
       evAt = 0
       rings = []
       flashes = []
+      trail.fill(-1)
+      trailAt = 0
       branchRows = []
       wolfTrace.length = 0
       nightRows.length = 0
@@ -585,6 +670,20 @@ export default function TheLastFlare() {
       const boundary = w.t % P.roundLen === 0 && w.round >= 0
       if (boundary) closeNight()
       step(w)
+      if (w.t % 4 === 0) {
+        const at = (trailAt % TRAIL) * 2
+        for (let i = 0; i < P.n; i++) {
+          const o = i * TRAIL * 2 + at
+          if (w.alive[i]) {
+            trail[o] = w.x[i]
+            trail[o + 1] = w.y[i]
+          } else {
+            trail[o] = -1
+            trail[o + 1] = -1
+          }
+        }
+        trailAt++
+      }
     }
 
     const paceFor = () => 30 * SPEEDS[speedIdx]
@@ -741,6 +840,29 @@ export default function TheLastFlare() {
           c.lineWidth = 1.2
           c.stroke()
         }
+      }
+
+      // where each station has been drifting
+      for (let i = 0; i < P.n; i++) {
+        if (!w.alive[i]) continue
+        c.beginPath()
+        let started = false
+        for (let s = 0; s < TRAIL; s++) {
+          const o = i * TRAIL * 2 + ((trailAt + s) % TRAIL) * 2
+          const tx = trail[o]
+          if (tx < 0) {
+            started = false
+            continue
+          }
+          const ty = trail[o + 1]
+          if (!started) {
+            c.moveTo(tx * SCALE, ty * SCALE)
+            started = true
+          } else c.lineTo(tx * SCALE, ty * SCALE)
+        }
+        c.strokeStyle = "rgba(198,214,238,0.16)"
+        c.lineWidth = 0.7
+        c.stroke()
       }
 
       // stations
@@ -965,6 +1087,7 @@ export default function TheLastFlare() {
         <span>red band: the wave</span>
         <span>contracted: sheltered</span>
         <span>dotted ring: audience trust under 0.34</span>
+        <span>tail: where it has drifted</span>
         <span>hollow: dead</span>
       </div>
 
@@ -1030,11 +1153,12 @@ export default function TheLastFlare() {
           <caption>Parameters</caption>
           <tbody>
             <tr><td>stations</td><td>60</td><td>nights</td><td>50 &times; 480 ticks</td><td>wave chance</td><td>0.55</td></tr>
-            <tr><td>wave speed / depth</td><td>0.32 / 8</td><td>severity</td><td>0.6 to 2.2</td><td>hit damage</td><td>0.26 &times; severity</td></tr>
+            <tr><td>wave speed / depth</td><td>0.32 / 8</td><td>severity</td><td>0.6 to 2.2</td><td>hit damage</td><td>0.18 &times; severity</td></tr>
             <tr><td>sense lead</td><td>7</td><td>flare reach</td><td>30</td><td>relay delay</td><td>8</td></tr>
-            <tr><td>shelter prep</td><td>62</td><td>shelter cost</td><td>0.035</td><td>regen</td><td>0.03</td></tr>
+            <tr><td>shelter prep</td><td>62</td><td>shelter cost</td><td>0.05</td><td>regen</td><td>0.038</td></tr>
             <tr><td>trust prior</td><td>0.5</td><td>act threshold</td><td>0.34</td><td>credit + / echo / &minus;</td><td>0.25 / 0.09 / 0.28</td></tr>
             <tr><td>relay vouch</td><td>0.1</td><td>error rates</td><td>0.02 to 0.07</td><td>one station</td><td>0.5</td></tr>
+            <tr><td>drift, per night</td><td>up to 3.5</td><td>pull / push</td><td>0.6 / 1.5, around the prior</td><td>elbow room</td><td>6</td></tr>
             <tr><td>settlement</td><td>each night, per origin heard</td><td>credit</td><td>heard before safe, before hit</td><td>claims carry</td><td>the origin&apos;s name</td></tr>
           </tbody>
         </table>
