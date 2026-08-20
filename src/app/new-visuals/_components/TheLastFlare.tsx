@@ -366,7 +366,7 @@ function branchWolfReset(w0: World, wolf: number, endT: number) {
 // restored to the prior relaying the claim and losing fewer.
 const RUNS: number[] = [58034, 32801, 44803, 63294]
 
-const SPEEDS = [1, 4, 16]
+const SPEEDS = [1, 3, 8]
 const SIDE = 1000
 const SCALE = SIDE / P.size
 
@@ -407,17 +407,35 @@ export default function TheLastFlare() {
     const buildGround = (s: number) => {
       const rr = makeRng((s ^ 0x51f15a1e) >>> 0)
       const R = () => draw(rr)
-      const grad = gctx.createRadialGradient(SIDE / 2, SIDE / 2, SIDE * 0.1, SIDE / 2, SIDE / 2, SIDE * 0.75)
-      grad.addColorStop(0, "#0a0d14")
-      grad.addColorStop(1, "#04060a")
+      const grad = gctx.createRadialGradient(
+        SIDE * 0.5, SIDE * 0.45, SIDE * 0.05, SIDE * 0.5, SIDE * 0.5, SIDE * 0.8
+      )
+      grad.addColorStop(0, "#0c1018")
+      grad.addColorStop(0.6, "#070a11")
+      grad.addColorStop(1, "#03050a")
       gctx.fillStyle = grad
       gctx.fillRect(0, 0, SIDE, SIDE)
-      for (let k = 0; k < 900; k++) {
+      // haze
+      for (let k = 0; k < 14; k++) {
+        const x = R() * SIDE
+        const y = R() * SIDE
+        const rad = 90 + R() * 220
+        const g = gctx.createRadialGradient(x, y, 0, x, y, rad)
+        g.addColorStop(0, `rgba(40,70,110,${0.02 + R() * 0.03})`)
+        g.addColorStop(1, "rgba(40,70,110,0)")
+        gctx.fillStyle = g
+        gctx.beginPath()
+        gctx.arc(x, y, rad, 0, 2 * Math.PI)
+        gctx.fill()
+      }
+      // stars
+      for (let k = 0; k < 1400; k++) {
         const x = R() * SIDE
         const y = R() * SIDE
         const a = R()
-        gctx.fillStyle = `rgba(120,140,170,${0.015 + a * 0.02})`
-        gctx.fillRect(x, y, 1, 1)
+        const sz = a > 0.94 ? 1.8 : a > 0.78 ? 1.2 : 0.8
+        gctx.fillStyle = `rgba(150,175,210,${0.02 + a * 0.05})`
+        gctx.fillRect(x, y, sz, sz)
       }
     }
 
@@ -427,6 +445,8 @@ export default function TheLastFlare() {
     let evAt = 0
     type Ring = { x: number; y: number; t0: number; relay: boolean }
     let rings: Ring[] = []
+    type Flash = { x: number; y: number; t0: number; kind: number }
+    let flashes: Flash[] = []
     type BranchRow = {
       t: number
       round: number
@@ -451,6 +471,7 @@ export default function TheLastFlare() {
       w = makeWorld(RUNS[runIdx], true)
       evAt = 0
       rings = []
+      flashes = []
       branchRows = []
       wolfTrace.length = 0
       nightRows.length = 0
@@ -506,10 +527,21 @@ export default function TheLastFlare() {
             if (trustNow <= 0.3) computeBranch(e[0] as number)
           }
         }
-        if (kind === "shelter") curNight.shelters++
-        if (kind === "hit") curNight.hits++
+        if (kind === "shelter") {
+          curNight.shelters++
+          const j = e[2] as number
+          flashes.push({ x: w.x[j], y: w.y[j], t0: e[0] as number, kind: 0 })
+        }
+        if (kind === "hit") {
+          curNight.hits++
+          const j = e[2] as number
+          if ((e[3] as number) < 0.9)
+            flashes.push({ x: w.x[j], y: w.y[j], t0: e[0] as number, kind: 1 })
+        }
         if (kind === "death") {
           curNight.deaths++
+          const j = e[2] as number
+          flashes.push({ x: w.x[j], y: w.y[j], t0: e[0] as number, kind: 2 })
           const last = branchRows[branchRows.length - 1]
           if (last && !last.done && e[3] === "wave" && (e[0] as number) >= last.t) {
             last.actualDeaths++
@@ -517,6 +549,7 @@ export default function TheLastFlare() {
         }
       }
       if (rings.length > 140) rings = rings.slice(-140)
+      if (flashes.length > 160) flashes = flashes.slice(-160)
     }
 
     const closeNight = () => {
@@ -554,7 +587,7 @@ export default function TheLastFlare() {
       step(w)
     }
 
-    const paceFor = () => 12 * SPEEDS[speedIdx]
+    const paceFor = () => 30 * SPEEDS[speedIdx]
 
     const updateData = () => {
       el("t").textContent = String(w.t)
@@ -588,101 +621,185 @@ export default function TheLastFlare() {
       c.clearRect(0, 0, SIDE, SIDE)
       c.drawImage(ground, 0, 0)
       const t = w.t
-      // trust threads: listeners to sources they would act on strongly
-      c.lineWidth = 0.5
+      const roundT0 = Math.floor(t / P.roundLen) * P.roundLen
+      const phase = Math.min(1, (t - roundT0) / P.roundLen)
+
+      // the watch: every station sweeps its own sensing radius, always
+      for (let i = 0; i < P.n; i++) {
+        if (!w.alive[i]) continue
+        const per = 200
+        const u = (((t + i * 41) % per) / per) / 0.6
+        if (u > 1) continue
+        c.beginPath()
+        c.arc(w.x[i] * SCALE, w.y[i] * SCALE, u * P.senseR * SCALE, 0, 2 * Math.PI)
+        c.strokeStyle = `rgba(140,175,210,${0.11 * (1 - u)})`
+        c.lineWidth = 0.7
+        c.stroke()
+      }
+
+      // trust threads: source to listener, drifting along the line
+      c.lineWidth = 0.6
+      c.setLineDash([2, 7])
+      c.lineDashOffset = -t * 0.8
       for (let j = 0; j < P.n; j++) {
         if (!w.alive[j]) continue
         for (let s = 0; s < P.n; s++) {
           if (s === j || !w.alive[s]) continue
           const tr = w.trust[j * P.n + s]
-          if (tr < 0.62) continue
+          if (tr < 0.5) continue
           const d = Math.hypot(w.x[j] - w.x[s], w.y[j] - w.y[s])
           if (d > P.flareR) continue
           c.beginPath()
-          c.moveTo(w.x[j] * SCALE, w.y[j] * SCALE)
-          c.lineTo(w.x[s] * SCALE, w.y[s] * SCALE)
-          c.strokeStyle = `rgba(150,170,200,${(tr - 0.62) * 0.35})`
+          c.moveTo(w.x[s] * SCALE, w.y[s] * SCALE)
+          c.lineTo(w.x[j] * SCALE, w.y[j] * SCALE)
+          c.strokeStyle = `rgba(150,175,210,${(tr - 0.5) * 0.42})`
           c.stroke()
         }
       }
-      // the wave front
+      c.setLineDash([])
+      c.lineDashOffset = 0
+
+      // the wave
       if (w.wave) {
-        const roundT0 = Math.floor(t / P.roundLen) * P.roundLen
         const front = w.front0 + (t - roundT0) * P.waveSpeed
-        const nx = w.dirX
-        const ny = w.dirY
-        // band between front-depth and front along (nx, ny)
-        c.save()
-        c.translate(SIDE / 2, SIDE / 2)
-        c.rotate(Math.atan2(ny, nx))
-        const cproj = (SIDE / 2 / SCALE) * (nx + ny) // projection of center, approx not needed: use exact below
-        void cproj
-        const centerProj = (P.size / 2) * nx + (P.size / 2) * ny
+        const centerProj = (P.size / 2) * w.dirX + (P.size / 2) * w.dirY
         const off = (front - centerProj) * SCALE
         const bandW = P.waveDepth * SCALE
-        const g = c.createLinearGradient(off - bandW, 0, off, 0)
-        const a = 0.16 * Math.min(1.6, w.waveSev)
-        g.addColorStop(0, "rgba(194,58,43,0)")
-        g.addColorStop(0.7, `rgba(194,58,43,${a})`)
-        g.addColorStop(1, `rgba(230,90,60,${a * 1.5})`)
+        const a = 0.2 * Math.min(1.6, w.waveSev)
+        c.save()
+        c.translate(SIDE / 2, SIDE / 2)
+        c.rotate(Math.atan2(w.dirY, w.dirX))
+        const g = c.createLinearGradient(off - bandW * 6, 0, off, 0)
+        g.addColorStop(0, "rgba(150,40,32,0)")
+        g.addColorStop(0.75, `rgba(180,52,40,${a * 0.5})`)
+        g.addColorStop(1, `rgba(232,96,64,${a})`)
         c.fillStyle = g
-        c.fillRect(off - bandW, -SIDE, bandW, SIDE * 2)
-        c.strokeStyle = `rgba(230,90,60,${0.35 * Math.min(1.6, w.waveSev)})`
-        c.lineWidth = 1.2
+        c.fillRect(off - bandW * 6, -SIDE, bandW * 6, SIDE * 2)
+        // drifting streaks so the sweep reads as motion
+        for (let k = 0; k < 7; k++) {
+          const sy = ((k * 317 + t * 2.2) % (SIDE * 2)) - SIDE
+          c.fillStyle = `rgba(240,120,86,${a * 0.35})`
+          c.fillRect(off - bandW * 1.4, sy, bandW * 1.4, 1.2)
+        }
+        c.strokeStyle = `rgba(246,140,104,${0.45 * Math.min(1.6, w.waveSev)})`
+        c.lineWidth = 1.4
         c.beginPath()
         c.moveTo(off, -SIDE)
         c.lineTo(off, SIDE)
         c.stroke()
         c.restore()
       }
+
       // flare rings
       rings = rings.filter((r) => t - r.t0 < 46)
       for (const r of rings) {
         const age = t - r.t0
-        const rad = Math.min(1, age / 40) * P.flareR * SCALE
+        const u = Math.min(1, age / 40)
+        const rad = u * P.flareR * SCALE
         const fade = 1 - age / 46
         c.beginPath()
         c.arc(r.x * SCALE, r.y * SCALE, rad, 0, 2 * Math.PI)
         c.strokeStyle = r.relay
-          ? `rgba(214,208,192,${0.34 * fade})`
-          : `rgba(244,196,110,${0.55 * fade})`
-        c.lineWidth = r.relay ? 0.8 : 1.3
+          ? `rgba(206,214,230,${0.34 * fade})`
+          : `rgba(248,198,112,${0.6 * fade})`
+        c.lineWidth = r.relay ? 0.9 : 1.5
         c.stroke()
+        if (!r.relay) {
+          c.beginPath()
+          c.arc(r.x * SCALE, r.y * SCALE, rad * 0.72, 0, 2 * Math.PI)
+          c.strokeStyle = `rgba(248,198,112,${0.22 * fade})`
+          c.lineWidth = 0.9
+          c.stroke()
+        }
       }
+
+      // shelters closing, bodies struck, lights going out
+      flashes = flashes.filter((f) => t - f.t0 < 36)
+      for (const f of flashes) {
+        const age = t - f.t0
+        const x = f.x * SCALE
+        const y = f.y * SCALE
+        if (f.kind === 0) {
+          const u = Math.min(1, age / 12)
+          c.beginPath()
+          c.arc(x, y, 10 - 6.5 * u, 0, 2 * Math.PI)
+          c.strokeStyle = `rgba(198,218,242,${0.5 * (1 - u)})`
+          c.lineWidth = 1
+          c.stroke()
+        } else if (f.kind === 1) {
+          const u = Math.min(1, age / 18)
+          c.beginPath()
+          c.arc(x, y, 3 + 14 * u, 0, 2 * Math.PI)
+          c.strokeStyle = `rgba(226,96,68,${0.7 * (1 - u)})`
+          c.lineWidth = 1.5
+          c.stroke()
+        } else {
+          const u = Math.min(1, age / 36)
+          c.beginPath()
+          c.arc(x, y, 4 + 28 * u, 0, 2 * Math.PI)
+          c.strokeStyle = `rgba(240,214,206,${0.7 * (1 - u)})`
+          c.lineWidth = 1.2
+          c.stroke()
+        }
+      }
+
       // stations
       for (let i = 0; i < P.n; i++) {
         const x = w.x[i] * SCALE
         const y = w.y[i] * SCALE
         if (!w.alive[i]) {
           c.beginPath()
-          c.arc(x, y, 2.6, 0, 2 * Math.PI)
-          c.strokeStyle = "rgba(120,130,150,0.3)"
+          c.arc(x, y, 3.2, 0, 2 * Math.PI)
+          c.strokeStyle = "rgba(122,134,156,0.3)"
           c.lineWidth = 0.7
           c.stroke()
           continue
         }
         const credit = meanInTrust(w, i)
-        const glowR = 4 + credit * 14
-        if (!w.sheltered[i]) {
-          const g = c.createRadialGradient(x, y, 0.5, x, y, glowR)
-          g.addColorStop(0, `rgba(235,225,200,${0.25 + credit * 0.4})`)
-          g.addColorStop(1, "rgba(235,225,200,0)")
-          c.fillStyle = g
+        const breath = 1 + 0.09 * Math.sin((t + i * 53) * 0.05)
+        const shel = w.sheltered[i]
+        const glowR = (shel ? 5.5 : 7 + credit * 13) * breath
+        const g = c.createRadialGradient(x, y, 0.5, x, y, glowR)
+        g.addColorStop(0, `rgba(242,232,208,${(shel ? 0.12 : 0.2) + credit * 0.32})`)
+        g.addColorStop(1, "rgba(242,232,208,0)")
+        c.fillStyle = g
+        c.beginPath()
+        c.arc(x, y, glowR, 0, 2 * Math.PI)
+        c.fill()
+        // credit ring: radius and brightness are the trust it receives
+        c.beginPath()
+        c.arc(x, y, (3.2 + credit * 5) * breath, 0, 2 * Math.PI)
+        c.strokeStyle = `rgba(232,224,202,${0.16 + credit * 0.46})`
+        c.lineWidth = 0.9
+        c.stroke()
+        if (shel) {
           c.beginPath()
-          c.arc(x, y, glowR, 0, 2 * Math.PI)
-          c.fill()
-        } else {
-          c.beginPath()
-          c.arc(x, y, 3.4, 0, 2 * Math.PI)
-          c.strokeStyle = `rgba(235,225,200,${0.3 + credit * 0.3})`
-          c.lineWidth = 0.8
+          c.arc(x, y, 2.2, 0, 2 * Math.PI)
+          c.strokeStyle = "rgba(232,224,202,0.55)"
+          c.lineWidth = 1.4
           c.stroke()
         }
+        // audience trust under the action threshold
+        if (audienceTrust(w, i) < P.actAt) {
+          c.setLineDash([1.5, 3])
+          c.beginPath()
+          c.arc(x, y, 11 * breath, 0, 2 * Math.PI)
+          c.strokeStyle = "rgba(214,118,88,0.55)"
+          c.lineWidth = 0.9
+          c.stroke()
+          c.setLineDash([])
+        }
         c.beginPath()
-        c.arc(x, y, 1.7, 0, 2 * Math.PI)
-        c.fillStyle = `rgba(240,234,214,${0.55 + credit * 0.45})`
+        c.arc(x, y, 1.8, 0, 2 * Math.PI)
+        c.fillStyle = `rgba(246,240,222,${0.5 + credit * 0.5})`
         c.fill()
       }
+
+      // the night's clock
+      c.fillStyle = "rgba(150,170,200,0.10)"
+      c.fillRect(0, 0, SIDE, 2.5)
+      c.fillStyle = w.wave ? "rgba(232,96,64,0.6)" : "rgba(196,212,236,0.35)"
+      c.fillRect(0, 0, SIDE * phase, 2.5)
     }
 
     const drawChart = () => {
@@ -840,13 +957,15 @@ export default function TheLastFlare() {
         className="w-full border border-[var(--site-line)]"
       />
       <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 smallcaps text-[10px] text-[var(--site-muted)]">
-        <span>lamp brightness: mean trust received</span>
+        <span>ring size and glow: trust received</span>
+        <span>faint sweep: sensing radius, 7</span>
         <span>amber ring: flare</span>
         <span>pale ring: relay</span>
-        <span>threads: trust at 0.62 or more</span>
+        <span>threads: trust at 0.5 or more</span>
         <span>red band: the wave</span>
-        <span>contracted lamp: sheltered</span>
-        <span>hollow ring: dead</span>
+        <span>contracted: sheltered</span>
+        <span>dotted ring: audience trust under 0.34</span>
+        <span>hollow: dead</span>
       </div>
 
       <canvas data-chart width={1140} height={110} className="mt-6 w-full" />
