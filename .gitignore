@@ -17,6 +17,7 @@
 /.next/
 /.next-preview/
 /.next-build/
+/.next-verify/
 /out/
 
 # local agent config
@@ -45,3 +46,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+
+# applicant submissions (PII)
+/data/
+
+# phase-model replays: plaintext stays local, only ciphertext is published
+public/research/replays/*.json
