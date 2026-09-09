@@ -1,14 +1,14 @@
 #!/bin/bash
-# In-container WO-2 full-20 grind: resume-loop + periodic push so progress survives
-# container restarts. The runner checkpoints per (condition, ablation, seed) cell into
+# WO-2 full-20 grind: resume-loop + periodic push so progress survives
+# interruptions. The runner checkpoints per (condition, ablation, seed) cell into
 # a TRACKED dir; this script pushes that checkpoint every ~5 min. On restart, relaunch
 # this script — `--check-complete` + the pushed checkpoint resume where it left off.
 set -u
-REPO=/home/user/tholos-site
+REPO=${REPO:-$(git rev-parse --show-toplevel)}
 PKG=$REPO/batch-a
 OUT=docs/diagnostics/wo2_full20
 CKPT=$PKG/$OUT/wo2_checkpoint.jsonl
-BR=claude/urgent-task-4rrqi7
+BR=${GRIND_BRANCH:-research/batch-a}
 
 commit_progress() {
   [ -f "$CKPT" ] || return 0

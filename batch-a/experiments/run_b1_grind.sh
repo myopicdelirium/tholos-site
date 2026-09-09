@@ -1,12 +1,12 @@
 #!/bin/bash
 # B1 pilot sweep grind: resume-loop + push-per-cycle (same pattern as WO-2/WO-3).
-# Relaunch after container restarts; the pushed checkpoint resumes it.
+# Relaunch after interruptions; the pushed checkpoint resumes it.
 set -u
-REPO=/home/user/tholos-site
+REPO=${REPO:-$(git rev-parse --show-toplevel)}
 PKG=$REPO/batch-a
 OUT=docs/diagnostics/b1_pilot
 CKPT=$PKG/$OUT/b1_checkpoint.jsonl
-BR=claude/urgent-task-4rrqi7
+BR=${GRIND_BRANCH:-research/batch-a}
 
 commit_progress() {
   [ -f "$CKPT" ] || return 0

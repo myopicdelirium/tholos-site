@@ -1,15 +1,15 @@
 #!/bin/bash
 # WO-3 full-20 grind, chained AFTER WO-2 so the two never contend for the single
-# container's CPU. Idles (cheap poll) until WO-2 is fully checkpointed, then runs
+# host's CPU. Idles (cheap poll) until WO-2 is fully checkpointed, then runs
 # A3+A4 × 20 seeds with the same resume-loop + push-per-cell durability as WO-2.
-# Relaunch after a container restart — `--check-complete` + the pushed checkpoints
+# Relaunch after an interruption — `--check-complete` + the pushed checkpoints
 # resume both work orders where they left off.
 set -u
-REPO=/home/user/tholos-site
+REPO=${REPO:-$(git rev-parse --show-toplevel)}
 PKG=$REPO/batch-a
 OUT=docs/diagnostics/wo3_full20
 CKPT=$PKG/$OUT/wo3_checkpoint.jsonl
-BR=claude/urgent-task-4rrqi7
+BR=${GRIND_BRANCH:-research/batch-a}
 
 cd "$PKG"
 # hold until WO-2 is done (do not split the CPU with the headline run)
