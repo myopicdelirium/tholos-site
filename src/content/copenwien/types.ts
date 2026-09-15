@@ -10,7 +10,6 @@ export type CopenWienArticle = {
   title: string
   /** One-paragraph lead shown in the chapter index. */
   abstract: string
-  authors?: string[]
   keywords?: string[]
   status?: string
   year?: string

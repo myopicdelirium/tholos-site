@@ -4,7 +4,6 @@ export type Artifact = {
   abstract: string
   keywords: string[]
   status: string
-  authors?: string[]
   venue?: string
   year?: string
   updated?: string

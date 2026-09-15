@@ -52,7 +52,7 @@ export const EVENTS: EventRecord[] = [
     blurb: "Methods and results from early multi-agent environment prototypes.",
     description:
       "We present prototype results on how scarcity and bounded cognition generate stable hierarchy, coalition behavior, and ideological clustering across runs.",
-    speakers: ["Felix Tinio"],
+    speakers: ["Myopic Delirium core team"],
     reading: [{ title: "Model notes and run logs", author: "Internal archive", href: "/logbook" }]
   }
 ];

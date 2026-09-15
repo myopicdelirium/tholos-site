@@ -63,8 +63,6 @@ export default function LogbookEntries() {
                   </span>
                 </div>
 
-                <div className="mt-2 smallcaps text-[10px] text-[var(--site-muted)]">{p.author}</div>
-
                 {isOpen ? null : (
                   <p className="mt-3 max-w-[92ch] text-[13px] leading-relaxed text-[var(--site-body)]">
                     {teaser(p.body[0])}

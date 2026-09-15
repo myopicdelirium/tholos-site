@@ -5,7 +5,6 @@ const article: CopenWienArticle = {
   title: "Stress phenotypes on a single surface",
   abstract:
     "A pre-registered agent-based study that separates, by construction, the stress profile an individual brings to its position from the profile the position produces, deriving four recognizable phenotypes as quadrants of one two-parameter surface.",
-  authors: ["Bruno Risach", "Felix Tinio"],
   keywords: [
     "agent-based simulation",
     "allostatic load",
