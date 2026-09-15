@@ -14,7 +14,6 @@ export default async function CopenWienArticlePage({ params }: { params: Promise
   const status = (article.status ?? "Extended abstract").toUpperCase()
   const updated = article.updated ? new Date(article.updated).toISOString().slice(0, 10) : null
   const year = article.year ?? (updated ? updated.slice(0, 4) : null)
-  const authors = (article.authors ?? []).join(", ")
 
   return (
     <div className="min-h-screen bg-[var(--site-bg)]">
@@ -37,10 +36,6 @@ export default async function CopenWienArticlePage({ params }: { params: Promise
           {year ? <span>{year}</span> : null}
           {updated ? <span>updated {updated}</span> : null}
         </div>
-
-        {authors ? (
-          <div className="mt-4 text-[13px] text-[var(--site-body)]">{authors}</div>
-        ) : null}
 
         <div className="mt-8 h-px w-full bg-[var(--site-line)]" />
 

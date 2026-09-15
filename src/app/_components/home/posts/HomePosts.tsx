@@ -240,8 +240,6 @@ export default function HomePosts() {
                   {post.title}
                 </h2>
 
-                <div className="mt-4 text-[11px] uppercase tracking-[0.28em] text-[var(--nav-muted)]">{post.author}</div>
-
                 <div className="mt-7 h-px w-full bg-[var(--nav-line)]" />
 
                 <div className="mt-7 space-y-5">

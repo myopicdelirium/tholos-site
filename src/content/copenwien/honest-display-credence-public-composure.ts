@@ -5,7 +5,6 @@ const article: CopenWienArticle = {
   title: "Honest display, credence, and public composure",
   abstract:
     "A pre-registered agent-based study of warning credibility, following, and the group-size vigilance effect, run where an agent's display is a read-only view of its own urgency and the effect can be measured within individuals rather than across them.",
-  authors: ["Felix Tinio", "Giulia Apolloni", "Bruno Risach", "Jacob Daaboul"],
   keywords: [
     "agent-based simulation",
     "bounded attention",

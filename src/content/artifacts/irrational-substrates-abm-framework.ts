@@ -7,7 +7,6 @@ const a: Artifact = {
   venue: "AAMAS 2026 (submitted)",
   year: "2025",
   updated: "2025-09-26",
-  authors: ["Felix Tinio"],
   keywords: ["ABM", "Cognition", "Irrationality", "Mechanisms", "Emergence"],
   abstract: `We propose a research framework for agent-based modeling that treats cognition as a mechanistic substrate rather than a simplifying assumption. The framework emphasizes attention, memory, inertia, and regime-switching dynamics as first-class components, and outlines how these elements reshape emergent social structure under stress, scarcity, and ideological pressure.`,
   previewImage: "/artifacts/irrational-substrates-abm-framework/page1.png",

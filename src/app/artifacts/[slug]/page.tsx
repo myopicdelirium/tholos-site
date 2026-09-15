@@ -11,7 +11,6 @@ export default async function ArtifactPage({ params }: { params: Promise<{ slug:
   const status = (artifact.status ?? "Working paper").toUpperCase()
   const updated = artifact.updated ? new Date(artifact.updated).toISOString().slice(0, 10) : null
   const year = artifact.year ?? (updated ? updated.slice(0, 4) : "—")
-  const authors = (artifact.authors ?? []).join(", ")
   const previewSrc = (artifact as any).previewImage ?? (artifact as any).preview ?? null
 
   return (
@@ -32,13 +31,6 @@ export default async function ArtifactPage({ params }: { params: Promise<{ slug:
             </div>
 
             <h1 className="mt-4 md-display md-hero-title text-[var(--site-ink)]">{artifact.title}</h1>
-
-            {authors ? (
-              <div className="mt-5 flex items-center gap-3">
-                <div className="smallcaps text-[11px] text-[var(--site-muted)]">Authors</div>
-                <div className="text-[13px] text-[var(--site-body)]">{authors}</div>
-              </div>
-            ) : null}
 
             <div className="mt-10 space-y-3">
               <div className="smallcaps text-[11px] text-[var(--site-muted)]">Abstract</div>
